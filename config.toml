@@ -1,0 +1,54 @@
+baseURL = "https://huanruiz.github.io"
+languageCode = "zh-CN"
+title = "PunchCode"
+theme = "maupassant"
+
+## 保持分类的原始名字（false会做转小写处理）
+preserveTaxonomyNames = true
+disablePathToLower = true
+
+hasCJKLanguage = true
+summaryLength = 140
+
+[author]
+  name = "哈里"
+
+[params]
+  author = "哈里"
+  subtitle = "Backend Engineer"
+  keywords = "Java,后端开发"
+  description = "该吃吃, 该喝喝, 啥事儿别忘心里搁"
+  busuanzi = true #启用不算子网页统计
+  googleAd = ""  #ca-pub-xxxxxxxxxxxxxx
+  localSearch = true # 启用本地搜索
+
+  # 这里我存放在了主题的static文件夹里，根目录的似乎也可以
+  customCSS = ['douban.css', 'other.css']
+  # if ['custom.css'], load '/static/css/custom.css' file
+  customJS = ['douban.js']
+  # if ['custom.js'], load '/static/js/custom.js' file
+
+  # 全局开关，你也可以在每一篇内容的 front matter 中针对单篇内容关闭或开启某些功能
+  toc = true  # 是否开启目录
+
+[params.cc]
+  name = "知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议"
+  link = "https://creativecommons.org/licenses/by-nc-nd/4.0/"
+
+[markup]
+  [markup.highlight]
+    lineNos = true
+    style = "github"
+
+[menu]
+  [[menu.main]]
+    identifier = "archives"
+    name = "归档"
+    url = "/archives/"
+    weight = 3
+
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 4
