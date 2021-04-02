@@ -4,7 +4,7 @@ date: 2021-01-08
 draft: false
 toc: true
 categories: ["数据结构与算法"]
-tags: ["DFS", "BFS", "回溯"]
+tags: ["数据结构与算法"]
 ---
 
 ## 回溯

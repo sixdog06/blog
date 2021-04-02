@@ -4,7 +4,7 @@ date: 2021-02-16
 draft: false
 toc: true
 categories: ["数据结构与算法"]
-tags: ["LRU", "LFU"]
+tags: ["数据结构与算法"]
 ---
 
 ## 146. LRU缓存机制

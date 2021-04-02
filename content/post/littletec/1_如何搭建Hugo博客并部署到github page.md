@@ -4,7 +4,7 @@ date: 2020-09-30
 draft: false
 toc: true
 categories: ["技术小文"]
-tags: ["Hugo", "Github page"]
+tags: ["Hugo"]
 ---
 
 因为Hexo博客又一次出现了问题, 在推油的推荐下, 我把个人博客迁移到了Hugo上. 我会根据复习的进度慢慢地把相关的笔记迁移到这里. Hugo的搭建过程非常简单, 可以参考[官方文档](https://gohugo.io/getting-started/quick-start/). 我在这里进行一个简单的总结.

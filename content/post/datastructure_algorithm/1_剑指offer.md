@@ -4,7 +4,7 @@ date: 2020-12-11
 draft: false
 toc: true
 categories: ["数据结构与算法"]
-tags: ["剑指"]
+tags: ["数据结构与算法", "剑指offer"]
 ---
 
 这是剑指offer第二版的刷题小总结, 对应leetcode上剑指Offer专题的题目. 括号内的数字对应主站中题目的序号, 没有注明的复杂度都是指时间复杂度.

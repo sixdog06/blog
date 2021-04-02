@@ -11,10 +11,10 @@ hasCJKLanguage = true
 summaryLength = 140
 
 [author]
-  name = "哈里"
+  name = "拳头"
 
 [params]
-  author = "哈里"
+  author = "拳头"
   subtitle = "Backend Engineer"
   keywords = "Java,后端开发"
   description = "该吃吃, 该喝喝, 啥事儿别忘心里搁"
