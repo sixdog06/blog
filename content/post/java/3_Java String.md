@@ -121,5 +121,5 @@ public String trim() {
 
 ## 参考
 1. Javadoc
-2. [Doubts about typecast “(String)anObject” and anotherString.value.length](https://stackoverflow.com/questions/57508759/doubts-about-typecast-stringanobject-and-anotherstring-value-length)
+2. [Doubts about typecast "(String)anObject" and anotherString.value.length](https://stackoverflow.com/questions/57508759/doubts-about-typecast-stringanobject-and-anotherstring-value-length)
 3. [Why doesn't String toCharArray use Arrays.copyOf?](https://stackoverflow.com/questions/49715328/why-doesnt-string-tochararray-use-arrays-copyof)
