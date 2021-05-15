@@ -117,6 +117,56 @@ public class GetServlet extends HttpServlet {
 
 启动Tomcat, 如果直接进入`getc`路径, 会显示`name is null`. 当加载了`hello`后再打开`getc`路径(也就是加载了数据之后), 就会显示`name is Harry`.
 
+再尝试一下转发(区别于重定向).
+```
+public class ServletDemo04 extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ServletContext context = this.getServletContext();
+        System.out.println("Demo04");
+        context.getRequestDispatcher("/getc").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doGet(req, resp);
+    }
+}
+```
+
+配置如下, 访问sd4实际上就是访问`getc`路径, 状态码是200, 证明并没有重定向.
+```
+<servlet>
+    <servlet-name>sd4</servlet-name>
+    <servlet-class>com.kuang.servlet.ServletDemo04</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>sd4</servlet-name>
+    <url-pattern>/sd4</url-pattern>
+</servlet-mapping>
+```
+
+还可以读取资源文件. 现在resource下创建一个资源文件`properties`, 写入`username=root password=123456`做测试.然够直接改上面的代码:
+```
+protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    InputStream is = this.getServletContext().getResourceAsStream("/WEB-INF/classes/db.properties");
+    Properties prop = new Properties();
+    prop.load(is);
+    String username = prop.getProperty("username");
+    String password = prop.getProperty("password");
+    resp.getWriter().println(username+" "+password); //打印root 123456
+}
+```
+
+## HttpServletResponse
+直接看`public interface ServletResponse`, 负责向浏览器发送数据如下. 而set开头的就是负责向浏览器发送响应头的方法.
+- public ServletOutputStream getOutputStream() throws IOException;//写中文
+- public PrintWriter getWriter() throws IOException;
+
+
+
+
+
 ## 原理
 其中首次访问指创建war包的过程, `service`方法定义在`Servlet接口中`.
 ![](/notes/notes28_1.png)
