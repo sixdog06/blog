@@ -163,9 +163,183 @@ protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws Se
 - public ServletOutputStream getOutputStream() throws IOException;//写中文
 - public PrintWriter getWriter() throws IOException;
 
+### 下载文件
+```
+public class FileServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
+        // 1.获取文件下载路径
+        String realPath = "/Users/harry/IdeaProjects/javaweb-02-servlet/response/target/classes/1.png"; //对应target中的1.png路径
+        // 2.文件名
+        String filename = realPath.substring(realPath.lastIndexOf("\\") + 1);
+        // 3.让浏览器支持(Content-Disposition)下载我们需要的东西
+        resp.setHeader("Content-Disposition", "attachment;filename"+ URLEncoder.encode(filename, "UTF-8"));
+        // 4.获取下载文件的输入流
+        FileInputStream in = new FileInputStream(realPath);
+        // 5.创建缓冲区
+        int len = 0;
+        byte[] buffer = new byte[1024];
+        // 6.获取OutputStream对象
+        ServletOutputStream out = resp.getOutputStream();
+        // 7. 将FileOutputSteam写入buffer, 用OutputStream将缓冲区中的数据输出到客户端
+        while ((len=in.read(buffer)) > 0) {
+            out.write(buffer, 0, len);
+        }
+        in.close();
+        out.close();
+    }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, ServletException {
+        super.doPost(req, resp);
+    }
+}
+```
 
+### 验证码实现
+重点在于缓存策略, 是`no-cache`, 看`response header`中, 其实就对应了我们的程序.
+```
+public class ImageServlet extends HttpServlet {
 
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 浏览器3s刷新一次
+        resp.setHeader("refresh", "3");
+        // 在内存中创建一张图片
+        BufferedImage bufferedImage = new BufferedImage(80, 20, BufferedImage.TYPE_INT_RGB);
+        // 得到图片
+        Graphics2D g = (Graphics2D) bufferedImage.getGraphics();
+        // 设置背景颜色
+        g.setColor(Color.white);
+        g.fillRect(0, 0, 80, 20);
+        // 给图片写数据
+        g.setColor(Color.BLUE);
+        g.setFont(new Font(null, Font.BOLD, 20));
+        g.drawString(makeNum(), 0, 20);
+        // 告诉浏览器, 这个请求用图片的方式打开
+        resp.setContentType("image/jpeg");
+        // 网站存在缓存, 不让浏览器缓存
+        resp.setDateHeader("expires", -1); //缓存策略
+        resp.setHeader("Cache-Control", "no-cache"); //浏览器不缓存
+        resp.setHeader("Pragma", "no-cache");
+
+        // 图片写给浏览器
+        ImageIO.write(bufferedImage, "jpg", resp.getOutputStream());
+    }
+
+    // 生成随机数
+    private String makeNum() {
+        Random random = new Random();
+        String num = random.nextInt(9999999) + "";
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < 7 - num.length(); i++) {
+            sb.append("0");
+        }
+        String s = sb.toString() + num;
+        return num;
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doPost(req, resp);
+    }
+}
+```
+
+## Response重定向
+```
+//        resp.setHeader("Location", "imageservlet");
+//        resp.setStatus(302);
+        resp.sendRedirect("/imageservlet"); //做的就是上里面的两行代码
+```
+重定向(302)和请求转发(307)的区别? 相同的是页面都会跳转, 但是**转发**的时候url不会产生变化, **重定向**的**时候, url地址会变化. 
+```
+<html>
+<body>
+<h2>Hello World!</h2>
+
+<%--${pageContext.request.contextPath}代表当前项目--%>
+<form action="${pageContext.request.contextPath}/login" method="get">
+    username: <input type="text" name="username"> <br>
+    password: <input type="password" name="password"> <br>
+    <input type="submit">
+</form>
+</body>
+</html>
+```
+
+```
+public class RequestTest extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        System.out.println(username + ":" + "password");
+
+        resp.sendRedirect("/success.jsp"); //登录后跳转页面
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doPost(req, resp);
+    }
+}
+```
+
+## Request转发
+视频中在`doGet`中写的逻辑, 实测会报错, 所以改为在doPost中写. `success.jsp`放在`index.jsp`目录下, 随便测试即可
+```
+public class LoginServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doGet(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setCharacterEncoding("utf-8");
+        req.setCharacterEncoding("utf-8");
+
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String[] hobbys = req.getParameterValues("hobby");
+
+        System.out.println("==============================");
+        System.out.println(username);
+        System.out.println(password);
+        System.out.println(Arrays.toString(hobbys));
+        System.out.println("==============================");
+
+        req.getRequestDispatcher("/success.jsp").forward(req, resp);
+    }
+}
+```
+
+```
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<body>
+<h1>Login</h1>
+
+<div>
+    <form action="${pageContext.request.contextPath}/login" method="post">
+        username: <input type="text" name="username"> <br>
+        password: <input type="password" name="password"> <br>
+        <input type="checkbox" name="hobby" value="girl">girl
+        <input type="checkbox" name="hobby" value="code">code
+        <input type="checkbox" name="hobby" value="sing">sing
+        <input type="checkbox" name="hobby" value="film">film
+
+        <br>
+        <input type="submit">
+    </form>
+</div>
+</body>
+</html>
+```
+
+可以看到登录后的url并没有变, 但是加载了`success.jsp`.
 
 ## 原理
 其中首次访问指创建war包的过程, `service`方法定义在`Servlet接口中`.
