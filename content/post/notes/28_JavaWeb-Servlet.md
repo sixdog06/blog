@@ -7,6 +7,10 @@ categories: ["学习笔记"]
 tags: ["JavaWeb"]
 ---
 
+## 原理
+其中首次访问指创建war包的过程, `service`方法定义在`Servlet接口中`.
+![](/notes/notes28_1.png)
+
 ## 实验
 在MVN repository中找`Java Servlet API/jsp api`, 导入maven. 除了通过maven导入, 也可以在`Project Structure-Module`导入. 删掉src, 在父项目下创建一个webapp类型的子module, 这个子项目默认继承了父项目的jar包, 将web.xml修改为最新的.
 ```
@@ -336,14 +340,12 @@ public class LoginServlet extends HttpServlet {
     </form>
 </div>
 </body>
-</html>
 ```
 
 可以看到登录后的url并没有变, 但是加载了`success.jsp`.
 
-## 原理
-其中首次访问指创建war包的过程, `service`方法定义在`Servlet接口中`.
-![](/notes/notes28_1.png)
+> mac idea tomcsat 1099 is already in use解决方案: 在host文件中配置上`localhost host`. 打开方式是: `sudo vim /etc/hosts`.
+
 
 ## 参考
 1. [JavaWeb入门到实战-狂神说Java](https://www.bilibili.com/video/BV12J411M7Sj?p=1)
