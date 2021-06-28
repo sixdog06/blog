@@ -188,4 +188,81 @@ public class UserDaoTest {
 </build>
 ```
 
+### 增删改查
+1. namespace: namespace中包名要和Dao/Mapper接口的包名一致
+2. select: id就是namespace中的方法名, resultType是sql的返回值
+3. parameterType
+
+把之前的`UserDao`重构为`UserMapper`, 加入下列方法.
+```
+//根据id查用户
+User getUserById(int id);
+
+//insert一个用户
+int addUser(User user);
+
+//update用户
+int updateUser(User user);
+
+//delete用户
+int deleteUser(int id);
+```
+
+`UserMapper.xml`中写sql语句.
+```
+<select id="getUserById" parameterType="int" resultType="com.kuang.pojo.User">
+    select * from mybatis.user where id = #{id};
+</select>
+
+<insert id="addUser" parameterType="com.kuang.pojo.User">
+    insert into mybatis.user (id, name, pwd) values (#{id}, #{name}, #{pwd});
+</insert>
+
+<update id="updateUser" parameterType="com.kuang.pojo.User">
+    update mybatis.user set name=#{name}, pwd=#{pwd} where id = #{id};
+</update>
+
+<delete id="deleteUser" parameterType="int">
+    delete from mybatis.user where id = #{id};
+</delete>
+```
+
+测试如下, **增删改**必须`commit()`提交事务, 否则不生效.
+```
+@Test
+public void addUser() {
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    int res = mapper.addUser(new User(4, "ha", "12333"));
+    System.out.println(res);
+
+    sqlSession.commit();
+    sqlSession.close();
+}
+
+@Test
+public void updateUser() {
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    mapper.updateUser(new User(4, "hehe", "123123"));
+
+    sqlSession.commit();
+    sqlSession.close();
+}
+
+@Test
+public void deleteUser() {
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    mapper.deleteUser(4);
+
+    sqlSession.commit();
+    sqlSession.close();
+}
+```
+
+## 参考
 1. [Mybatis最新完整教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1NE411Q7Nx)
