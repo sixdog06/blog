@@ -264,5 +264,14 @@ public void deleteUser() {
 }
 ```
 
+- 可以用`parameterType=map`并传入Map类型的值, 这样就可以根据Map的键值对传值. 
+- 如果只有一个参数, 可以直接在sql中写. 
+- 如果传入的是对象, 可以直接取对象的field, `parameterType=Object`.
+
+> like模糊查询注意sql注入问题
+
+## 配置解析
+
+
 ## 参考
 1. [Mybatis最新完整教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1NE411Q7Nx)
