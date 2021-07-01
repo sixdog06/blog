@@ -271,6 +271,24 @@ public void deleteUser() {
 > like模糊查询注意sql注入问题
 
 ## 配置解析
+在`mybatis-config.xml`相同的包下加入`db.properties`, 写入
+```
+driver=com.mysql.jdbc.Driver
+url=jdbc:mysql://localhost:3306/mybatis?useSSL=true&useUnicode=true&useUnicode=true&characterEncoding=UTF-8
+username=root
+password=xxxxxxxx
+```
+
+并在`mybatis-config.xml`中的`<configuration>`下加入`<configuration>`. 就可以用`<property name="driver" value="${driver}"/>`的方式去替换我们的配置. `<properties>`这个标签下也可以直接用`<property>`直接配置. 如果两个文件都配置了相同字段, 优先使用外部配置文件的. 
+
+还可以取别名, 这个功能唯一的好处就是方便, 在Mapper中的类名就可以换掉. 可以给类名, 包名取别名, 如下两种方式. 如果是扫描包, 则可以把`@Alias`加在实体类上, 给实体类自定义别名, 否则用类名本身. **基本类型/包装类有默认的别名**.
+```
+<typeAliases>
+    <typeAlias type="com.kuang.pojo.User" alias="User"/>
+    <package name="com.kuang.pojo"/>
+</typeAliases>
+```
+
 
 
 ## 参考
