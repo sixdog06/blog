@@ -15,9 +15,9 @@ summaryLength = 140
 
 [params]
   author = "拳头"
-  subtitle = "Backend Engineer"
-  keywords = "Java,后端开发"
-  description = "该吃吃, 该喝喝, 啥事儿别忘心里搁"
+  subtitle = "Software Engineer"
+  keywords = "这也不会 那也不会"
+  description = "Code Eat Sleep"
   busuanzi = true #启用不算子网页统计
   googleAd = ""  #ca-pub-xxxxxxxxxxxxxx
   localSearch = true # 启用本地搜索
