@@ -129,7 +129,7 @@ setTimeout(function(){
 ```
 
 实例生命周期:
-![](/notes/notes36_1.png)
+![](/notes/notes34_1.png)
 
 ## 模板语法
 ### 插值(Mustache{{}})
@@ -621,5 +621,17 @@ var vm = new Vue({
 ```
 
 > 部分HTML元素对内部元素的类型有限制, 所以我们自定义的`component`如果放在里面, 可能会导致渲染错误.
+
+## 单文件组件
+简单来说, 就是一个`.vue`文件作为一个单文件组件, 在页面文件中通过`import 文件名 from '路径/文件名.vue'`, 再用
+```
+export default {
+    name: 'app',
+    components: {
+        文件名
+    }
+}
+```
+注册这个组件, 在template中就可以使用这个组件了. 单文件组件包含`<template>/<script>/<style>`三种组件. 
 
 1. [Vue getting started](https://cn.vuejs.org/v2/guide/index.html)
