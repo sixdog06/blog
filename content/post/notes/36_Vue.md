@@ -245,7 +245,112 @@ setTimeout(function(){
 <a @[event]="doSomething"> ... </a>
 ```
 
+### 计算属性
+`computed`中的内容就是计算属性, 基于响应式依赖进行缓存, **只在相关响应式依赖发生改变时它们才会重新求值**. 如果不要缓存, 使用方法也可以做到同样的效果. 除了计算属性之外还有侦听属性, 和前面的`vm.$watch`类似, 比如`<input v-model="question">`, 当用户在输入框打字时, 我们就可以用`watch`下的`question: function(newQuestion, oldQuestion) {}`侦听并执行代码块内的逻辑.
+```
+var vm = new Vue({
+  el: '#demo',
+  data: {
+    firstName: 'Foo',
+    lastName: 'Bar'
+  },
+  computed: {
+    fullName: function () {
+      return this.firstName + ' ' + this.lastName
+      //可以加入setter, 否则只有getter
+      //get: function() {}
+      //set: function() {}
+    }
+  }
+})
+```
 
+## Class绑定Style
+实际上还是绑定了`data`中的字段.
+```
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<script src="vue.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- v-bind:class="{ active: isActive, green: isGreen}" map形式也可以, 这里的green指样式 -->
+        <div 
+        class="test" 
+        v-bind:class="[ isActive ? 'active' : '', isGreen ? 'green' : '']" 
+        style="width:200px; height:200px; text-align:center; line-height:200px;">
+            hi vue
+        </div>
+        <!--color(属性):color(变量)-->
+        <div 
+        :style="{color:color, fontSize:size, background: isRed ? '#FF0000' : ''}">
+            hi vue
+        </div>
+    </div>
+    <script type="text/javascript">
+    var vm = new Vue({
+        el : "#app",
+        data : {
+            isActive : true, //是否生效
+            isGreen : true,
+            color : "#FFFFFF",
+            size : '50px',
+            isRed : true
+        }
+    });
+    </script>
+    <style>
+    .test{font-size:30px;}
+    .green{color:#00FF00;}
+    .active{background:#FF0000;}
+    </style>
+</body>
+</html>
+```
 
+## 条件渲染
+`if-else`中的模板可以复用元素, 可以用两个`<input>`做测试, 两个`<input>`通过一个按键互相切换, 输入框中的值不变. 如果想每次都重新渲染, 那么在`<input>`中加入`key`即可.
+```
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<script src="vue.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+    <div id="app">
+        <div v-if="type === 'A'"> <!--根据条件渲染div(惰性)-->
+        A
+        </div>
+        <div v-else-if="type === 'B'">
+        B
+        </div>
+        <div v-else-if="type === 'C'">
+        C
+        </div>
+        <div v-else>
+        Not A/B/C
+        </div>
+        <!--根据条件渲染, element本身存在, 只是css渲染不同-->
+        <h1 v-show="ok">Hello!</h1>
+    </div>
+    <script type="text/javascript">
+    var vm = new Vue({
+        el : "#app",
+        data : {
+            type : "B",
+            ok : true
+        }
+    });
+    </script>
+    <style type="text/css">
+    </style>
+</body>
+</html>
+```
 
 1. [Vue getting started](https://cn.vuejs.org/v2/guide/index.html)
