@@ -1,6 +1,6 @@
 ---
-title: "Mybatis"
-date: 2021-07-04
+title: "Mybatis入门"
+date: 2021-07-09
 draft: false
 toc: true
 categories: ["学习笔记"]
@@ -289,6 +289,11 @@ password=xxxxxxxx
 </typeAliases>
 ```
 
+之前`mappers`中我们用了`<mapper resource="com/kuang/dao/UserMapper.xml"/>`注册, 实际上还有`<mapper class="com.kuang.dao.UserMapper"/>`类注册, `<package name="com.kuang.dao"/>`包注册两种方式, 但是要注意接口和配置文件**名称必须一致**, 并且在**同一个包下**.
+
+对于生命周期和作用域, 简单的总结是: `SqlSessionFactoryBuilder`创建`SqlSessionFactory`(想象为连接池), `SqlSessionFactory`生产`SqlSession`一个线程, `SqlSession`下包含`Mapper`, `Mapper`就是一个个业务. `SqlSessionFactoryBuilder`在`SqlSessionFactory`创建后就没用了, 但是`SqlSessionFactory`在应用运行期间一直应存在, **最佳作用域是应用的作用域**, 最简单的使用就是单例. 而`SqlSession`是连接到线程池的一个请求, 线程不安全, **最佳作用域是请求或方法作用域**, 用完之后应立刻关闭, 防止资源占用.
+
+## 
 
 
 ## 参考
