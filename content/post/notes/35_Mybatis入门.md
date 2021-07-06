@@ -293,8 +293,91 @@ password=xxxxxxxx
 
 对于生命周期和作用域, 简单的总结是: `SqlSessionFactoryBuilder`创建`SqlSessionFactory`(想象为连接池), `SqlSessionFactory`生产`SqlSession`一个线程, `SqlSession`下包含`Mapper`, `Mapper`就是一个个业务. `SqlSessionFactoryBuilder`在`SqlSessionFactory`创建后就没用了, 但是`SqlSessionFactory`在应用运行期间一直应存在, **最佳作用域是应用的作用域**, 最简单的使用就是单例. 而`SqlSession`是连接到线程池的一个请求, 线程不安全, **最佳作用域是请求或方法作用域**, 用完之后应立刻关闭, 防止资源占用.
 
-## 
+## 结果集映射
+前面的例子中, 我们的User Bean中的字段和数据库字段的名称一一对应, 如果不同的话怎么办? 例如把`User`中的`pwd`改为`password`, 那么除了用MySQL的别名, 还可以用mybatis的`resultMap`. 当然这是比较简单的情况, 文档里面说**如果这个世界总是这么简单就好了**, 实际还有更复杂的一对多多对一的情况, 需要用`collections`处理. 
+```
+<resultMap id="UserMap" type="User">
+    <result column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="pwd" property="password"/>
+</resultMap>
+<!--相当于用Impl去重写接口方法, resultMap代表返回值-->
+<select id="getUserById" resultMap="UserMap">
+    select * from mybatis.user where id = #{id}
+</select>
+```
 
+## Mybatis的日志
+在配置文件配一下就ok, 这里用的标准输出为例.
+```
+<settings>
+    <setting name="logImpl" value="STDOUT_LOGGING"/>
+</settings>
+```
+
+会打印:
+```
+Opening JDBC Connection
+Created connection 551479935.
+Setting autocommit to false on JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@20deea7f]
+==>  Preparing: select * from mybatis.user where id = ?
+==> Parameters: 1(Integer)
+<==    Columns: id, name, pwd
+<==        Row: 1, Harry1, 123a
+<==      Total: 1
+User{id=1, name='Harry1', pwd='123a'}
+Resetting autocommit to true on JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@20deea7f]
+Closing JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@20deea7f]
+Returned connection 551479935 to pool.
+```
+
+再尝试一下`log4j`.
+```
+<!-- https://mvnrepository.com/artifact/log4j/log4j -->
+<dependency>
+    <groupId>log4j</groupId>
+    <artifactId>log4j</artifactId>
+    <version>1.2.17</version>
+</dependency>
+```
+
+新建`resource`下创建`log4j.properties`, 参照官网配置.
+```
+# 全局日志配置, 级别有OFF/FATAL(导致程序挂掉的严重错误)/ERROR(发生错误但不影响运行)/WARN(潜在错误)/INFO(打印感兴趣的日志)/DEBUG(帮助debug()/TRACE(一般不用)/ALL
+log4j.rootLogger=DEBUG, stdout
+# MyBatis 日志配置
+log4j.logger.org.mybatis.example.BlogMapper=TRACE
+# 控制台输出
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n
+#
+log4j.logger.com.mybatis=DEBUG
+```
+
+Mybatis配置改为如下并运行.
+```
+<settings>
+    <setting name="logImpl" value="LOG4j"/>
+</settings>
+```
+
+**比较标准的使用方式**: 通过`static Logger logger = Logger.getLogger(UserDaoTest.class);`拿到日志对象, 通过`logger.info()/logger.debug()/logger.erroer()`打印日志, 比如在同一个测试类下加入:
+```
+@Test
+public void testLog4j(){
+    logger.info("info");
+    logger.debug("debug");
+    logger.error("error");
+}
+```
+
+就能打印:
+```
+ INFO [main] - info
+DEBUG [main] - debug
+ERROR [main] - error
+```
 
 ## 参考
 1. [Mybatis最新完整教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1NE411Q7Nx)
