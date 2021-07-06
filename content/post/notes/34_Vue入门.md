@@ -634,4 +634,5 @@ export default {
 ```
 注册这个组件, 在template中就可以使用这个组件了. 单文件组件包含`<template>/<script>/<style>`三种组件. 
 
+## 参考
 1. [Vue getting started](https://cn.vuejs.org/v2/guide/index.html)

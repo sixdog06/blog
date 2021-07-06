@@ -10,4 +10,4 @@ Hi, I am Harry, a new programmer but not young. This blog contains my opinions/n
 Let's see, who will I become after 10 years.
 
 - email: huanruiz@foxmail.com
-- status: working as software programmer
+- status: working as software engineer
