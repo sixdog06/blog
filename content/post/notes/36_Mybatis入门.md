@@ -291,7 +291,9 @@ password=xxxxxxxx
 
 之前`mappers`中我们用了`<mapper resource="com/kuang/dao/UserMapper.xml"/>`注册, 实际上还有`<mapper class="com.kuang.dao.UserMapper"/>`类注册, `<package name="com.kuang.dao"/>`包注册两种方式, 但是要注意接口和配置文件**名称必须一致**, 并且在**同一个包下**.
 
-对于生命周期和作用域, 简单的总结是: `SqlSessionFactoryBuilder`创建`SqlSessionFactory`(想象为连接池), `SqlSessionFactory`生产`SqlSession`一个线程, `SqlSession`下包含`Mapper`, `Mapper`就是一个个业务. `SqlSessionFactoryBuilder`在`SqlSessionFactory`创建后就没用了, 但是`SqlSessionFactory`在应用运行期间一直应存在, **最佳作用域是应用的作用域**, 最简单的使用就是单例. 而`SqlSession`是连接到线程池的一个请求, 线程不安全, **最佳作用域是请求或方法作用域**, 用完之后应立刻关闭, 防止资源占用.
+对于**生命周期和作用域**, 简单的总结是: `SqlSessionFactoryBuilder`创建`SqlSessionFactory`(想象为连接池), `SqlSessionFactory`生产`SqlSession`一个线程, `SqlSession`下包含`Mapper`, `Mapper`就是一个个业务. `SqlSessionFactoryBuilder`在`SqlSessionFactory`创建后就没用了, 但是`SqlSessionFactory`在应用运行期间一直应存在, **最佳作用域是应用的作用域**, 最简单的使用就是单例. 而`SqlSession`是连接到线程池的一个请求, 线程不安全, **最佳作用域是请求或方法作用域**, 用完之后应立刻关闭, 防止资源占用. 
+
+> 对于执行流程, 还有很多是源码做的但我们看不到的, 比如读配置, 事务管理, 创建executor执行器等等. 介意debug的时候看一条sql语句是怎么跑的, 看用到了哪些东西
 
 ## 结果集映射
 前面的例子中, 我们的User Bean中的字段和数据库字段的名称一一对应, 如果不同的话怎么办? 例如把`User`中的`pwd`改为`password`, 那么除了用MySQL的别名, 还可以用mybatis的`resultMap`. 当然这是比较简单的情况, 文档里面说**如果这个世界总是这么简单就好了**, 实际还有更复杂的一对多多对一的情况, 需要用`collections`处理. 
@@ -378,6 +380,42 @@ public void testLog4j(){
 DEBUG [main] - debug
 ERROR [main] - error
 ```
+
+## 分页
+分页的目的是减少数据的处理量. 可以通过Limit或者**RowBounds**实现. 对于limit实现实际上就是简单地传入limit的值即可.
+```
+<!--对应List<User> getUserByLimit(Map<String, Integer> map);-->
+<select id="getUserByLimit" parameterType="map" resultMap="UserMap">
+    select * from mybatis.user limit #{startIndex},#{pageSize}
+</select>
+```
+
+**RowBounds**实现, 在写sql时就不需要加limit了, 而是在调用的时候用`RowBounds`作为selectList的参数传入.
+```
+@Test
+public void getUserByRowBounds() {
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+    RowBounds rowBounds = new RowBounds(1, 2);
+    List<User> userList = sqlSession.selectList("com.kuang.dao.UserMapper.getUserByRowBounds", null, rowBounds);
+
+    for (User user: userList) {
+        System.out.println(user);
+    }
+    sqlSession.close();
+}
+```
+还有诸如`PageHelper`这样的插件可以分页, 甚至公司会有自己私有的分页工具.
+
+## 注解开发
+直接删掉`UserMapper.xml`, dao接口直接在方法上加上注解, 依然可以查询. 核心是用反射通过`UserMapper`做到`UserMapper.xml`的配置. 但是这个地方如果数据库的字段和实体类不同就无法读取了. **注意核心配置文件还是要绑定接口**.
+```
+public interface UserMapper {
+
+    @Select("select * from user")
+    List<User> getUsers();
+}
+```
+
 
 ## 参考
 1. [Mybatis最新完整教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1NE411Q7Nx)
