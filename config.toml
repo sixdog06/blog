@@ -52,3 +52,9 @@ summaryLength = 140
     name = "About"
     url = "/about/"
     weight = 4
+
+[params.utteranc]
+    enable = true
+    repo = "https://github.com/huanruiz/blog.git"    # 存储评论的Repo，格式为 owner/repo
+    issueTerm = "pathname"  #表示你选择以那种方式让github issue的评论和你的文章关联。
+    theme = "github-light" # 样式主题，有github-light和github-dark两种
