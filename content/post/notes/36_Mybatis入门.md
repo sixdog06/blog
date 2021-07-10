@@ -435,5 +435,110 @@ int updateUser(User user);
 int deleteUser(@Param("uid") int id);
 ```
 
+> 视频讲了lombok插件, 简化写getter/setter, 是否使用仁者见仁智者见智
+
+## 复杂查询
+两个表, 1对多, 多对1的查询如何实现. 用下面的表做测试.
+```
+use mybatis;
+
+CREATE TABLE `teacher` (
+  `id` INT(10) NOT NULL,
+  `name` VARCHAR(30) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+INSERT INTO teacher(`id`, `name`) VALUES (1, "秦老师"); 
+
+CREATE TABLE `student` (
+  `id` INT(10) NOT NULL,teacher
+  `name` VARCHAR(30) DEFAULT NULL,
+  `tid` INT(10) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fktid` (`tid`),
+  CONSTRAINT `fktid` FOREIGN KEY (`tid`) REFERENCES `teacher` (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES (1, "小明", 1); 
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES (2, "小红", 1); 
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES (3, "小张", 1); 
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES (4, "小李", 1); 
+INSERT INTO `student` (`id`, `name`, `tid`) VALUES (5, "小王", 1);
+```
+
+## 多对一
+要查询所有的学生对应的老师, 首先pojo类中的`Student`会有相对应的`Teacher`字段. 查询时配置如下, 实际上就把`Student`中的`Teacher`字段查询额外绑定了sql语句, 也就是把tid绑定上了Teacher的java类型, 再通过java类型查询. 方法2看起来更简单, 写完sql之后再用map绑定.
+```
+<mapper namespace="com.kuang.dao.StudentMapper">
+    <!--1-->
+    <select id="getStudent" resultMap="StudentTeacher">
+        select * from student;
+    </select>
+    <resultMap id="StudentTeacher" type="Student">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <!--
+            对象 association
+            集合 collection
+        -->
+        <association property="teacher" column="tid" javaType="Teacher" select="getTeacher"/>
+    </resultMap>
+    <select id="getTeacher" resultType="Teacher">
+        select * from teacher where id = #{tid}
+    </select>
+
+    <!--2-->
+    <select id="getStudent2" resultMap="StudentTeacher2">
+    select s.id sid, s.name sname, t.name tname
+    from student s, teacher t
+    where s.tid = t.id;
+    </select>
+    <resultMap id="StudentTeacher2" type="Student">
+        <result property="id" column="sid"/>
+        <result property="name" column="sname"/>
+        <association property="teacher" javaType="Teacher">
+            <result property="name" column="tname"/>
+        </association>
+    </resultMap>
+</mapper>
+```
+
+> idea的maven项目在resourse目录下会不能new package, 只要创建directory即可, 用`/`分隔不同层级的目录, 否则mapper.xml文件可能会无法绑定
+
+## 一对多
+一个老师对应多个学生的情况(Teacher类下有`List<Student>`字段), 可以用`collection`去用`ofType`拿对应的`Student`. 
+```
+<mapper namespace="com.kuang.dao.TeacherMapper">
+    <select id="getTeacher" resultMap="TeacherStudent">
+        select s.id sid, s.name sname, t.name tname, t.id id
+        from student s,teacher t
+        where s.tid = t.id and t.id = #{tid}
+    </select>
+
+    <resultMap id="TeacherStudent" type="Teacher">
+        <result property="id" column="tid"/>
+        <result property="name" column="tname"/>
+        <collection property="student" ofType="Student">
+            <result property="id" column="sid"/>
+            <result property="name" column="sname"/>
+            <result property="tid" column="tid"/>
+        </collection>
+    </resultMap>
+</mapper>
+```
+
+当然依然可以用几个select去分别读数据, 先读teacher, 拿到id, 再通过id, 到student表中取数据对应`tid`的数据. 
+```
+<select id="getTeacher2" resultMap="TeacherStudent2">
+    select * from mybatis.teacher where id = #{tid}
+</select>
+<resultMap id="TeacherStudent2" type="Teacher">
+    <collection property="student" javaType="ArrayList" ofType="Student" select="getStudentByTeacherId" column="id"/>
+</resultMap>
+<select id="getStudentByTeacherId" resultType="Student">
+    select * from mybatis.student where tid = #{tid}
+</select>
+```
+
 ## 参考
-1. [Mybatis最新完整教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1NE411Q7Nx)
+1. [Mybatis最新完整教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1NE411Q7Nx)类型
