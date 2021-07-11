@@ -467,7 +467,7 @@ INSERT INTO `student` (`id`, `name`, `tid`) VALUES (5, "小王", 1);
 ```
 
 ## 多对一
-要查询所有的学生对应的老师, 首先pojo类中的`Student`会有相对应的`Teacher`字段. 查询时配置如下, 实际上就把`Student`中的`Teacher`字段查询额外绑定了sql语句, 也就是把tid绑定上了Teacher的java类型, 再通过java类型查询. 方法2看起来更简单, 写完sql之后再用map绑定.
+要查询所有的学生对应的老师, 首先pojo类中的`Student`会有相对应的`Teacher`字段. 查询时配置如下, 实际上就把`Student`中的`Teacher`字段查询额外绑定了sql语句, 也就是把tid绑定上了Teacher的java类型, 再通过java类型查询. 方法2看起来更简单, 写完所有sql之后再用map绑定.
 ```
 <mapper namespace="com.kuang.dao.StudentMapper">
     <!--1-->
@@ -477,10 +477,6 @@ INSERT INTO `student` (`id`, `name`, `tid`) VALUES (5, "小王", 1);
     <resultMap id="StudentTeacher" type="Student">
         <result property="id" column="id"/>
         <result property="name" column="name"/>
-        <!--
-            对象 association
-            集合 collection
-        -->
         <association property="teacher" column="tid" javaType="Teacher" select="getTeacher"/>
     </resultMap>
     <select id="getTeacher" resultType="Teacher">
@@ -540,5 +536,138 @@ INSERT INTO `student` (`id`, `name`, `tid`) VALUES (5, "小王", 1);
 </select>
 ```
 
+## 动态sql
+建表做实验.
+```
+CREATE TABLE `blog`(
+`id` VARCHAR(50) NOT NULL COMMENT 博客id,
+`title` VARCHAR(100) NOT NULL COMMENT 博客标题,
+`author` VARCHAR(30) NOT NULL COMMENT 博客作者,
+`create_time` DATETIME NOT NULL COMMENT 创建时间,
+`views` INT(30) NOT NULL COMMENT 浏览量
+)ENGINE=INNODB DEFAULT CHARSET=utf8
+```
+
+插入数据. 其中的id通过`UUID.randomUUID().toString().replaceAll("-", "");`生成, 时间通过`new Date()`插入.
+```
+<insert id="addBlog" parameterType="blog">
+    insert into mybatis.blog values (#{id}, #{title}, #{author}, #{createTime}, #{views})
+</insert>
+```
+
+### if
+通过一个Map把`title`和`author`传入, 进行查询. 其中`where 1=1`是一个小技巧, 保证`and`能顺利的加上, 即使没有`and`也是有效的语句.
+```
+<select id="queryBlogIF" parameterType="map" resultType="Blog">
+    select * from mybatis.blog where 1 = 1
+    <if test="title != null">
+        and title = #{title}
+    </if>
+    <if test="author != null">
+        and author = #{author}
+    </if>
+</select>
+```
+
+### choose/set
+choose相当于Java的`switch`, 其中的语句只有一条生效. `where`元素让我们可以省去写`1=1`, 他会判断子句是否有返回, 如果只返回一个子句, 那么子句前面的and/or就会被去掉. 这样我们就可以正常地写sql逻辑了.
+```
+<select id="queryBlogChoose" parameterType="map" resultType="blog">
+    select * from mybatis.blog
+    <where>
+        <choose>
+            <when test="title != null">
+                title = #{title}
+            </when>
+            <when test="author != null">
+                and author = #{author}
+            </when>
+            <otherwise>
+                and views = #{views}
+            </otherwise>
+        </choose>
+    </where>
+</select>
+```
+
+`set`可以动态地把s`et`前置 并且删除自动字段间的逗号.
+```
+<update id="updateBlog" parameterType="map">
+    update mybatis.blog
+    <set>
+        <if test="title != null">
+            title = #{title},
+        </if>
+        <if test="author != null">
+            author = #{author}
+        </if>
+    </set>
+    where id = #{id}
+</update>
+```
+
+而trim允许我们自定义的去定义首尾的重写, 比如where的功能其实就是`<trim prefix="WHERE" prefixOverrides="AND |OR "></trim>`, 如果开头是And或者OR, 就移除. 而`set`就等同于`<trim prefix="SET" suffixOverrides=","></trim>`.
+
+> `sql`标签可以抽取公共部分的语句, 然后在需要用的地方加上`<include refid="sqlid"></include>`即可. 但是最好用单表定义sql片段, 并且不要放`where`在片段中, 否则没什么复用的效果
+
+### Foreach
+相当于去自动生成sql语句的and后或者or后的条件, 如下我们可以传入一个map实例, 最后拼的sql就会加上`id=1 or id=2 ...`.
+```
+<select id="queryBlogForeach" parameterType="map" resultType="blog">
+    select * from mybatis.blog
+    <where>
+        <foreach collection="ids" item="id" open="and (" close=")" separator="or">
+            id = #{id}
+        </foreach>
+    </where>
+</select>
+```
+
+## 缓存
+### 一级缓存(本地缓存)
+也就是前面看到的SqlSession, 对于同一个查询, 第二次就会读缓存. 可以用`<setting name="logImpl" value="STDOUT_LOGGING"/>`标准日志打印做测试, 写两条相同的查询, 从连接到关闭只会实际查询一次数据库. 但是如果在两次查询之间有增删改, 会使缓存失效(因为可能会修改原来的数据, 缓存会刷新). 除此之外, 查不同的Mapper.xml或者手动`sqlSession.clearCache()`清理缓存也会使缓存失效. 
+
+### 二级缓存(全局缓存)
+文档只写了二级缓存, 有如下四种, 其中LRU是默认缓存规则. 基于`namespace`级别(在`namespace`下放`<cache/>`). 一个查询的数据放在一级缓存中, **当会话关闭或提交, 一级缓存消失, 就会把一级缓存中的数据存到二级缓存中**. 新的查询也就可以通过二级缓存获取数据. **不同的mapper分别有不同的缓存**.
+- LRU(Least Recently Used): Removes objects that haven't been used for the longst period of time.
+- FIFO(First In First Out): Removes objects in the order that they entered the cache.
+- SOFT(Soft Reference): Removes objects based on the garbage collector state and the rules of Soft References.
+- WEAK(Weak Reference): More aggressively removes objects based on the garbage collector state and rules of Weak References.
+
+使用前核心配置文件一般要加入`<setting name="cacheEnabled" value="true"/>`显式开启缓存(为了可读性). 用如下的测试看效果. 当关闭session的操作在1处, 则会查两次数据库. 而在2时就只会查一次数据库. 注意这里的实体类需要序列化`implements Serializable`.
+```
+@Test
+public void test() {
+    SqlSession sqlSession = MybatisUtils.getSqlSession();
+    SqlSession sqlSession2 = MybatisUtils.getSqlSession();
+
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    UserMapper mapper2 = sqlSession2.getMapper(UserMapper.class);
+
+    User user = mapper.queryUserById(1);
+    System.out.println(user);
+    sqlSession.close();
+    //sqlSession.close(); //2, 不关闭仍然会查两次, 因为一级缓存的数据还没有放到二级缓存
+
+    User user2 = mapper2.queryUserById(1);
+    System.out.println(user2);
+
+    sqlSession.close(); //1
+    sqlSession2.close();
+}
+```
+
+> 一级缓存在Session, 二级缓存在Mapper. 查询先看二级缓存, 再看一级缓存, 两个都没有就查数据库
+
+### 自定义缓存
+可以用ehcache等多种缓存, 在`Mapper.xml`文件中加入`<cache type="org.mybatis.caches.ehcache.EhcacheCache" />`即可. 我们可以看到实际上缓存就是去实现了`Cache`接口, 所以如果我们强到自己写缓存, 实际上也就是去实现这个接口的方法.  
+```
+<dependency>
+    <groupId>org.mybatis.caches</groupId>
+    <artifactId>mybatis-ehcache</artifactId>
+    <version>1.2.1</version>
+</dependency>
+```
+
 ## 参考
-1. [Mybatis最新完整教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1NE411Q7Nx)类型
+1. [Mybatis最新完整教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1NE411Q7Nx)
