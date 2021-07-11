@@ -466,7 +466,7 @@ INSERT INTO `student` (`id`, `name`, `tid`) VALUES (4, "小李", 1);
 INSERT INTO `student` (`id`, `name`, `tid`) VALUES (5, "小王", 1);
 ```
 
-## 多对一
+### 多对一
 要查询所有的学生对应的老师, 首先pojo类中的`Student`会有相对应的`Teacher`字段. 查询时配置如下, 实际上就把`Student`中的`Teacher`字段查询额外绑定了sql语句, 也就是把tid绑定上了Teacher的java类型, 再通过java类型查询. 方法2看起来更简单, 写完所有sql之后再用map绑定.
 ```
 <mapper namespace="com.kuang.dao.StudentMapper">
@@ -501,7 +501,7 @@ INSERT INTO `student` (`id`, `name`, `tid`) VALUES (5, "小王", 1);
 
 > idea的maven项目在resourse目录下会不能new package, 只要创建directory即可, 用`/`分隔不同层级的目录, 否则mapper.xml文件可能会无法绑定
 
-## 一对多
+### 一对多
 一个老师对应多个学生的情况(Teacher类下有`List<Student>`字段), 可以用`collection`去用`ofType`拿对应的`Student`. 
 ```
 <mapper namespace="com.kuang.dao.TeacherMapper">
