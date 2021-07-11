@@ -48,11 +48,15 @@ hugo server -D
 ```
 hugo # 生成public文件夹
 cd public
+echo "your url" > CNAME # CNAME到自己的域名上, 没有就不填
 git init
-git remote add origin git@github.com:huanruiz/huanruiz.github.io.git
+git remote set-url origin https://github.com/huanruiz/huanruiz.github.io.git
+git remote add origin https://github.com/huanruiz/huanruiz.github.io.git
 git add .
 git commit -m 'init'
 git push -f --set-upstream origin master
+cd ..
+rm -rf public
 ```
 
 大功告成!

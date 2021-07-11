@@ -1,5 +1,6 @@
 hugo # 生成public文件夹
 cd public
+echo "punchcode.top" > CNAME
 git init
 git remote set-url origin https://github.com/huanruiz/huanruiz.github.io.git
 git remote add origin https://github.com/huanruiz/huanruiz.github.io.git
