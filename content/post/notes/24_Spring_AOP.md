@@ -49,7 +49,7 @@ public class JDKProxy {
          * @param   接口InvocationHandler的实现类
          */
         //接口实现类的代理对象
-        UserDao dao = (UserDao) Proxy.newProxyInstance(JDKProxy.class.getClassLoader(), interfaces, new UserDaoProxy(userDao)); /也可以用匿名内部类代替UserDaoProxy, new InvocationHandler(), 直接Override invoke方法
+        UserDao dao = (UserDao) Proxy.newProxyInstance(JDKProxy.class.getClassLoader(), interfaces, new UserDaoProxy(userDao)); //也可以用匿名内部类代替UserDaoProxy, new InvocationHandler(), 直接Override invoke方法
         int result = dao.add(1, 2);
         System.out.println("result: " + result);
         System.out.println(dao.update("test"));
