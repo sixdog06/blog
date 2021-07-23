@@ -185,6 +185,68 @@ public class HelloController {
 }
 ```
 
-## R
+有时候我们想传值给controller, 可以通过如下方式, 并访问`http://localhost:8080/hello?a=1&b=1`, 就可以看到输出结果.
+```
+@Controller
+public class HelloController {
 
+    @RequestMapping("/hello")
+    public String hello(int a, int b, Model model) {
+        int res = a + b;
+        model.addAttribute("msg", "Hello " + res);
+        return "hello";
+    }
+}
+```
+
+要满足RESTful风格, 就需要如下控制器, 并且访问`http://localhost:8080/hello/1/2`.
+```
+@Controller
+public class HelloController {
+
+    @RequestMapping("/hello/{a}/{b}")
+    public String hello(@PathVariable int a, @PathVariable int b, Model model) {
+        int res = a + b;
+        model.addAttribute("msg", "Hello " + res);
+        return "hello";
+    }
+}
+```
+
+还可以限制请求的类型, 比如`@RequestMapping(value = "/hello/{a}/{b}", method = RequestMethod.GET)`, 或者直接通过注解`@GetMapping`限制. **所以就算url相同, 也可以通过请求方法的不同区分开.**
+
+在return的时候, 可以通过`return "forward:/WEB-INF/jsp/hello.jsp";`**重定向**, 通过`return "redirect:/index.jsp";`**转发**, 这样视图解析器就失效了, 不会去拼接前缀和后缀.
+
+## 前端交互
+### 获取请求参数
+第一种方式是用`@RequestParam("username")`, 一般不省略. 第二种是直接传入对象, 但是对象的字段必须一一对应, 否则为null, 这里要注意, 如果对象的字段不是包装类型, 那么int型默认返回0, 所以pojo类通常都需要用包装类型. 
+```
+@Controller
+@RequestMapping("/user")
+public class UserController {
+
+    @GetMapping("/t1")
+    public String test1(
+            @RequestParam("username") String name,
+            Model model) {
+        System.out.println("name is" + name);
+        model.addAttribute("msg", name);
+        return "test";
+    }
+
+    @GetMapping("t2")
+    public String test2(User user) {
+        System.out.println(user);
+        return "test";
+    }
+}
+```
+
+### 回显
+一般用下面的三种类的实例进行数据的存储, 并回显
+- Model: 简单存数据
+- ModelMap: 继承了LinkMap, 所以有LinkedMap的特性
+- ModelAndView: 可以设置返回的逻辑视图, 进行控制显示层跳转(一般不用)
+
+## 参考
 1. [SpringMVC最新教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1aE41167Tu)
