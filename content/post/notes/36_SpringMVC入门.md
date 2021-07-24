@@ -248,6 +248,5 @@ public class UserController {
 - ModelMap: 继承了LinkMap, 所以有LinkedMap的特性
 - ModelAndView: 可以设置返回的逻辑视图, 进行控制显示层跳转(一般不用)
 
- 
 ## 参考
 1. [SpringMVC最新教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1aE41167Tu)
