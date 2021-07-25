@@ -248,5 +248,372 @@ public class UserController {
 - ModelMap: 继承了LinkMap, 所以有LinkedMap的特性
 - ModelAndView: 可以设置返回的逻辑视图, 进行控制显示层跳转(一般不用)
 
+### 乱码问题
+前端有如下form进行输入时, 如果输入的是中文, 后端可能会拿到乱码. 
+```
+<form action="/e/t1" method="post">
+    <input type="text" name="name">
+    <input type="submit">
+</form>
+```
+
+以前的解决方案是重写一个过滤器, 实现Fliter接口, 并将请求和返回都配置上utf-8的编码. 而现在可以直接用springmvc的过滤器.
+```
+public class EncodingFilter implements Filter {
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
+        chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+}
+```
+
+上面是我们实现的过滤器, 而下面是springmvc提供的过滤器.
+```
+<filter>
+    <filter-name>encoding</filter-name>
+    <filter-class>com.kuang.filter.EncodingFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>encoding</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+<filter>
+    <filter-name>encoding</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+        <param-name>encoding</param-name>
+        <param-value>utf-8</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+    <filter-name>encoding</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+## JSON
+通常前后端可以通过JSON传输数据, 我们可以手动用`ObjectMapper`实现或者直接用fastjson等jar包提供的工具类来进行JSON的编码解码.
+```
+//@Controller + @ResponseBody = 不走视图解析器, 或直接RestController注解
+@RestController
+public class UserController {
+
+//    @RequestMapping(value = "j1", produces = "application/json;charset=utf-8")
+    @RequestMapping("j1")
+    //@ResponseBody //不走视图解析器
+    public String json1() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        User user = new User("李四", 3, "男");
+        String str = mapper.writeValueAsString(user);
+        return str;
+    }
+
+    @RequestMapping("j2")
+    public String json2() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        User user1 = new User("李四", 3, "男");
+        User user2 = new User("王五", 4, "男");
+        List<User> list = new ArrayList<>();
+        list.add(user1);
+        list.add(user2);
+        String str = mapper.writeValueAsString(list);
+        return str;
+    }
+
+    @RequestMapping("j3")
+    public String json3() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        //方式2
+        mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        //方式1
+        //String str = mapper.writeValueAsString(sdf.format(date));
+
+        //方式2
+        mapper.setDateFormat(sdf);
+        String str = mapper.writeValueAsString(date);
+        return str;
+    }
+
+    @RequestMapping("j4")
+    public String json4() {
+        /**
+         * 用fastjson(工具类)
+         * json字符串->java对象
+         * java对象->json对象
+         * json对象->java对象
+        **/
+        User user1 = new User("李四", 3, "男");
+        User user2 = new User("王五", 4, "男");
+        List<User> list = new ArrayList<>();
+        list.add(user1);
+        list.add(user2);
+
+        String str = JSON.toJSONString(list);
+        return str;
+    }
+}
+```
+
+通过[ssm整合项目](https://mp.weixin.qq.com/s/SDxqGu_il3MUCTcN1EYrng)进行练习. 我做实验的时候, 配置`db.properties`时的url去掉了`?`后的字段, 否则会编译失败.
+
+## Ajax
+用jQuery做ajax请求其实非常简单, 我们写一个输入框, 当失去焦点时发送一个请求.
+```
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+  <head>
+    <title>First</title>
+    <script src="${pageContext.request.contextPath}/statics/js/jquery-3.6.0.js"></script>
+    <script>
+      function a() {
+        $.post({
+          url: "${pageContext.request.contextPath}/a1",
+          data: {
+            "name": $("#username").val()
+          },
+          success: function (data) {
+            alert(data);
+          }
+        });
+      }
+    </script>
+  </head>
+  <body>
+
+  user: <input type="text" id="username" onblur="a()">
+
+  </body>
+</html>
+```
+
+并在后端的controller中打印这个传过来的name, 这里可以出, `"name": $("#username").val()`中的key `name`才是后端拿到的字段名. 最后我们可以在浏览器调试窗口看到, a1的请求Type是`xhr`, 表示这是一个异步的请求.
+```
+@RestController
+public class AjaxController {
+
+    @RequestMapping("/a1")
+    public void a1(String name, HttpServletResponse response) throws IOException {
+        System.out.println(name);
+        response.getWriter().print(name);
+    }
+}
+```
+
+后端也可以把数据传给前端, 比如在controller中把一个类直接传给前端.
+```
+@RequestMapping("/a2")
+public List<User> a2() {
+    ArrayList<User> list = new ArrayList<>();
+    list.add(new User("张三", 1, "男"));
+    list.add(new User("李四", 2, "女"));
+    return list;
+}
+```
+
+在前端中, 取data中的值, 并做成列表放在页面上.
+```
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+    <script src="${pageContext.request.contextPath}/statics/js/jquery-3.6.0.js"></script>
+    <script>
+        $(function() {
+            $("#btn").click(function () {
+                $.post("${pageContext.request.contextPath}/a2", function (data) {
+                    console.log(data);
+                    var html = "";
+                    for (let i = 0; i < data.length; i++) {
+                        html += "<tr>" +
+                            "<td>" + data[i].name + "</td>" +
+                            "<td>" + data[i].age + "</td>" +
+                            "<td>" + data[i].gender + "</td>" +
+                            "</tr>";
+                    }
+                    $("#content").html(html);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+
+<input type="button" value="load data" id="btn">
+<table>
+    <tr>
+        <td>name</td>
+        <td>age</td>
+        <td>gender</td>
+    </tr>
+    <tbody id="content">
+
+    </tbody>
+</table>
+
+</body>
+</html>
+```
+
+## 拦截器
+SpringMVC的拦截器只拦截controller方法, 也是应用了aop的思想. 通过实现`HandlerInterceptor`接口来完成拦截器的功能. 方法分别对对应处理前/处理后/清理三步. 其中处理前是一个返回为`boolean`的方法, 为`true`才会继续执行controller方法, 可通过这个拦截器选择是否继续执行. 通过拦截器, 可以实现对登陆权限等的拦截, 注意要检测是否有session, 在注销的时候移除session.
+```
+public class MyInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("preHandle");
+        return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        System.out.println("postHandle");
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        System.out.println("afterCompletion");
+    }
+}
+```
+
+## 文件上传/下载
+SpringMVC可以让我们方便地实现文件上传和下载, 需要在maven中加入如下配置.
+```
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.3.3</version>
+</dependency>
+```
+
+controller类实现了两种上传方法和一种下载方法.
+```
+@Controller
+public class FileController {
+
+    //@RequestParam("file")将name=file控件得到的文件封装成CommonsMultipartFile对象, 批量上传CommonsMultipartFile则为数组即可
+    @RequestMapping("/upload")
+    public String fileUpload(@RequestParam("file") CommonsMultipartFile file, HttpServletRequest request) throws IOException {
+
+        //获取文件名
+        String uploadFileName = file.getOriginalFilename();
+
+        if ("".equals(uploadFileName)){
+            return "redirect:/index.jsp";
+        }
+        System.out.println("filename: "+uploadFileName);
+
+        //上传路径保存设置
+        String path = request.getServletContext().getRealPath("/upload");
+        File realPath = new File(path);
+        if (!realPath.exists()){
+            realPath.mkdir();
+        }
+        System.out.println("dir: "+realPath);
+
+        InputStream is = file.getInputStream(); //文件输入流
+        OutputStream os = new FileOutputStream(new File(realPath,uploadFileName)); //文件输出流
+
+        //读取写出
+        int len=0;
+        byte[] buffer = new byte[1024];
+        while ((len=is.read(buffer))!=-1){
+            os.write(buffer,0,len);
+            os.flush();
+        }
+        os.close();
+        is.close();
+        return "redirect:/index.jsp";
+    }
+
+    @RequestMapping("/upload2")
+    public String fileUpload2(@RequestParam("file") CommonsMultipartFile file, HttpServletRequest request) throws IOException {
+
+        String path = request.getServletContext().getRealPath("/upload");
+        File realPath = new File(path);
+        if (!realPath.exists()){
+            realPath.mkdir();
+        }
+        System.out.println("dir: "+realPath);
+
+        //通过CommonsMultipartFile的方法直接写文件
+        file.transferTo(new File(realPath +"/"+ file.getOriginalFilename()));
+        return "redirect:/index.jsp";
+    }
+
+    @RequestMapping(value="/download")
+    public String downloads(HttpServletResponse response, HttpServletRequest request) throws Exception{
+        //要下载的图片地址
+        String path = request.getServletContext().getRealPath("/upload");
+        String fileName = "IMG_5284.JPG";
+
+        //设置response响应头
+        response.reset(); //设置页面不缓存,清空buffer
+        response.setCharacterEncoding("UTF-8"); //字符编码
+        response.setContentType("multipart/form-data"); //二进制传输数据
+
+        response.setHeader("Content-Disposition",
+                "attachment;fileName="+ URLEncoder.encode(fileName, "UTF-8"));
+
+        File file = new File(path, fileName);
+        //读取文件输入流
+        InputStream input = new FileInputStream(file);
+        //写出文件输出流
+        OutputStream out = response.getOutputStream();
+
+        byte[] buff = new byte[1024];
+        int index = 0;
+        //写出
+        while((index= input.read(buff))!= -1){
+            out.write(buff, 0, index);
+            out.flush();
+        }
+        out.close();
+        input.close();
+        return "ok";
+    }
+}
+```
+
+前端页面.
+```
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+  <head>
+    <title>First</title>
+  </head>
+  <body>
+
+  <form action="${pageContext.request.contextPath}/upload" enctype="multipart/form-data" method="post">
+    <input type="file" name="file"/>
+    <input type="submit" value="upload">
+  </form>
+
+  <a href="/download">点击下载</a>
+  </body>
+</html>
+```
+
 ## 参考
 1. [SpringMVC最新教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1aE41167Tu)
