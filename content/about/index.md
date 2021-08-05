@@ -13,4 +13,4 @@ Let's see, who will I become after 10 years.
 - status: working as software engineer
 
 
-> 学子笔记分类下的都是看的课和书的一些总结, 基本就是把原书/抄了一遍, 仅对自己查漏补缺用. 其他分类的博客是我真正想分享的东西.
+> 学习笔记分类下的都是看的课和书的一些总结, 基本就是把原书/抄了一遍, 仅对自己查漏补缺用. 其他分类的blog更多的是我的思考和总结.
