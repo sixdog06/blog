@@ -60,6 +60,8 @@ Dog{name='狗', age=3}
 Person{name='zhangsan', age=20, happy=false, birth=Sat Jan 01 00:00:00 CST 2000, maps={k1=v1, k2=v2}, lists=[code, eat, sleep], dog=Dog{name='柯基', age=1}}
  ```
 
+> 通过`@Validated`注解, 可以给数据进行**JSR303**(Java Specification Requests)数据校验
+
 ## 参考
 1. [SpringBoot最新教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
 2. [Spring Boot - Introduction](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm)
