@@ -56,7 +56,7 @@ public class HelloServlet extends HttpServlet {
 ```
 
 ## ServletContext
-web容器(Tomcat), 为每个Web成都旭出在哪构建一个对应的ServletContext对象, 代表当前的Web应用. ServletContext的作用是防止一些数据. 我们新建一个类, 用来放置数据
+web容器(Tomcat), 为每个Web应用程序构建一个对应的ServletContext对象, 代表当前的Web应用. ServletContext的作用是防止一些数据. 我们新建一个类, 用来放置数据
 ```
 public class HelloServlet extends HttpServlet {
 
@@ -256,7 +256,7 @@ public class ImageServlet extends HttpServlet {
 //        resp.setStatus(302);
         resp.sendRedirect("/imageservlet"); //做的就是上里面的两行代码
 ```
-重定向(302)和请求转发(307)的区别? 相同的是页面都会跳转, 但是**转发**的时候url不会产生变化, **重定向**的**时候, url地址会变化. 
+重定向(302)和请求转发(307)的区别? 相同的是页面都会跳转, 但是**转发**的时候url不会产生变化, **重定向**的时候, url地址会变化. 
 ```
 <html>
 <body>
