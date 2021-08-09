@@ -60,6 +60,25 @@ Dog{name='狗', age=3}
 Person{name='zhangsan', age=20, happy=false, birth=Sat Jan 01 00:00:00 CST 2000, maps={k1=v1, k2=v2}, lists=[code, eat, sleep], dog=Dog{name='柯基', age=1}}
  ```
 
+ yaml还支持多环境配置, 通过`---`分开不同环境. 
+ ```
+server:
+  port: 8081
+spring:
+  profiles:
+    active: prod
+---
+server:
+  port: 8083
+spring:
+  profiles: dev
+---
+server:
+  port: 8084
+spring:
+  profiles: prod
+ ```
+
 > 通过`@Validated`注解, 可以给数据进行**JSR303**(Java Specification Requests)数据校验
 
 ## 参考
