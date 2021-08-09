@@ -7,7 +7,9 @@ categories: ["学习笔记"]
 tags: ["前端"]
 ---
 
-## 简介
+HTML stands for HyperText Markup Language. It is used to design web pages using a markup language. HTML is the combination of Hypertext and Markup language. Hypertext defines the link between the web pages. A markup language is used to define the text document within tag which defines the structure of web pages. This language is used to annotate (make notes for the computer) text so that a machine can understand it and manipulate text accordingly. Most markup languages (e.g. HTML) are human-readable. The language uses tags to define what manipulation has to be done on the text. 
+
+## 结构
 ```
 <!-- DOCTYPE: 告诉浏览器规范(可省略) -->
 <!DOCTYPE html>

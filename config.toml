@@ -8,7 +8,7 @@ preserveTaxonomyNames = true
 disablePathToLower = true
 
 hasCJKLanguage = true
-summaryLength = 140
+summaryLength = 60
 
 [author]
   name = "拳头"
