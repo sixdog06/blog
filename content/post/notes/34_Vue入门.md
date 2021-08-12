@@ -10,7 +10,7 @@ tags: ["Vue"]
 官方文档的中文介绍有简单入门的视频教程, 下载**HbuilderX**, 并导入官方的教程代码. 我学习的过程是先看完视频跑一边代码再根据文档梳理一次. 
 
 ## Hello World
-把`app`这个vue对象的`data对象`绑定到`<div>`元素中. 要注意**只有当实例被创建时就已经存在于data中的property才是响应式的**, 所以如果后面要用一个property, 再`data`中需要预先声明一个空的property. 
+把`app`这个vue对象的`data对象`绑定到`<div>`元素中. 要注意**只有当实例被创建时就已经存在于data中的property才是响应式的**, 所以如果后面要用一个property, 在`data`中需要预先声明一个空的property. 
 ```
 <!DOCTYPE html>
 <html>
