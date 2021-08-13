@@ -70,7 +70,7 @@ tags: ["Vue"]
 ```
 
 ## 实例生命周期钩子
-可以在生命周期不同的阶段注入逻辑, **不能在property或回调上使用箭头函数, 因为建通函数没有this, 可能导致错误(向上级查找)**, 可能导致`Uncaught TypeError: Cannot read property of undefined`或`Uncaught TypeError: this.myMethod is not a function`.
+可以在生命周期不同的阶段注入逻辑, **不能在property或回调上使用箭头函数, 因为箭头函数没有this, 可能导致错误(向上级查找)**, 可能导致`Uncaught TypeError: Cannot read property of undefined`或`Uncaught TypeError: this.myMethod is not a function`.
 ```
 <!DOCTYPE html>
 <html>

@@ -618,4 +618,5 @@ public class FileController {
 ```
 
 ## 参考
-1. [SpringMVC最新教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1aE41167Tu)
+1. [SpringMVC-狂神说Java](https://www.bilibili.com/video/BV1aE41167Tu)
+2. [SpringMVC doc](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/mvc.html)

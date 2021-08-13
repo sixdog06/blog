@@ -98,4 +98,4 @@ public class TestPing {
 ```
 
 
-1. [Redis最新超详细版教程通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1S54y1R7SB)
+1. [Redis-狂神说Java](https://www.bilibili.com/video/BV1S54y1R7SB)
