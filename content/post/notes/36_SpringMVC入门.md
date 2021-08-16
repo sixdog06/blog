@@ -308,7 +308,7 @@ public class EncodingFilter implements Filter {
 ```
 
 ## JSON
-通常前后端可以通过JSON传输数据, 我们可以手动用`ObjectMapper`实现或者直接用fastjson等jar包提供的工具类来进行JSON的编码解码.
+通常前后端可以通过JSON传输数据, 我们可以手动用`ObjectMapper`实现或者直接用fastjson等jar包提供的工具类来进行JSON的编码解码. **不走视图解析器就是说返回的并不是一个文件的路径, 而是一个对一个请求的响应, 那么这个方法就相当于一个服务的api了**.
 ```
 //@Controller + @ResponseBody = 不走视图解析器, 或直接RestController注解
 @RestController

@@ -9,6 +9,8 @@ tags: ["前端"]
 
 Cascading Style Sheets(CSS) is a stylesheet language used to describe the presentation of a document written in HTML or XML(including XML dialects such as SVG, MathML or XHTML). CSS describes how elements should be rendered on screen, on paper, in speech, or on other media. CSS is among the core languages of the open web and is standardized across Web browsers according to W3C specifications. 
 
+官方的tutorial读起来会感到都一点混乱, 东西全但抓不住重点, 所以我通过看视频+看重点部分的文档进行入门的学习. 
+
 ## 样式位置
 常用的有三种, 遵循就近原则, 最近的样式优先级最高. 
 ```
@@ -230,6 +232,39 @@ a:visited{
 - square: 正方形
 
 ## 盒子模型
+可以通过debug中的computed测试. 
+- padding: 内边距
+- border: 边框
+- margin: 外边距
+
+比如
+```
+/*分别表示上/右/下/左*/
+margin: 0 0 0 0
+/*auto表示左右自动*/
+margin: 0 auto
+/*表示上/右/下/左都为4px*/
+margin: 4px
+/*表示上为10px, 左右为20px, 下为30px*/
+margin: 10px 20px 30px
+```
+
+最后整个元素的大小就等于`内容+padding+border+margin`.
+
+## 浮动
+块级元素比如`h1~h6/p/div`等的内部可以包含行内元素(也叫内联元素)如`span/a/img`等, 反之就不行. 块级元素会独占一行, 也就是说后面的元素会放在新的一行(准确的说应该是他们的默认类型是某种元素). 我们也可以通过在块级元素内部写`display: inline`将其转换为行内元素. 还有`display: inline-block`. 他们有什么特点呢, 这里直接用文档的解释:
+
+Some HTML elements, such as `<h1>` and `<p>`, use block as their outer display type by default. If a box has an outer display type of block, it will behave in the following ways. 
+- The box will break onto a new line.
+- The box will extend in the inline direction to fill the space available in its container. In most cases this means that the box will become as wide as its container, filling up 100% of the space available.
+- The width and height properties are respected.
+- Padding, margin and border will cause other elements to be pushed away from the box
+
+Some HTML elements, such as `<a>`, `<span>`, `<em>` and `<strong>` use inline as their outer display type by default. If a box has an outer display type of inline, then:
+- The box will not break onto a new line.
+- The width and height properties will not apply.
+- Vertical padding, margins, and borders will apply but will not cause other inline boxes to move away from the box.
+- Horizontal padding, margins, and borders will apply and will cause other inline boxes to move away from the box.
 
 
 ## 参考
