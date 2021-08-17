@@ -266,6 +266,68 @@ Some HTML elements, such as `<a>`, `<span>`, `<em>` and `<strong>` use inline as
 - Vertical padding, margins, and borders will apply but will not cause other inline boxes to move away from the box.
 - Horizontal padding, margins, and borders will apply and will cause other inline boxes to move away from the box.
 
+浮动可能会造成父级边框塌陷, 也就是说子元素超出了父级边框, 一般有如下解决方案: 
+1. 通过手动给父级增加高度
+2. 在同级元素下增加`<div class="clear></div>`, clear是margin与padding都为0, 并且clear属性为both的元素
+3. 给父元素增加`overflow: hidden`, 也就是隐藏溢出的子元素
+4. 给父元素增加一个伪类, 样式为`father:after{content: ''; display: block; clear: both;}`, **推荐, 侵入性小**
+
+## 定位
+- 相对定位: 相对于原来的位置偏移
+- 绝对定位: 没有父级元素则相对于浏览器窗口. 父级元素有定位就相对于父级元素定位. 不会超出父级元素范围.
+- 固定定位: 只相对于浏览器窗口
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+            padding: 20px;
+        }
+        div{
+            margin: 10px;
+            padding: 5px;
+            font-size: 12px;
+            line-height: 25px;
+        }
+        #father{
+            border: 1px solid #666;
+            padding: 0;
+            position: relative;
+        }
+        #first{
+            background-color: yellow;
+            border: 1px dashed black;
+            position: relative;
+            top: -20px;
+        }
+        #second{
+            background-color: green;
+            border: 1px dashed black;
+            position: absolute;
+            right: 20px;
+        }
+        #third{
+            background-color: red;
+            border: 1px dashed black;
+            position: fixed;
+            right: 0;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+<div id = "father">
+    <div id="first">第一个盒子</div>
+    <div id="second">第二个盒子</div>
+    <div id="third">第三个盒子</div>
+</div>
+</body>
+</html>
+```
 
 ## 参考
 1. [CSS doc](https://developer.mozilla.org/en-US/docs/Web/CSS)
