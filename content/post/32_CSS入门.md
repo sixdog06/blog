@@ -329,6 +329,12 @@ Some HTML elements, such as `<a>`, `<span>`, `<em>` and `<strong>` use inline as
 </html>
 ```
 
+## z-index
+类似photoshop的图层. 对于一个已经定位的盒子, z-index属性指定:
+- 盒子在当前堆叠上下文中的堆叠层级. `z-index: 0-999`的数字, 数字越大层级越高
+- 盒子是否创建一个本地堆叠上下文. `z-index: auto`: 盒子不会创建一个新的本地堆叠上下文, 在当前堆叠上下文中生成的盒子的堆叠层级和父级盒子相同
+
+
 ## 参考
 1. [CSS doc](https://developer.mozilla.org/en-US/docs/Web/CSS)
 2. [CSS3-狂神说Java](https://www.bilibili.com/video/BV1YJ411a7dy)
