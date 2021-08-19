@@ -79,7 +79,12 @@ spring:
   profiles: prod
  ```
 
+
+给容器中自动配置类添加组件的时候, 会从properties类中获取属性, 我们只需要在配置文件中指定这些属性的值即可. 源码中的`xxxAutoConfigurartion`就是自动配置类(配置类中的`Conditionalxxx`注解会控制配置类是否生效), 而`xxxProperties`封装了配置文件中的相关属性. 在配置文件中加入`debug=true`, 就能打印所有加载的配置. 
+
 > 通过`@Validated`注解, 可以给数据进行**JSR303**(Java Specification Requests)数据校验
+
+
 
 ## 参考
 1. [SpringBoot最新教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
