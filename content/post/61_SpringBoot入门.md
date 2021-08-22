@@ -84,7 +84,46 @@ spring:
 
 > 通过`@Validated`注解, 可以给数据进行**JSR303**(Java Specification Requests)数据校验
 
+## Web开发
+### 静态资源导入
+可以通过webjars处理, 也可以放在resources下的resources/static/public目录, 优先级依次降低. 而templates中一般放动态页面, 需要通过controller访问. 动态网页传值时需要用模板引擎, springboot推荐的是thymyleaf, 导入如下maven依赖即可.
+```
+<dependency>
+    <groupId>org.thymeleaf</groupId>
+    <artifactId>thymeleaf-spring5</artifactId>
+    <version>3.0.12.RELEASE</version>
+</dependency>
+```
 
+编写controller:
+```
+@Controller
+public class IndexController {
+
+    @RequestMapping("/test")
+    public String test(Model model) {
+        model.addAttribute("msg", "<h1>hello springboot</h1>");
+        model.addAttribute("users", Arrays.asList("zhang3", "li4"));
+        return "test";
+    }
+}
+```
+
+html文件中通过`th:`与`${}`去取model中传入的值. `text`原封不动地输出了`msg`中的文本, 而`utext`标签下的文本把`<h1>`标签转义了. thymyleaf还可以通过`each`去读取一个list中的元素.
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:text="${msg}">123</div>
+<div th:utext="${msg}">123</div>
+<div th:each="user:${users}" th:text="${user}"></div>
+</body>
+</html>
+``` 
 
 ## 参考
 1. [SpringBoot最新教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
