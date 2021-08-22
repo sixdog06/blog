@@ -123,7 +123,34 @@ html文件中通过`th:`与`${}`去取model中传入的值. `text`原封不动�
 <div th:each="user:${users}" th:text="${user}"></div>
 </body>
 </html>
-``` 
+```
+
+### 配置MVC
+可以简单地用以下类测试, 并在`class DispatcherServlet-method doDispatch`中打断点, 可以看到`this-viewResolvers`, 也就是视图解析器实例加载的解析器下包含了我们的`MyMvcConfig`. 除此之外还可以看到其他的视图解析器, 比如我们刚才配置的`ThymeleafViewResolver`.
+```
+@Configuration
+public class MyMvcConfig implements WebMvcConfigurer {
+
+    /**
+     * 配置自己的视图解析器
+     * @return 自定义的视图解析器class
+     */
+    @Bean
+    public ViewResolver myViewResolver() {
+        return new MyViewResolver();
+    }
+
+    /**
+     * 自定义的视图解析器
+     */
+    public static class MyViewResolver implements ViewResolver {
+        @Override
+        public View resolveViewName(String viewName, Locale locale) {
+            return null;
+        }
+    }
+}
+```
 
 ## 参考
 1. [SpringBoot最新教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
