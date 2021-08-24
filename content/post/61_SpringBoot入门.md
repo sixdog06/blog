@@ -152,6 +152,16 @@ public class MyMvcConfig implements WebMvcConfigurer {
 }
 ```
 
+更好的方式是去实现`WebMvcConfigurer`的配置.
+```
+@Override
+public void addViewControllers(ViewControllerRegistry registry) {
+    registry.addViewController("/kuang").setViewName("test");
+}
+```
+
+> 官方文档特别强调不能加入`@EnableWebMvc`配置类, 否则自动配置会因为condition失效
+
 ## 参考
-1. [SpringBoot最新教程IDEA版通俗易懂-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
+1. [SpringBoot-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
 2. [Spring Boot - Introduction](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm)
