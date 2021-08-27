@@ -169,6 +169,16 @@ Cannot resolve org.springframework:spring-tx:5.3.9
 Cannot resolve com.zaxxer:HikariCP:4.0.3
 ```
 
+配置数据库:
+```
+spring:
+  datasource:
+    username: root
+    password: 123
+    url: jdbc:mysql://localhost:3306/myemployees?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+```
+
 配置好吼, 就可以注入`DataSource`, 证明我们的数据源已经被自动配置了. 接下来就可以通过注入`JdbcTemplate`来进行数据库的CRUD. 比如`jdbcTemplate.queryForList(sql);`/`jdbcTemplate.update(sql);`等等操作.
 
 ## 参考
