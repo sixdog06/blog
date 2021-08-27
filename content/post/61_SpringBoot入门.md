@@ -162,6 +162,15 @@ public void addViewControllers(ViewControllerRegistry registry) {
 
 > 官方文档特别强调不能加入`@EnableWebMvc`配置类, 否则自动配置会因为condition失效
 
+## 整合jdbc
+我做实验的时候, `spring-boot-starter-parent`已经到了`2.5.4`. 会无法自动注入`DataSource`, 报错的信息是如下, 所以导入**对应版本的依赖**即可.
+```
+Cannot resolve org.springframework:spring-tx:5.3.9
+Cannot resolve com.zaxxer:HikariCP:4.0.3
+```
+
+配置好吼, 就可以注入`DataSource`, 证明我们的数据源已经被自动配置了. 接下来就可以通过注入`JdbcTemplate`来进行数据库的CRUD. 比如`jdbcTemplate.queryForList(sql);`/`jdbcTemplate.update(sql);`等等操作.
+
 ## 参考
 1. [SpringBoot-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
-2. [Spring Boot - Introduction](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm)
+2. [Spring Boot-Introduction](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm)
