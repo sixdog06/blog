@@ -85,6 +85,5 @@ Map<String, Double> map = pairArrayList.stream().collect(
 
 > 在idea中可以安装Alibaba Java Coding Guidelines, 时刻检查代码规约
 
-
 ## 参考
 1. Java开发手册嵩山版
