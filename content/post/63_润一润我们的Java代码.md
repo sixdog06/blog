@@ -81,6 +81,7 @@ Map<String, Double> map = pairArrayList.stream().collect(
 
 ### ORM映射
 - **一律不要使用*作为查询的字段列表, 需要哪些字段必须明确写明**
+- **POJO类的布尔属性不能加is, 而数据库字段必须加is_**, POJO类有is, 在前端解析时会造成歧义 
 
 > 在idea中可以安装Alibaba Java Coding Guidelines, 时刻检查代码规约
 
