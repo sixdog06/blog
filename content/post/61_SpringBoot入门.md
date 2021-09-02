@@ -162,7 +162,8 @@ public void addViewControllers(ViewControllerRegistry registry) {
 
 > 官方文档特别强调不能加入`@EnableWebMvc`配置类, 否则自动配置会因为condition失效
 
-## 整合jdbc
+## 整合数据库
+### jdbc
 我做实验的时候, `spring-boot-starter-parent`已经到了`2.5.4`. 会无法自动注入`DataSource`, 报错的信息是如下, 所以导入**对应版本的依赖**即可.
 ```
 Cannot resolve org.springframework:spring-tx:5.3.9
@@ -180,6 +181,92 @@ spring:
 ```
 
 配置好吼, 就可以注入`DataSource`, 证明我们的数据源已经被自动配置了. 接下来就可以通过注入`JdbcTemplate`来进行数据库的CRUD. 比如`jdbcTemplate.queryForList(sql);`/`jdbcTemplate.update(sql);`等等操作.
+
+还可以整合Mybatis, 都是配置即可, 我选Mybatis简单了解. 首先导入包, 我们可以发现`artifactid`的开头是`mybatis-spring-boot-xxx`, 而不是`spring-boot-xxx`, 说明这个不是springboot官方提供的包.
+```
+<dependency>
+    <groupId>org.mybatis.spring.boot</groupId>
+    <artifactId>mybatis-spring-boot-starter</artifactId>
+    <version>2.1.1</version>
+</dependency>
+```
+
+mybatis需要在application文件中额外配置如下信息, 直接用即可.
+```
+mybatis:
+  type-aliases-package: com.kuang.pojo
+  mapper-locations: classpath/mapper/*.xml
+```
+
+## SpringSecurity
+用SpringSecurity可以帮助实现登陆的验证. 
+```
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+```
+
+首先需要一个controller来做实验, 子页面分别有`level1/level2/level3`构成. 
+```
+@Controller
+public class RouterController {
+
+    @RequestMapping({"/","/index"})
+    public String index(){
+        return "index";
+    }
+
+    @RequestMapping("/toLogin")
+    public String toLogin(){
+        return "views/login";
+    }
+
+    @RequestMapping("/level1/{id}")
+    public String level1(@PathVariable("id") int id){
+        return "views/level1/"+id;
+    }
+
+    @RequestMapping("/level2/{id}")
+    public String level2(@PathVariable("id") int id){
+        return "views/level2/"+id;
+    }
+
+    @RequestMapping("/level3/{id}")
+    public String level3(@PathVariable("id") int id){
+        return "views/level3/"+id;
+    }
+}
+```
+
+写一个类来拦截请求, 分配权限. 测试的时候就会发现, 对应的用户才能访问对应的资源文件. `BCryptPasswordEncoder`是将密码加密的方法, 业务中通常都会对敏感信息进行加密处理.
+```
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests().antMatchers("/").permitAll()
+                .antMatchers("/level1/**").hasRole("vip1")
+                .antMatchers("/level2/**").hasRole("vip2")
+                .antMatchers("/level3/**").hasRole("vip3");
+        http.formLogin();
+    }
+
+    //定义认证规则
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+        auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
+                .withUser("zhangsan").password(new BCryptPasswordEncoder().encode("123")).roles("vip2","vip3")
+                .and()
+                .withUser("lisi").password(new BCryptPasswordEncoder().encode("123")).roles("vip1","vip2","vip3")
+                .and()
+                .withUser("wangwu").password(new BCryptPasswordEncoder().encode("123")).roles("vip1","vip2");
+    }
+}
+```
+
 
 ## 参考
 1. [SpringBoot-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
