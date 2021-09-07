@@ -274,7 +274,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 很多情况下, 我们更希望用自己写的登录页面, 也可以通过配置复用SpringSecurity的验证逻辑, 比如配置`http.formLogin().loginPage("/toLogin").usernameParameter("user").passwordParameter("pwd").loginProcessingUrl("login");`, 登陆时就会走`login`.  `xxxParameter`方法可以用来传递参数. `rememberMe`方法也是同样的道理, 用`rememberMeParameter`可以传递这个记住我的参数, 用checkbox组件捕获即可.
 
 ## Shiro
-看官方的[10 Minute Tutorial on Apache Shiro](https://shiro.apache.org/10-minute-tutorial.html#introduction)即可. 
+看官方的[10 Minute Tutorial on Apache Shiro](https://shiro.apache.org/10-minute-tutorial.html#introduction)即可. 直接上手做springboot继承shiro实验. 首先搭建一个index主页做测试, 测试的时候要记住先不导入shiro, 否则`/`会被重定向到没实现的登陆界面.
 
 ## 参考
 1. [SpringBoot-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
