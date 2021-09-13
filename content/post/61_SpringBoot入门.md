@@ -276,6 +276,83 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 ## Shiro
 看官方的[10 Minute Tutorial on Apache Shiro](https://shiro.apache.org/10-minute-tutorial.html#introduction)即可. 直接上手做springboot继承shiro实验. 首先搭建一个index主页做测试, 测试的时候要记住先不导入shiro, 否则`/`会被重定向到没实现的登陆界面.
 
+现在开始整合springboot, 首先导入maven依赖. 注意这个依赖很和官方的基础依赖`<artifactId>shiro-core</artifactId>`不同. 
+```
+<dependency>
+    <groupId>org.apache.shiro</groupId>
+    <artifactId>shiro-core</artifactId>
+    <version>1.7.1</version>
+</dependency>
+```
+
+然后配置我们的`Realm`类.
+```
+public class UserRealm extends AuthorizingRealm {
+
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        //打印一个提示
+        System.out.println("执行了授权方法");
+        return null;
+    }
+
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        //打印一个提示
+        System.out.println("执行了认证方法");
+        return null;
+    }
+}
+```
+
+最后在`Realm`的基础上配置Shiro的配置信息. 这三大类从上到下是层层依赖的我欢喜, 并且用`@Qualifier`注解进行Bean的注入. 
+```
+public class ShiroConfig {
+
+    @Bean(name="shiroFilterFactoryBean")
+    public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("securityManager") DefaultWebSecurityManager defaultWebSecurityManager){
+        ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
+        bean.setSecurityManager(defaultWebSecurityManager);
+        return bean;
+    }
+
+    @Bean(name="securityManager")
+    public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("userRealm") UserRealm userRealm) {
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        securityManager.setRealm(userRealm);
+        return securityManager;
+    }
+
+    @Bean(name="userRealm")
+    public UserRealm userRealm() {
+        return new UserRealm();
+    }
+}
+```
+
+最后做一个简单的controller, 实现从index页面跳转add和update页面的链接即可.
+```
+@Controller
+public class MyController {
+
+    @RequestMapping("/")
+    public String toIndex(Model model) {
+        model.addAttribute("msg","Hello Shiro");
+        return "index";
+    }
+
+    @RequestMapping("user/add")
+    public String add() {
+        return "user/add";
+    }
+
+    @RequestMapping("user/update")
+    public String update() {
+        return "user/update";
+    }
+}
+```
+
 ## 参考
 1. [SpringBoot-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
 2. [Spring Boot-Introduction](https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm)
