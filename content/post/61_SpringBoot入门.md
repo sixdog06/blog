@@ -163,7 +163,6 @@ public void addViewControllers(ViewControllerRegistry registry) {
 > 官方文档特别强调不能加入`@EnableWebMvc`配置类, 否则自动配置会因为condition失效
 
 ## 整合数据库
-### jdbc
 我做实验的时候, `spring-boot-starter-parent`已经到了`2.5.4`. 会无法自动注入`DataSource`, 报错的信息是如下, 所以导入**对应版本的依赖**即可.
 ```
 Cannot resolve org.springframework:spring-tx:5.3.9
@@ -277,7 +276,50 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 看官方的[10 Minute Tutorial on Apache Shiro](https://shiro.apache.org/10-minute-tutorial.html#introduction)即可. 直接上手做springboot继承shiro实验. 首先搭建一个index主页做测试, 测试的时候要记住先不导入shiro, 否则`/`会被重定向到没实现的登陆界面. springboot整合也看官方的sample, 防止踩坑.
 
 ## Swagger
+生成api文档, 跳过
 
+## 异步/邮件/定时任务
+- 异步: 在`@Service`注解的类下的方法打上`@Async`注释, 再在主程序上加上`@EnableAsync`注解开启异步功能.
+- 定时: `@EnableScheduling`开启定时job, `@Scheduled`控制类执行时间, 同样需要给service类打上`@Service`注解
+- 邮件: 需要`spring-boot-starter-mail`启动器, 桶sender发送配置好的message
+
+## 整合redis
+加入NoSQL的redis依赖, 直接看配置类. 可以看到`RedisTemplate<Object, Object>`的key-value都是Object, 但是只有在`redisTemplate`没有时才生效, 所以我们可以自定义. 通常我们还要自己去实现`RedisTemplate`的序列化方式, 去序列化传入的对象. 用redisTemplate的ops系列方法操作get/set redis即可. 
+```
+@Configuration(
+    proxyBeanMethods = false
+)
+@ConditionalOnClass({RedisOperations.class})
+@EnableConfigurationProperties({RedisProperties.class})
+@Import({LettuceConnectionConfiguration.class, JedisConnectionConfiguration.class})
+public class RedisAutoConfiguration {
+    public RedisAutoConfiguration() {
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(
+        name = {"redisTemplate"}
+    )
+    @ConditionalOnSingleCandidate(RedisConnectionFactory.class)
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<Object, Object> template = new RedisTemplate();
+        template.setConnectionFactory(redisConnectionFactory);
+        return template;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnSingleCandidate(RedisConnectionFactory.class)
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        StringRedisTemplate template = new StringRedisTemplate();
+        template.setConnectionFactory(redisConnectionFactory);
+        return template;
+    }
+}
+```
+
+## Dubbo+zookeeper
+RPC/HTTP.
 
 ## 参考
 1. [SpringBoot-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
