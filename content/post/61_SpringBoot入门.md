@@ -319,7 +319,7 @@ public class RedisAutoConfiguration {
 ```
 
 ## Dubbo+zookeeper
-RPC/HTTP.
+Dubbo可以让服务被注册与消费, zookeeper做服务治理.
 
 ## 参考
 1. [SpringBoot-狂神说Java](https://www.bilibili.com/video/BV1PE411i7CV)
