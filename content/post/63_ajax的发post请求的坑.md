@@ -91,8 +91,8 @@ public class AjaxController {
 接下来就是开心的实验时刻, 会发现jquery post让后端输出了`the number is 1`, 而axios post让后端输出了`the number is 0`, 一个成功了, 一个不成功, 这是怎么回事呢. 首先从chrome的开发者工具入手, 发现请求响应本身是没有问题的, 而问题就出在post是如何装载数据的, 为了清楚地看到post请求主题是什么样的, 我们用wireshark抓包试试. 选择`Loopback: lo0`就能抓去本地的请求响应. 
 
 上图是jquery post的请求体, 下图是axios post的请求体. 前者是类似我们`url?xxx=1&xxx=2`的形式, 而后者是一个对象的形式. 所以说, 如果用axios做发送请求的工具, 想让后端通过`@RequestParam`去拿到亲情中的字段, 我们还是只有通过写`data: 'requestNumber=2'`, 去使得请求体不是对象的形式.
-![](/64_1.png)
-![](/64_2.png)
+![](/63_1.png)
+![](/63_2.png)
 
 ## 参考
 1. [POST方法](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/POST)
