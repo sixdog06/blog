@@ -2,7 +2,7 @@
 title: "Vue入门"
 date: 2021-07-02
 draft: false
-toc: true
+author: "小拳头"
 categories: ["WEB开发"]
 tags: ["Vue"]
 ---

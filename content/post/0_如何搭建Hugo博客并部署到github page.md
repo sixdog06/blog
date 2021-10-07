@@ -2,7 +2,7 @@
 title: "如何搭建Hugo博客并部署到Github Page"
 date: 2020-09-30
 draft: false
-toc: true
+author: "小拳头"
 categories: ["杂谈"]
 tags: ["Hugo"]
 ---

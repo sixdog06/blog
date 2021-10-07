@@ -2,7 +2,7 @@
 title: "MySQL-高级"
 date: 2020-11-17
 draft: false
-toc: true
+author: "小拳头"
 categories: ["WEB开发"]
 tags: ["MySQL"]
 ---

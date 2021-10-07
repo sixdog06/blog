@@ -2,7 +2,7 @@
 title: "剑指offer"
 date: 2020-12-11
 draft: false
-toc: true
+author: "小拳头"
 categories: ["程序设计"]
 tags: ["数据结构与算法"]
 ---

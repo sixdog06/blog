@@ -2,7 +2,7 @@
 title: "JVM与Java体系结构"
 date: 2021-01-25
 draft: false
-toc: true
+author: "小拳头"
 categories: ["Java"]
 tags: ["JVM"]
 ---
