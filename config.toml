@@ -1,60 +1,113 @@
 baseURL = "https://huanruiz.github.io"
 languageCode = "zh-CN"
 title = "PunchCode"
-theme = "maupassant"
-
-## 保持分类的原始名字（false会做转小写处理）
+theme = "hugo-theme-cleanwhite"
+disqusShortname = ""
+googleAnalytics = ""
 preserveTaxonomyNames = true
-disablePathToLower = true
-
+paginate = 10 #frontpage pagination
 hasCJKLanguage = true
-summaryLength = 60
+author = "小拳头"
 
-[author]
-  name = "拳头"
+[outputs]
+home = ["HTML", "RSS"]
 
 [params]
-  author = "拳头"
-  subtitle = "Software Engineer"
-  keywords = "这也不会 那也不会"
-  description = "Code Eat Sleep"
-  busuanzi = true #启用不算子网页统计
-  googleAd = ""  #ca-pub-xxxxxxxxxxxxxx
-  localSearch = true # 启用本地搜索
+  header_image = "front.png"
+  SEOTitle = "普通的记录"
+  description = "Software Engineer"
+  keyword = "Harry, 小拳头"
+  slogan = "以终为始"
+  author = "小拳头"
 
-  # 这里我存放在了主题的static文件夹里，根目录的似乎也可以
-  customCSS = ['douban.css', 'other.css']
-  # if ['custom.css'], load '/static/css/custom.css' file
-  customJS = ['douban.js']
-  # if ['custom.js'], load '/static/js/custom.js' file
+  image_404 = ""
+  title_404 = "你来到了没有知识的荒原 :("
+  omit_categories = false
 
-  # 全局开关，你也可以在每一篇内容的 front matter 中针对单篇内容关闭或开启某些功能
-  toc = true  # 是否开启目录
+  # leancloud storage for page view counter
+  page_view_conter = false 
+  leancloud_app_id = ""
+  leancloud_app_key = ""
 
-[params.cc]
-  name = "知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议"
-  link = "https://creativecommons.org/licenses/by-nc-nd/4.0/"
+  # algolia site search
+  algolia_search = false
+  algolia_appId = ""
+  algolia_indexName = ""
+  algolia_apiKey = ""
 
-[params.utteranc]
-    enable = true
-    repo = "huanruiz/blog" # 存储评论的Repo, 格式为 owner/repo
-    issueTerm = "pathname"  # 表示你选择以哪种方式让github issue的评论和你的文章关联
-    theme = "github-light" # 样式主题, 有github-light和github-dark两种
+  # Sidebar settings
+  sidebar_about_description = "Software Developer, Open Source Enthusiast and Life Adventurer"
+  sidebar_avatar = "img/zhaohuabing.png"      # use absolute URL, seeing it's used in both `/` and `/about/`
+
+  featured_tags = true 
+  featured_condition_size = 1 
+
+  # Baidu Analytics
+  ba_track_id = ""
+  
+  # We need a proxy to access Disqus api in China
+  # Follow https://github.com/zhaohuabing/disqus-php-api to set up your own disqus proxy
+  disqus_proxy = ""
+  disqus_site = ""
+
+  #Enable wechat pay & alipay to allow readers send reward money if they like the articles 
+  reward = false 
+  # reward_guide = "如果这篇文章对你有用,请随意打赏" 
+
+  # friends = true
+  bookmarks = false
+  about_me = true
+
+  [params.social]
+  rss            = true 
+#  email          = "youremail@gmail.com"
+  #facebook      = "full profile url in facebook"
+  #googleplus    = "full profile url in googleplus"
+  #twitter       = "full profile url in twitter"
+#  linkedin       = "https://www.linkedin.com/in/yourlinkedinid"
+#  stackoverflow  = "https://stackoverflow.com/users/yourstackoverflowid"
+  #instagram     = "full profile url in instagram"
+  github         = "https://github.com/huanruiz"
+#  wechat         = "your wechat qr code image"
+#  medium         = "full profile url in medium"
+  #pinterest     = "full profile url in pinterest"
+  #reddit        = "full profile url in reddit"
+  #gitlab        = "full profile url in gitlab"
+  #mastodon      = "full profile url in mastodon"
+  #keybase       = "full profile url in keybase"
+  #xing          = "https://www.xing.com/profile/yourxingid"
+  #git           = "full profile url for git user"
+  
+ # [[params.friend_link]]
+#  title = "Linda的博客"
+#  href =  "https://zhaozhihan.com"
+
+#  [[params.bookmark_link]]
+#  title =  "Martin Fowler"
+#  href =  "https://martinfowler.com"
+#  [[params.bookmark_link]]
+#  title = "ServiceMesher"
+#  href =  "http://www.servicemesher.com"
+#  [[params.bookmark_link]]
+#  title =  "Pxhere"
+#  href = "https://pxhere.com"
+#  [[params.bookmark_link]]
+#  title = "unsplash"
+#  href = "https://unsplash.com"
+  
+#  [[params.addtional_menus]]
+#  title =  "BOOKS"
+#  href =  "/top/books/"
+  [[params.addtional_menus]]
+  title =  "ARCHIVE"
+  href =  "/top/archive/"
+  [[params.addtional_menus]]
+  title =  "ABOUT"
+  href =  "/top/about/"
 
 [markup]
+  [markup.tableOfContents]
+    endLevel = 2
+    startLevel = 1
   [markup.highlight]
-    lineNos = true
-    style = "github"
-
-[menu]
-  [[menu.main]]
-    identifier = "archives"
-    name = "归档"
-    url = "/archives/"
-    weight = 3
-
-  [[menu.main]]
-    identifier = "about"
-    name = "About"
-    url = "/about/"
-    weight = 4
+    style = "dracula"

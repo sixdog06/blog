@@ -3,7 +3,7 @@ title: "DFS与BFS"
 date: 2021-01-08
 draft: false
 toc: true
-categories: ["数据结构与算法"]
+categories: ["程序设计"]
 tags: ["数据结构与算法"]
 ---
 

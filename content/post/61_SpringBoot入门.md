@@ -3,7 +3,7 @@ title: "SpringBoot入门"
 date: 2021-08-15
 draft: false
 toc: true
-categories: ["学习笔记"]
+categories: ["WEB开发"]
 tags: ["SpringBoot"]
 ---
 
