@@ -8,7 +8,7 @@ categories: ["Java"]
 
 这是Effective Java第二章的总结, 主要涵盖对象的创建和销毁.
 
-## Item1-Consider static factory methods instead of constructors
+## Item1: Consider static factory methods instead of constructors
 这个建议和设计模式中的工厂方法不是一个东西, 这里指当我们创建对象的时候, 考虑用静态方法返回一个实例, 而不是通过new的方式直接创建对象. 
 
 好处有
@@ -20,10 +20,10 @@ categories: ["Java"]
 
 限制有
 - 如果类只提供静态工厂方法, 没有public/protected的构造器, 那么没法被继承. 这种类更加推荐composition而不是inheritance
-- 开发者找静态工厂方法比直接找构造器难, 所有会有新手用`new`而不是`valueOf`
+- 开发者找静态工厂方法比直接找构造器难, 所有会有新手用`new`而不是`valueOf`.
 
 ## Item 2: Consider a builder when faced with many constructor parameters
-
+用一个静态内部类Builder去替代telescoping constructor, 这个Builder可以替代setter, 让这个类immutable. 
 
 ## 参考
 1. Effective Java
