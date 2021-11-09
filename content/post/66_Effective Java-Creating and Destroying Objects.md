@@ -29,7 +29,7 @@ categories: ["Java"]
 构造器私有化, 实例为`static final`的, 如果实例是public的, 那么调用时直接通过类字段可以拿到, 如果是private的, 那么需要通过`getInstance()`的静态工厂方法返回. 静态工厂方法可以清楚地指明这个类是单例的, 并且灵活度更高. **用单例的时候, 如果没有继承关系, 最好的方式是考虑枚举类**, 枚举类的特性让我们可以非常轻松地new许多类型的单例对象, 按需返回.
 
 ## Item 4: Enforce noninstantiability with a private constructor
-
+对于一个Util工具类, 可以把这个类的构造器私有化, 防止这个类被实例化, 为防止类的内部调用构造器, 还可以在构造器内`throw new AssertionError();`, 彻底杜绝实例化. 缺点是这种类无法被继承.
 
 ## 参考
 1. Effective Java
