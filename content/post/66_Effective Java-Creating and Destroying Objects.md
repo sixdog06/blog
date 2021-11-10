@@ -31,5 +31,8 @@ categories: ["Java"]
 ## Item 4: Enforce noninstantiability with a private constructor
 对于一个Util工具类, 可以把这个类的构造器私有化, 防止这个类被实例化, 为防止类的内部调用构造器, 还可以在构造器内`throw new AssertionError();`, 彻底杜绝实例化. 缺点是这种类无法被继承.
 
+## Item 5: Prefer dependency injection to hardwiring resources
+当Class需要依赖资源, 可以通过构造器注入这个资源实例, 让这个Class的字段指向这个实例. 单例或者静态工厂类无法做到这一点. 因为单例的字段不能随便改动, 而静态工厂类只提供通用的静态方法.
+
 ## 参考
 1. Effective Java
