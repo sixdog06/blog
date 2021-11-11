@@ -34,5 +34,8 @@ categories: ["Java"]
 ## Item 5: Prefer dependency injection to hardwiring resources
 当Class需要依赖资源, 可以通过构造器注入这个资源实例, 让这个Class的字段指向这个实例. 单例或者静态工厂类无法做到这一点. 因为单例的字段不能随便改动, 而静态工厂类只提供通用的静态方法.
 
+## Item 6: Avoid creating unnecessary objects
+简而言之, 有两点, 一个是new的时候要考虑是不是可以用其他方式拿到这个实例, 第二是在装箱的时候想有没有多余的对象被创建, 能用基本类型就用, **注意没必要的自动装箱**. 
+
 ## 参考
 1. Effective Java
