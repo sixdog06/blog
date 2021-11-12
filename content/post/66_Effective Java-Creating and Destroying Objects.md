@@ -37,5 +37,12 @@ categories: ["Java"]
 ## Item 6: Avoid creating unnecessary objects
 简而言之, 有两点, 一个是new的时候要考虑是不是可以用其他方式拿到这个实例, 第二是在装箱的时候想有没有多余的对象被创建, 能用基本类型就用, **注意没必要的自动装箱**. 
 
+## Item 7: Eliminate obsolete object references
+被淘汰的对象引用如果持续存在就产生了内存泄漏的问题. 有三种情况: 
+1. 我们写的Class有自己的memory, 如例子中的Stack, 可以通过吧引用指向null来释放引用
+2. Class有自己的caches, 如WeakHashMap/LinkedHashMap的entry, 有自动释放机制. 这种机制包括结构本身可以释放. 如果本身释放机制不够好, 可通过一个线程去释放. 或者向`LinkedHashMap`通过`removeEldestEntry`方法, 在有新的值插入时去检查是否要释放缓存.
+3. listeners/callbacks没有及时deregister
+分析可以通过`heap profiler`这类的debug工具看堆的情况.
+
 ## 参考
 1. Effective Java
