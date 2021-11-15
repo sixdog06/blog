@@ -44,5 +44,11 @@ categories: ["Java"]
 3. listeners/callbacks没有及时deregister
 分析可以通过`heap profiler`这类的debug工具看堆的情况.
 
+## Item 8: Avoid finalizers and cleaners
+不要手动调用垃圾回收方法.
+
+## Item 9: Prefer try-with-resources to try-finally
+遇到资源需要被关闭的情况, 总是用`try-with-resources`替换`try-finally`. `try-finally`主要有两个问题, 一是让代码冗长(为了解决二的问题), 二是finally中的close如果和try中的语句同时报错, finally中的错会盖掉try中的错, 导致debug困难. 
+
 ## 参考
 1. Effective Java
