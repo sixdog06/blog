@@ -48,7 +48,7 @@ categories: ["Java"]
 不要手动调用垃圾回收方法.
 
 ## Item 9: Prefer try-with-resources to try-finally
-遇到资源需要被关闭的情况, 总是用`try-with-resources`替换`try-finally`. `try-finally`主要有两个问题, 一是让代码冗长(为了解决二的问题), 二是finally中的close如果和try中的语句同时报错, finally中的错会盖掉try中的错, 导致debug困难. 
+遇到资源需要被关闭的情况, 总是用`try-with-resources`替换`try-finally`. `try-finally`如果出现finally中的close和try中的语句同时报错, finally中的错会盖掉try中的错(Suppressed Exception), 导致debug困难. 而用getSuppressed鬼让代码冗余. 若果有多resources, 多个`try-catch`会让代码不必要地冗长.
 
 ## 参考
 1. Effective Java
