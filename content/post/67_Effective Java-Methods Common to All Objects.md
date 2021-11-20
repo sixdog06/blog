@@ -20,8 +20,12 @@ categories: ["Java"]
 - Reflexive: For any non-null reference value x, x.equals(x) must return true.
 - Symmetric: For any non-null reference values x and y, x.equals(y)must return true if and only if y.equals(x) returns true.
 - Transitive: For any non-null reference values x, y, z, if x.equals(y) returns true and y.equals(z) returns true, then x.equals(z) must return true.
-- Consistent: For any non-null reference values x and y, multiple invocations of x.equals(y) must consistently return true or consistently return false, provided no information used in equals comparisons is modified.
-- For any non-null reference value x, x.equals(null) must return false.
+- Consistent: For any non-null reference values x and y, multiple invocations of x.equals(y) must consistently return true or consistently return false, provided no information used in equals comparisons is modified. 对unreliable resources应该不写equals, 否则很难满足`Consistent`, 比如`java.net.URL`的equals会比较ip, 但ip会因为路由变动
+- Non-nullity: For any non-null reference value x, x.equals(null) must return false. 
+
+书上总结了高质量`equals`方法四部曲:
+1. 用`==`检查输入是否是现在对象的引用, 是的话不用比了
+2. 用`instanceof`检查输入
 
 ## 参考
 1. Effective Java
