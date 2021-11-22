@@ -25,7 +25,14 @@ categories: ["Java"]
 
 书上总结了高质量`equals`方法四部曲:
 1. 用`==`检查输入是否是现在对象的引用, 是的话不用比了
-2. 用`instanceof`检查输入
+2. 用`instanceof`检查输入的类型是否正确
+3. 在`instanceof`为`true`的基础上强制转换类型
+4. 比较字段是否相同, 基本类型用`==`比较, 包装类型用`Float.compare(float, float)`/`Double.compare(double, double)`比较, 一些可为空的对象, 可用`Objects.equals(Object, Object)`比较. 
+
+除了四部曲之外, 有几点要注意. 我们可以用AutoValue框架来自动生成equals, 我认为自动生成不仅仅只是为了方便, 还可以让我们double check自己写的代码是否有问题.
+- 重写`equals`后必须重写`hashCode`
+- 注意`equals`的入参是Object而不是具体的类
+- 写相等条件的时候, 只比较想要比较的条件, 这种条件是符合需求的即可, 而不是把所有字段一层一层往下比
 
 ## 参考
 1. Effective Java
