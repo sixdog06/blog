@@ -34,5 +34,19 @@ categories: ["Java"]
 - 注意`equals`的入参是Object而不是具体的类
 - 写相等条件的时候, 只比较想要比较的条件, 这种条件是符合需求的即可, 而不是把所有字段一层一层往下比
 
+## Item 11: Always override hashCode when you override equals
+重写`equals`之后必须重写`hashCode`, 参见`hashCode`的契约, 来自Java8的文档.
+- Whenever it is invoked on the same object more than once during an execution of a Java application, the hashCode method must consistently return the same integer, provided no information used in equals comparisons on the object is modified. This integer need not remain consistent from one execution of an application to another execution of the same application.
+- If two objects are equal according to the equals(Object) method, then calling the hashCode method on each of the two objects must produce the same integer result.
+- **It is not required** that if two objects are unequal according to the equals(Object) method, then calling the hashCode method on each of the two objects must produce distinct integer results. However, the programmer should be aware that producing distinct integer results for unequal objects may improve the performance of hash tables.
+
+> significant field: 影响比较条件的字段
+
+如果不重写, 那么像`HashMap`这种依赖hashCode的类就会出现问题. 而计算哈希值也有一个三部曲:
+1. 定义一个名为`result`的`int`字段, 初始化为第一个significant field算出的哈希值
+2. 对每个significant field, 做以下计算
+    a. 基础类型的字段f, 计算`Type.hashCode(f)`
+    b. 引用类型字段, 如果是`equals`中是递归地调用`equals`去一层一层比较, 那么`hashCode`也同样递归计算. 如果比较过于复杂, 
+
 ## 参考
 1. Effective Java
