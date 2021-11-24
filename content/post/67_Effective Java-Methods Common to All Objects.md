@@ -45,8 +45,13 @@ categories: ["Java"]
 如果不重写, 那么像`HashMap`这种依赖hashCode的类就会出现问题. 而计算哈希值也有一个三部曲:
 1. 定义一个名为`result`的`int`字段, 初始化为第一个significant field算出的哈希值
 2. 对每个significant field, 做以下计算
-    a. 基础类型的字段f, 计算`Type.hashCode(f)`
-    b. 引用类型字段, 如果是`equals`中是递归地调用`equals`去一层一层比较, 那么`hashCode`也同样递归计算. 如果比较过于复杂, 
+
+- 基础类型的字段f, 计算`Type.hashCode(f)`. 
+- 引用类型字段, 如果是`equals`中是递归地调用`equals`去一层一层比较, 那么`hashCode`也同样递归计算. 如果计算过于复杂, 需要对这个字段设置一个canonical representation来计算hashCode, 如果这个字段是null, 用默认值代替, 这个默认值通常是0. 
+- 数组字段, 若没有significant element, 用**非0常数**代替, 如果全是significant element, 直接调用`Arrays.hashCode`来计算, 而如果只有部分是significant element, 用`Type.hashCode(f)`计算每一个值, 并用算出来的每一个c做`result = 31 * result + c`计算, 得到哈希值
+
+对于这个计算公式中31的选择, 主要因为它是一个奇数. 如果是个偶数, 在做乘法时如果结果超出了数据范围的限制, 那么信息会丢失, 因为从位运算的角度看, 乘2相当于左移一位. 而`31 * i == (i << 5) - i`, 可以用为操作获得更好的性能表现. 写哈希方法时, 不要给计算方法的详细说明, 因为这会限制以后的优化. 像`String/Integer`的hashCode都是根据实例计算的确定值, 造成以后所有的新发布都要依赖这种实现.
+
 
 ## 参考
 1. Effective Java
