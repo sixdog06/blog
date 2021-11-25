@@ -56,6 +56,7 @@ categories: ["Java"]
 如果不重写, 返回的是`类名@hashCode的十六进制`. 书中推荐对所有可以实例化的类都重写`toString()`方法, 言下之意, 对静态工厂类, 枚举类没必要重写
 
 ## Item 13: Override clone judiciously
+`Cloneable`这个接口只能起一个标记的作用. 
 
 ## 参考
 1. Effective Java
