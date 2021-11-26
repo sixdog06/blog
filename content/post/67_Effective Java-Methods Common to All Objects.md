@@ -55,8 +55,12 @@ categories: ["Java"]
 ## Item 12: Always override toString
 如果不重写, 返回的是`类名@hashCode的十六进制`. 书中推荐对所有可以实例化的类都重写`toString()`方法, 言下之意, 对静态工厂类, 枚举类没必要重写
 
-## Item 13: Override clone judiciously
-`Cloneable`这个接口只能起一个标记的作用. 
+## Item 13: Override clone judiciously(todo)
+`Cloneable`这个接口起一个标记的作用, 如果有类实现了它, 当其对象`clone`方法被调用时, 会返回对象的copy, 对象的每个字段都应该被copy. 所以如果要实现这个接口, 类应该提供一个通常实现起来很复杂的`clone`方法. 
+
+## 
+Item 14: Consider implementing Comparable
+
 
 ## 参考
 1. Effective Java
