@@ -14,7 +14,7 @@ home = ["HTML", "RSS"]
 
 [params]
   header_image = "front.png"
-  SEOTitle = "普通的记录"
+  SEOTitle = "以终为始"
   description = "Software Engineer"
   keyword = "Harry, 小拳头"
   slogan = "以终为始"

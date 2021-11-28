@@ -58,8 +58,16 @@ categories: ["Java"]
 ## Item 13: Override clone judiciously(todo)
 `Cloneable`这个接口起一个标记的作用, 如果有类实现了它, 当其对象`clone`方法被调用时, 会返回对象的copy, 对象的每个字段都应该被copy. 所以如果要实现这个接口, 类应该提供一个通常实现起来很复杂的`clone`方法. 
 
-## 
-Item 14: Consider implementing Comparable
+## Item 14: Consider implementing Comparable
+实现`compareTo`后便可以用`Arrays.sort(a);`或者有自动排序功能的Collection如TreeSet. 
+```
+public interface Comparable<T> {
+    int compareTo(T var1);
+}
+```
+
+Comparable的契约: Compares this object with the specified object for order. Returns a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object. Throws ClassCastException if the specified object’s type prevents it from being compared to this object. 一般用-1, 1代替负值和正值, 负值正值的绝对值要相等. 满足reflexivity, symmetry, and transitivity. 还有一点, 推荐但不强制`(x.compareTo(y) == 0) == (x.equals(y))`, 行为一致会让代码清晰, 不一致应指明他们的相等条件的维度是什么(natural ordering?/other kinds of ordering?). 像BigDecimal的equals和compareTo的实现就是不同的, 对于`new BigDecimal("1.0") and new BigDecimal("1.00")`如果用HashSet这种基于`equals`的集合去存储, 两个都会存进去, 而对于TreeSet这种基于`compareTo`的集合, 会被认为是相等的. 比较时还要注意越界的问题, 不要用`Integer-Integer`这种方式最为return的值
+
 
 
 ## 参考
