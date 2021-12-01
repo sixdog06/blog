@@ -13,5 +13,18 @@ categories: ["Java"]
 
 这里要注意nonzero-length array, 即使是`public static final Thing[]`, 其中的值可以被修改. 我们可以让这个字段`private`, 然后露出一个返回或者它的方法/用另一个字段返回一个只读的copy.
 
+## Item 16: In public classes, use accessor methods, not public fields
+对public classes, 用getter和setter来暴露字段, 不要用public字段. 对私有类/嵌套类, 可以用public的字段
+
+## Item 17: Minimize mutability
+Java本身提供了许多immutable的类, 比如String/BigInteger/BigDecimal/包装类. 让类immutable, 有5条规则.
+1. Don’t provide methods that modify the object’s state
+2. Ensure that the class can’t be extended. 声明为`public final`类, 防止被继承
+3. Make all fields final. 
+4. Make all fields private. 即使对final的基础数据类型字段, immutable objects的引用字段, 也最用方法的方式返回, 为后序的更新留下余地
+5. Ensure exclusive access to any mutable components. 因为有些字段是对象, 而对象本身可能回被外部修改
+
+
+
 ## 参考
 1. Effective Java
