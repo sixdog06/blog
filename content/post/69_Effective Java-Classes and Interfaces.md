@@ -24,6 +24,9 @@ Java本身提供了许多immutable的类, 比如String/BigInteger/BigDecimal/包
 4. Make all fields private. 即使对final的基础数据类型字段, immutable objects的引用字段, 也最用方法的方式返回, 为后序的更新留下余地
 5. Ensure exclusive access to any mutable components. 因为有些字段是对象, 而对象本身可能回被外部修改
 
+immutable objects有很多优点, 比如线程安全(因为不可修改), 可以被放心地调用. 但是如果每个不同的对象都要new新的对象, 会造成资源地浪费. 总的来说, 也应该尽可能地使用immutable objects, 即使无法做到, 也要尽量让字段private final, 不露出不必要的setter. 甚至我们可以让构造器也是私有的, 通过静态工厂方法返回对象, 进一步增加灵活度.
+
+## Item 18: Favor composition over inheritance
 
 
 ## 参考
