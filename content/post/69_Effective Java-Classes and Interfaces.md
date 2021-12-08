@@ -42,7 +42,7 @@ immutable objects有很多优点, 比如线程安全(因为不可修改), 可以
 接口作用是用来定义一个type, 而不是其他. 像`java.io.ObjectStreamConstants`这种constant interface pattern的设计师是有问题的. 去实现这个接口的类即使不用某个常量了, 但是为了保证兼容性还是要去实现这个接口, 并且类的所有子类都会不必要地拥有这些常量. 这种常量应该存在于通用的工具类/某个都会使用此常量的类或接口中.
 
 ## Item 23: Prefer class hierarchies to tagged classes
-
+tagged class(类的内部用子弹来区分类型)这种类都应该用继承来替换, tagged class实际上就是对类的继承这种性质的一种不好的模仿.
 
 ## 参考
 1. Effective Java
