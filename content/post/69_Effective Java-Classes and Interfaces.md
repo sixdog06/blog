@@ -44,5 +44,8 @@ immutable objects有很多优点, 比如线程安全(因为不可修改), 可以
 ## Item 23: Prefer class hierarchies to tagged classes
 tagged class(类的内部用子弹来区分类型)这种类都应该用继承来替换, tagged class实际上就是对类的继承这种性质的一种不好的模仿.
 
+## Item 24: Favor static member classes over nonstatic
+
+
 ## 参考
 1. Effective Java
