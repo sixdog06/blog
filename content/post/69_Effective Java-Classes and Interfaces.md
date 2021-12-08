@@ -36,6 +36,12 @@ immutable objects有很多优点, 比如线程安全(因为不可修改), 可以
 书中主要还是介绍了接口的灵活度, 我自己的理解是接口更多定义的是行为(method), 所以只有类拥有某个行为, 就可以用接口去抽象. 像java Collection接口下有很多AbstractInterface抽象类, 这种实现方式叫abstract skeletal implementation class, 实现接口这个类型下一部分的行为(method), 没有实现的方法就可以最大限度地让子类去实现, 而不用考虑父类方法. 而且类可恶意实现多个接口, 对于通用的类型, 用接口更加合适(Serializable, Cloneable等等).
 
 ## Item 21: Design interfaces for posterity
+书中这一节主要是讲写接口的时候要考虑到子类实现是否合适, 想Collection接口的removeIf(是一个default方法), 对Java自己的集合类可以试用, 但是像某些实现了这个接口的第三方集合类(SynchronizedCollection)就不适用.
+
+## Item 22: Use interfaces only to define types
+接口作用是用来定义一个type, 而不是其他. 像`java.io.ObjectStreamConstants`这种constant interface pattern的设计师是有问题的. 去实现这个接口的类即使不用某个常量了, 但是为了保证兼容性还是要去实现这个接口, 并且类的所有子类都会不必要地拥有这些常量. 这种常量应该存在于通用的工具类/某个都会使用此常量的类或接口中.
+
+## Item 23: Prefer class hierarchies to tagged classes
 
 
 ## 参考
