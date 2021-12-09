@@ -42,9 +42,16 @@ immutable objects有很多优点, 比如线程安全(因为不可修改), 可以
 接口作用是用来定义一个type, 而不是其他. 像`java.io.ObjectStreamConstants`这种constant interface pattern的设计师是有问题的. 去实现这个接口的类即使不用某个常量了, 但是为了保证兼容性还是要去实现这个接口, 并且类的所有子类都会不必要地拥有这些常量. 这种常量应该存在于通用的工具类/某个都会使用此常量的类或接口中.
 
 ## Item 23: Prefer class hierarchies to tagged classes
-tagged class(类的内部用子弹来区分类型)这种类都应该用继承来替换, tagged class实际上就是对类的继承这种性质的一种不好的模仿.
+tagged class(类的内部用字段来区分类型)这种类都应该用继承来替换, tagged class实际上就是对类的继承这种性质的一种不好的模仿.
 
 ## Item 24: Favor static member classes over nonstatic
+这节讨论nested class, 分为4种: static member classes(inner classes), nonstatic member classes, anonymous classes, and local classes. 
+
+static member classes相当于外部类的一个字段, 可以访问private字段和方法, 同时自身也受到作用域的限制. 因为是static, 本身是独立于实例的. static member classes常用来作为一个helper class作为辅助功能. 而nonstatic member class的一个常用的设计是作为Adapter, 比如Map中的keySet, entrySet, and values返回的对象, 被当做集合的一个view. 所以只要和对象无关的nested class, 都应该被声明为static, 否则每个对象都会持有对这个nested class的引用.
+
+todo: last 2 types.
+
+## Item 25: Limit source files to a single top-level class
 
 
 ## 参考
