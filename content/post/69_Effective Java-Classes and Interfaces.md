@@ -52,7 +52,7 @@ static member classes相当于外部类的一个字段, 可以访问private字�
 todo: last 2 types.
 
 ## Item 25: Limit source files to a single top-level class
-
+不要再同一个文件下放多个class, 这样不仅代码难读, 当用`javac`编译时, 如果顺序不对还会造成编译错误. 要么非public的类分别放到不用的java文件中, 要么放到top-level class的内部供调用.
 
 ## 参考
 1. Effective Java
