@@ -47,9 +47,9 @@ tagged class(类的内部用字段来区分类型)这种类都应该用继承来
 ## Item 24: Favor static member classes over nonstatic
 这节讨论nested class, 分为4种: static member classes(inner classes), nonstatic member classes, anonymous classes, and local classes. 
 
-static member classes相当于外部类的一个字段, 可以访问private字段和方法, 同时自身也受到作用域的限制. 因为是static, 本身是独立于实例的. static member classes常用来作为一个helper class作为辅助功能. 而nonstatic member class的一个常用的设计是作为Adapter, 比如Map中的keySet, entrySet, and values返回的对象, 被当做集合的一个view. 所以只要和对象无关的nested class, 都应该被声明为static, 否则每个对象都会持有对这个nested class的引用.
+**static member classes**相当于外部类的一个字段, 可以访问private字段和方法, 同时自身也受到作用域的限制. 因为是static, 本身是独立于实例的. static member classes常用来作为一个helper class作为辅助功能. 而**nonstatic member class**的一个常用的设计是作为Adapter, 比如Map中的keySet, entrySet, and values返回的对象, 被当做集合的一个view. **和实例无关的nested class, 都应该被声明为static, 否则每个对象都会持有对这个nested class的引用.** private static member classes通常作为外部类的一个member, 比如Map中的Entry, 每个entry本身与map有关, 但是entry自身的`getKey/getValue/setValue`与外部的map无关, 所以用private就可以了.
 
-todo: last 2 types.
+除了member classes之外, anonymous classes可以用来作为一个小的功能对象或者过程中生成的对象, 但是有lambda之后就可以用lambda替换这些对象. 还有一个作用就是实现工厂方法. local classes使用场景较少, 文中没举例, 我也没见过...
 
 ## Item 25: Limit source files to a single top-level class
 不要再同一个文件下放多个class, 这样不仅代码难读, 当用`javac`编译时, 如果顺序不对还会造成编译错误. 要么非public的类分别放到不用的java文件中, 要么放到top-level class的内部供调用.
