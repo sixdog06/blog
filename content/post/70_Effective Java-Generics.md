@@ -14,6 +14,7 @@ categories: ["Java"]
 2. 用instanceof验证类型时, 如`o instanceof Set`
 
 ## Item 27: Eliminate unchecked warnings
+书中提醒我们要干掉所有warning, 有些是因为代码的疏忽造成的, 还有一些warning是编译器抛出但是我们可忽略的. 对可以忽略的warning, 可以加上`@SuppressWarnings("unchecked")`注解, 注意**要把这个注解的范围缩到最小**. 对于一些不好加注解的语句, 比如`return`, 可以把return的值定义出来, 并在定义的代码上加入此注解.
 
 ## 参考
 1. Effective Java
