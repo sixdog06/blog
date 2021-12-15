@@ -16,5 +16,11 @@ categories: ["Java"]
 ## Item 27: Eliminate unchecked warnings
 书中提醒我们要干掉所有warning, 有些是因为代码的疏忽造成的, 还有一些warning是编译器抛出但是我们可忽略的. 对可以忽略的warning, 可以加上`@SuppressWarnings("unchecked")`注解, 注意**要把这个注解的范围缩到最小**. 对于一些不好加注解的语句, 比如`return`, 可以把return的值定义出来, 并在定义的代码上加入此注解.
 
+## Item 28: Prefer lists to arrays
+和上一节一样, list支持泛型, 让我们从编译期就能看到代码的错误, 如果使用array, 一些类型转换/不同类型赋值的场景就很有可能出错. 这种把数据聚集起来的情况, 我们多数情况都要竟可能让元素统一. 
+
+## Item 29: Favor generic types
+这一节结合了上面几节, 把非泛型的Stack类改造成了泛型Stack类.
+
 ## 参考
 1. Effective Java
