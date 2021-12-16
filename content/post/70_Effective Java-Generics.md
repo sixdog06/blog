@@ -20,7 +20,10 @@ categories: ["Java"]
 和上一节一样, list支持泛型, 让我们从编译期就能看到代码的错误, 如果使用array, 一些类型转换/不同类型赋值的场景就很有可能出错. 这种把数据聚集起来的情况, 我们多数情况都要竟可能让元素统一. 
 
 ## Item 29: Favor generic types
-这一节结合了上面几节, 把非泛型的Stack类改造成了泛型Stack类.
+这一节结合了上面几节, 把非泛型的Stack类改造成了泛型Stack类, 除此之外, 还有个释放obsolete reference的小细节. 跟着敲一遍!
+
+## Item 30: Favor generic methods
+
 
 ## 参考
 1. Effective Java
