@@ -23,6 +23,9 @@ categories: ["Java"]
 这一节结合了上面几节, 把非泛型的Stack类改造成了泛型Stack类, 除此之外, 还有个释放obsolete reference的小细节. 跟着敲一遍!
 
 ## Item 30: Favor generic methods
+和用泛型类一样, 用泛型方法可以避免类型转换带来的问题, 书中循序渐进总结了从非泛型方法转换泛型方法, 泛型单例工厂, 
+
+## Item 31: Use bounded wildcards to increase API flexibility
 
 
 ## 参考
