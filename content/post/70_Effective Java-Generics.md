@@ -26,7 +26,15 @@ categories: ["Java"]
 和用泛型类一样, 用泛型方法可以避免类型转换带来的问题, 书中循序渐进总结了从非泛型方法转换泛型方法, 泛型单例工厂, 
 
 ## Item 31: Use bounded wildcards to increase API flexibility
-
+用通配符来放开api的限制, 简而言之就是类似如下代码, 定义的是`Iterable<Number>`, 那么即使Integer是Number的子类, `Iterable<Integer>`是无法传入的, 因为`Iterable<Integer>`不是`Iterable<Number>`的子类, 所以需要通配符.
+```
+public void pushAll(Iterable<E> src) {
+    for (E e : src) {
+        push(e);
+    }
+}
+```
+因为类型擦除的原因, 通配符要满足PECS原则: **PECS stands for producer-extends, consumer-super.**. extends只能读类型`E`而不能写(null除外), consumer只能写类型`E`而不能读(Object除外). 
 
 ## 参考
 1. Effective Java
