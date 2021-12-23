@@ -34,7 +34,11 @@ public void pushAll(Iterable<E> src) {
     }
 }
 ```
-因为类型擦除的原因, 通配符要满足PECS原则: **PECS stands for producer-extends, consumer-super.**. extends只能读类型`E`而不能写(null除外), consumer只能写类型`E`而不能读(Object除外). 
+因为类型擦除的原因, 通配符要满足PECS原则: **PECS stands for producer-extends, consumer-super.**. extends只能读类型`E`而不能写(null除外), consumer只能写类型`E`而不能读(Object除外). 也是因为这一点, 并不是所有的api中的字段都需要用通配符, 像之前的`public static <E> Set<E> union(Set<? extends E> s1, Set<? extends E> s2)`, 返回值就是`Set<E>`, 输入没有必要用通配符.
+
+书中还讲了swap的例子, 讲了入了: **if a type parameter appears only once in a method declaration, replace it with a wildcard**, 我觉得在实际实现的时候, 这个例子`<?>`通配符的可读性没有不用好.
+
+## Item 32: Combine generics and varargs judiciously
 
 ## 参考
 1. Effective Java
