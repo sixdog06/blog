@@ -43,6 +43,10 @@ public void pushAll(Iterable<E> src) {
 1. it doesn’t store anything in the varargs parameter array,
 2. it doesn’t make the array (or a clone) visible to untrusted code. (Java8中)
 为防止warning, 我们通常会打上`SafeVarargs`注解, 在Java8中, 该注解只能打到static methods/final instance methods上, 换言之, 要保证重写的方法也是安全的. 
+还有很多情况下, 可变参数的方法可以在套一个list来保证typesafe, 我感觉还是用list替换比较好, 这种tricky的使用方法在项目里面会带来不必要的麻烦.
+
+## Item 33: Consider typesafe heterogeneous containers
+
 
 ## 参考
 1. Effective Java
