@@ -39,6 +39,10 @@ public void pushAll(Iterable<E> src) {
 书中还讲了swap的例子, 讲了入了: **if a type parameter appears only once in a method declaration, replace it with a wildcard**, 我觉得在实际实现的时候, 这个例子`<?>`通配符的可读性没有不用好.
 
 ## Item 32: Combine generics and varargs judiciously
+编译器在编译期无法推断可变数组的泛型是什么, 从也可能导致运行期出错. generic varargs methods is safe if: 
+1. it doesn’t store anything in the varargs parameter array,
+2. it doesn’t make the array (or a clone) visible to untrusted code. (Java8中)
+为防止warning, 我们通常会打上`SafeVarargs`注解, 在Java8中, 该注解只能打到static methods/final instance methods上, 换言之, 要保证重写的方法也是安全的. 
 
 ## 参考
 1. Effective Java
