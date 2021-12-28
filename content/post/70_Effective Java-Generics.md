@@ -46,7 +46,7 @@ public void pushAll(Iterable<E> src) {
 还有很多情况下, 可变参数的方法可以在套一个list来保证typesafe, 我感觉还是用list替换比较好, 这种tricky的使用方法在项目里面会带来不必要的麻烦.
 
 ## Item 33: Consider typesafe heterogeneous containers
-
+因为泛型限制, 在一个container中往往只能放有限类型的Java对象, 而通过把`Class<?>`对象作为Map的key, 就能存放各种各样的对象. 要注意保证传入的实例类型和Class中的类型对上. 
 
 ## 参考
 1. Effective Java
