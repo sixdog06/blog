@@ -24,6 +24,10 @@ categories: ["Java"]
 因为枚举类本身不能被继承, 所以可以通过写一个通用的接口, 让这个接口定义枚举的通用方法, 去实现可扩展的场景.
 
 ## Item 39: Prefer annotations to naming patterns
+早先有通过naming patterns(方法名)来捕获某种行为, 现在都用注解了. 书中介绍了`@Test`注解, 并用反射去捕获某个类中被`@Test`注解的方法, 并调用这些方法, 简而言之就是自己写了一个mini的ut测试工具.
+
+## Item 40: Consistently use the Override annotation
+
 
 ## 参考
 1. Effective Java
