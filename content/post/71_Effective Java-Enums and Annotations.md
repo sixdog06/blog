@@ -27,6 +27,9 @@ categories: ["Java"]
 早先有通过naming patterns(方法名)来捕获某种行为, 现在都用注解了. 书中介绍了`@Test`注解, 并用反射去捕获某个类中被`@Test`注解的方法, 并调用这些方法, 简而言之就是自己写了一个mini的ut测试工具.
 
 ## Item 40: Consistently use the Override annotation
+用到重写了就一定要加`@Override`, 避免诡异的bug. 比如`equals`这种方法, 重写之后如果参数不是`Object`类型, 那么并没有真正地重写. `@Override`帮助我们在编译的时候及时找到代码的错误.
+
+## Item 41: Use marker interfaces to define types
 
 
 ## 参考
