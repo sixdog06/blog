@@ -30,7 +30,7 @@ categories: ["Java"]
 用到重写了就一定要加`@Override`, 避免诡异的bug. 比如`equals`这种方法, 重写之后如果参数不是`Object`类型, 那么并没有真正地重写. `@Override`帮助我们在编译的时候及时找到代码的错误.
 
 ## Item 41: Use marker interfaces to define types
-
+灵活使用marker interfaces/marker annotations, marker interfaces可以标注类或者接口, 这种需要表示某种type的情况. marker annotations作用面更小, 用来标注类型中的元素.
 
 ## 参考
 1. Effective Java
