@@ -22,6 +22,17 @@ categories: ["Java"]
 | Array Constructor | int[]::new | len -> new int[len] |
 
 ## Item 44: Favor the use of standard functional interfaces
+有了函数式编程的加持, 写api的时候就可以用各种`functional interfaces`. 大多数情况下不用子基写, 直接使用`java.util.function`包中的就ok. 6个基本的函数式接口如下. 他们都有int/long/double的版本, 方法名就是前缀加数据类型. 具体使用时看包下有哪些接口最直观. 
+| Interface | Function Signature | Example |
+| -- | -- | -- |
+| UnaryOperator<T> | T apply(T t) | String::toLowerCase |
+| BinaryOperator<T> | T apply(T t1, T t2) | BigInteger::add |
+| Predicate<T> | boolean test(T t) | Collection::isEmpty |
+| Function<T,R> | R apply(T t) | Arrays::asList |
+| Supplier<T> | T get() | Instant::now |
+| Consumer<T> | void accept(T t) | System.out::println |
+
+## Item 45: Use streams judiciously
 
 
 ## 参考
