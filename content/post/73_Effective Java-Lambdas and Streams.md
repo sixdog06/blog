@@ -33,6 +33,14 @@ categories: ["Java"]
 | Consumer<T> | void accept(T t) | System.out::println |
 
 ## Item 45: Use streams judiciously
+streams和写循环需要trade off, streams让代码短了, 但是可读性可能差了, 通过一定的helper method可以帮助提升可读性. 因为stream过程中的值是拿不到的, 会对debug造成困扰(虽然idea有stream debug工具). 书中列举了几个stream用起来很舒适的场景:
+- Uniformly transform sequences of elements
+- Filter sequences of elements
+- Combine sequences of elements using a single operation(for example to add them, concatenate them, or compute their minimum)
+- Accumulate sequences of elements into a collection, perhaps grouping them by some common attribute
+- Search a sequence of elements for an element satisfying some criterion
+
+## Item 46: Prefer side-effect-free functions in streams
 
 
 ## 参考
