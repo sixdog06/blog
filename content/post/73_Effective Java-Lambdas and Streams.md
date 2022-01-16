@@ -41,6 +41,9 @@ streams和写循环需要trade off, streams让代码短了, 但是可读性可�
 - Search a sequence of elements for an element satisfying some criterion
 
 ## Item 46: Prefer side-effect-free functions in streams
+对同一个逻辑, 虽然可以写不同的stream实现, 但是要记住我们是在用函数式编程的思想. 比如`forEach`方法应该是用来展示stream的结果, 而不是用来在stream中计算, 我们需要的是一个stream的输入输出, 而不是过程中每个元素的行为. 除此之外书中介绍了`toList/toSet/toMap/groupingBy/joining`, 其中[toMap有个坑](https://huanruiz.github.io/post/72_java%E4%B8%ADtomap%E4%B8%8Easlist%E7%9A%84%E5%9D%91/), 在书中也介绍了.
+
+## Item 47: Prefer Collection to Stream as a return type
 
 
 ## 参考
