@@ -47,7 +47,7 @@ streams和写循环需要trade off, streams让代码短了, 但是可读性可�
 在Java8, Stream和Iterator的相互转换不是容易的事情. 所以当我们写的返回返回一个sequence时, 最好用Collection的实现, 这样在使用的地方既可以用stream处理, 也可以用for-each处理. Collection的限制是`size()`的返回值是int, 所以这个方法最大只能返回`Integer.MAX_VALUE`, 当然具体能不能存超过这个值的数字, 还是要看具体的实现.
 
 ## Item 48: Use caution when making streams parallel
-
+用`parallel()`来提高stream的性能时需要极其谨慎, 极有可能出错. 比如`Stream.iterate()`这种无法被并行的stream, 并行只会对`ArrayList/HashMap/HashSet/ConcurrentHashMap/array/int range/long ranges这种可以被轻易切分, 而且能快速定位引用的模块有好的效果. 
 
 ## 参考
 1. Effective Java
