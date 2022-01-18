@@ -1,6 +1,6 @@
 ---
-title: "Methods"
-date: 2021-01-17
+title: "Effective Java-Methods"
+date: 2022-01-17
 draft: false
 author: "小拳头"
 categories: ["Java"]
@@ -15,6 +15,17 @@ categories: ["Java"]
 当我们希望一个实例的字段是immutable的时候, 需要把输入和输出的参数都做copy, 防止在调用后被外部恶意修改. 这样会导致new更多的实例, 所以当调用方可被信任的时候, 用文档标注这个class中的元素可能被修改就好(实际上没见过有人这么做).
 
 ## Item 51: Design method signatures carefully
+设计函数签名的几个规则:
+- Choose method names carefully. 
+- Don’t go overboard in providing convenience methods. 别写过多的方法, 会让使用者崩溃.
+- Avoid long parameter lists. 书中推荐4个及以下. 把多个输入减少通常有3种方法. 
+    1. 拆方法, 但是会造成方法数量的增加; 
+    2. 用helper class来聚合输入的参数; 
+    3. 结合1和2, 用Builder pattern来
+- For parameter types, favor interfaces over classes.
+- Prefer two-element enum types to boolean parameters. 这个主要是true和false有实际意义时, 如果像灰度这种打开关闭的逻辑用boolean会更清楚一点
+
+## Item 52: Use overloading judiciously
 
 
 ## 参考
