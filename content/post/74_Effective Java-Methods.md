@@ -35,6 +35,12 @@ varargs容易出现因为输入参数不确定而导致的错误, 比如传参�
 如标题所讲, 不要再返回集合或数组时返回null, 而是用长度为0的集合或数组代替. 集合有类似`Collections.emptyList()`这样的方法,减少对性能的影响. 数组也可以被定义长度为0的空数组.
 
 ## Item 55: Return optionals judiciously
+`Optional<T>`的作用是用来**返回一个值**, 并且防止这个值的返回是null而作额外的处理. 但是它的使用是受限的
+- 不要用来封装collections, maps, streams, arrays这样的集合, 因为他们本身可以有空的返回
+- 有`OptionalInt, OptionalLong, OptionalDouble`这三个类, 所以`int, long, double`类型就直接使用这三个类包装即可
+- key, value, collection, array都不适合用optional作为元素
+
+## Item 56: Write doc comments for all exposed API elements
 
 
 ## 参考
