@@ -32,6 +32,9 @@ categories: ["Java"]
 varargs容易出现因为输入参数不确定而导致的错误, 比如传参为空等等. 优化方式是overload同名方法, 用多参数方法替换, 以`public void foo(int a1, int a2, int a3, int... rest)`结尾. 但这会造成方法过多, 所以依然要trade-off优劣.
 
 ## Item 54: Return empty collections or arrays, not nulls
+如标题所讲, 不要再返回集合或数组时返回null, 而是用长度为0的集合或数组代替. 集合有类似`Collections.emptyList()`这样的方法,减少对性能的影响. 数组也可以被定义长度为0的空数组.
+
+## Item 55: Return optionals judiciously
 
 
 ## 参考
