@@ -29,6 +29,9 @@ categories: ["Java"]
 **overload没有动态根据instance来运行对应方法的效果, 只能用override实现, override才会在运行期动态选择方法.** 重载的方法集合中最好都不要写有相同参数数量的方法, 要设计相同参数数量的方法就换个名字. 如果是构造器(无法改名字), 那么就提供对应的工厂方法. 书中举了很多有趣的例子, 比如List的`boolean remove(Object o);`/`E remove(int index);`, 一个是删除对应的元素, 一个是删除index位置的元素.
 
 ## Item 53: Use varargs judiciously
+varargs容易出现因为输入参数不确定而导致的错误, 比如传参为空等等. 优化方式是overload同名方法, 用多参数方法替换, 以`public void foo(int a1, int a2, int a3, int... rest)`结尾. 但这会造成方法过多, 所以依然要trade-off优劣.
+
+## Item 54: Return empty collections or arrays, not nulls
 
 
 ## 参考
