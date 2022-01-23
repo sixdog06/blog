@@ -18,6 +18,9 @@ categories: ["Java"]
 - Parallel iteration: 并行地遍历多个集合
 
 ## Item 59: Know and use the libraries
+别造轮子, 在理解的基础上多用库里有的api. 比如Java8中的随机数可以用性能更好的`ThreadLocalRandom`和`SplittableRandom`提供的api实现, 而不是用Random本身. 
+
+## Item 60: Avoid float and double if exact answers
 
 
 ## 参考
