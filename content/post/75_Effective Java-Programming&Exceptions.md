@@ -21,6 +21,12 @@ categories: ["Java"]
 别造轮子, 在理解的基础上多用库里有的api. 比如Java8中的随机数可以用性能更好的`ThreadLocalRandom`和`SplittableRandom`提供的api实现, 而不是用Random本身. 
 
 ## Item 60: Avoid float and double if exact answers
+因为浮点型天然无法准确表示negative power of ten, 所以在需要精确计算(货币计算)时不能使用. 可以使用`BigDecimal`替换, 带来的问题是比较麻烦, 而且计算会比浮点型更慢. 还有一个办法就是用更小的单位, 这样就可以用整型来表示浮点型.
+
+## Item 61: Prefer primitive types to boxed primitives
+用基本数据类型, 省去拆箱装箱和乱用包装类型导致bug的烦恼. 虽然在泛型的场景, 我们不得不用包装类型.
+
+## Item 62: Avoid strings where other types are more appropriate
 
 
 ## 参考
