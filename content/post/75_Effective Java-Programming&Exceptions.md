@@ -27,6 +27,18 @@ categories: ["Java"]
 用基本数据类型, 省去拆箱装箱和乱用包装类型导致bug的烦恼. 虽然在泛型的场景, 我们不得不用包装类型.
 
 ## Item 62: Avoid strings where other types are more appropriate
+能不用String的场景尽量用其他的类型替换, 书中介绍了一些case, 在开发中常见的场景就是redis key, 如果用String魔法值表示很容易重复. 如果转而用枚举表示, 并用String作为枚举的一个字段不失为一个更好的方式.
+
+## Item 63: Beware the performance of string concatenation
+因为`String`是immutable的, 所以用`+`拼接需要把原来的多个String全部赋值一遍, 产生不必要的内存消耗. 用`StringBuilder`可以避免这一点.
+
+## Item 64: Refer to objects by their interfaces
+为了代码的灵活度, 引用对象的时候最好用合适的接口去表示引用. 有3中情况不好用接口表示:
+1. `String`或`BigInteger`这种本身不会有多种实现类
+2. 没有合适的接口使用, 像class-based framework, 类的粒度已经最大了
+3. 类里面有的方法咋接口没有提供, 如`PriorityQueue`的`comparator`在`Queue`接口中没有
+
+## Item 65: Prefer interfaces to reflection
 
 
 ## 参考
