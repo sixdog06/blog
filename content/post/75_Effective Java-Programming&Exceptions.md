@@ -45,7 +45,9 @@ categories: ["Java"]
 为了安全, native methods别用, 相信JVM...
 
 ## Item 67: Optimize judiciously
+不要傻乎乎地优化性能, 试着写好代码而不是写快速的代码, 好的代码自然快. 对底层设计, 从算法和数据结构上就要考虑性能, 并且要有灵活度, 让我们在以后的升级中能有更多操作空间.
 
+## Item 68: Adhere to generally accepted naming conventions
 
 ## 参考
 1. Effective Java
