@@ -39,6 +39,12 @@ categories: ["Java"]
 3. 类里面有的方法咋接口没有提供, 如`PriorityQueue`的`comparator`在`Queue`接口中没有
 
 ## Item 65: Prefer interfaces to reflection
+当我们需要的类在编译期才能确定时, 只能通过反射实现. 反射问题主要有三个: 编译期的检查没了/写起来麻烦/性能比正常new对象差. 我们使用反射的时候应当在new的时候就做好, 并用接口或父类去引用实例. 在使用时就当普通的实例使用即可.
+
+## Item 66: Use native methods judiciously
+为了安全, native methods别用, 相信JVM...
+
+## Item 67: Optimize judiciously
 
 
 ## 参考
