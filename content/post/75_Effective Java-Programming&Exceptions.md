@@ -48,6 +48,11 @@ categories: ["Java"]
 不要傻乎乎地优化性能, 试着写好代码而不是写快速的代码, 好的代码自然快. 对底层设计, 从算法和数据结构上就要考虑性能, 并且要有灵活度, 让我们在以后的升级中能有更多操作空间.
 
 ## Item 68: Adhere to generally accepted naming conventions
+列几个特点:
+- 可实例化的**Class**通常由单数名词/名词词组组成, 而不可实例化的Class通常是复数名词
+- **接口名**和类名相似, 或在后缀加上able/ible表能力
+- **方法名**表示一种操作, 由动词/动词词组组成, 返回`boolean`的方法会有is前缀. 除了JavaBean中的方法, 注意与getter和setter区分(不用get/set做前缀)
+- **转换类型的方法**, 一般是`toType`的形式. **返回基础类型的方法**, 一般是`typeValue`的形式. 
 
 ## 参考
 1. Effective Java
