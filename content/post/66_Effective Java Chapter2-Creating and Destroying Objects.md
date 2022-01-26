@@ -1,5 +1,5 @@
 ---
-title: "Effective Java-Creating and Destroying Objects"
+title: "Effective Java Chapter2-Creating and Destroying Objects"
 date: 2021-11-08
 draft: false
 author: "小拳头"

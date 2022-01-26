@@ -1,5 +1,5 @@
 ---
-title: "方法区"
+title: "JVM入门-方法区"
 date: 2021-01-28
 draft: false
 author: "小拳头"

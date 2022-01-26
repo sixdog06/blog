@@ -1,5 +1,5 @@
 ---
-title: "Effective Java-Methods Common to All Objects"
+title: "Effective Java Chapter3-Methods Common to All Objects"
 date: 2021-11-16
 draft: false
 author: "小拳头"

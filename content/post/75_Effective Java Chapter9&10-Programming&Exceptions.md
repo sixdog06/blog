@@ -1,5 +1,5 @@
 ---
-title: "Effective Java-General Programming&Exceptions"
+title: "Effective Java Chapter9&10-General Programming&Exceptions"
 date: 2022-01-20
 draft: false
 author: "小拳头"
@@ -53,6 +53,21 @@ categories: ["Java"]
 - **接口名**和类名相似, 或在后缀加上able/ible表能力
 - **方法名**表示一种操作, 由动词/动词词组组成, 返回`boolean`的方法会有is前缀. 除了JavaBean中的方法, 注意与getter和setter区分(不用get/set做前缀)
 - **转换类型的方法**, 一般是`toType`的形式. **返回基础类型的方法**, 一般是`typeValue`的形式. 
+
+---
+
+下面开始第10章的笔记, 讲exceptions.
+
+## Item 69: Use exceptions only for exceptional conditions
+exceptions只能用来处理潜在的意外情况, 而不是用作基础的流程控制.
+
+## Item 70: Use checked exceptions for recoverable conditions and runtime exceptions for programming errors
+Java有三种throwables: checked exceptions, runtime exceptions, errors. 如果要实现`Throwable`, 都应该去实现`RuntimeException`. 用`RuntimeException`去捕捉因为程序bug产生的报错. `Error`的子类都不应该手动抛(除了AssertionError).
+
+包括Exception及其子类(除了RuntimeException及其子类)都应捕获, 这种类型的异常称为Checked Exception. 包括Error及其子类, RuntimeException及其子类不需要捕获. 但实际上为了项目不崩, 项目一般最后都会有兜底的Exception.
+
+## Item 71: Avoid unnecessary use of checked exceptions
+
 
 ## 参考
 1. Effective Java

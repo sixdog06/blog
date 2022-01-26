@@ -1,5 +1,5 @@
 ---
-title: "Effective Java-Classes and Interfaces"
+title: "Effective Java Chapter4-Classes and Interfaces"
 date: 2021-11-28
 draft: false
 author: "小拳头"

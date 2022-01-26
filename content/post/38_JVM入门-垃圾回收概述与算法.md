@@ -1,5 +1,5 @@
 ---
-title: "垃圾回收概述与算法"
+title: "JVM入门-垃圾回收概述与算法"
 date: 2021-01-30
 draft: false
 author: "小拳头"

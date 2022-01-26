@@ -1,5 +1,5 @@
 ---
-title: "Effective Java-Generics"
+title: "Effective Java Chapter5-Generics"
 date: 2021-12-14
 draft: false
 author: "小拳头"

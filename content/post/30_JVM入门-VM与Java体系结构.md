@@ -1,5 +1,5 @@
 ---
-title: "JVM与Java体系结构"
+title: "JVM入门-JVM与Java体系结构"
 date: 2021-01-25
 draft: false
 author: "小拳头"

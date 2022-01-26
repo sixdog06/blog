@@ -1,5 +1,5 @@
 ---
-title: "Effective Java-Methods"
+title: "Effective Java Chapter8-Methods"
 date: 2022-01-17
 draft: false
 author: "小拳头"

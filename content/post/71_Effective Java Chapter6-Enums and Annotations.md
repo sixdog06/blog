@@ -1,5 +1,5 @@
 ---
-title: "Effective Java-Enums and Annotations"
+title: "Effective Java Chapter6-Enums and Annotations"
 date: 2021-12-28
 draft: false
 author: "小拳头"

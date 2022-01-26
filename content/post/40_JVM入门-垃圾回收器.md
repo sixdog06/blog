@@ -1,5 +1,5 @@
 ---
-title: "垃圾回收器"
+title: "JVM入门-垃圾回收器"
 date: 2021-02-02
 draft: false
 author: "小拳头"
