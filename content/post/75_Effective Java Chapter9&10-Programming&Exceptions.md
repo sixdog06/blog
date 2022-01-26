@@ -62,11 +62,23 @@ categories: ["Java"]
 exceptions只能用来处理潜在的意外情况, 而不是用作基础的流程控制.
 
 ## Item 70: Use checked exceptions for recoverable conditions and runtime exceptions for programming errors
-Java有三种throwables: checked exceptions, runtime exceptions, errors. 如果要实现`Throwable`, 都应该去实现`RuntimeException`. 用`RuntimeException`去捕捉因为程序bug产生的报错. `Error`的子类都不应该手动抛(除了AssertionError).
-
 包括Exception及其子类(除了RuntimeException及其子类)都应捕获, 这种类型的异常称为Checked Exception. 包括Error及其子类, RuntimeException及其子类不需要捕获. 但实际上为了项目不崩, 项目一般最后都会有兜底的Exception.
 
 ## Item 71: Avoid unnecessary use of checked exceptions
+如果某个case会provide insufficient information, 才抛checked exception, 其他情况可以正常走业务逻辑, 用正常代码去拦可能错误的case. 如果unchecked exceptions可以自恢复, 也可以考虑cache但不抛. (日志该记还是要记)
+
+## Item 72: Favor the use of standard exceptions
+**Do not reuse Exception, RuntimeException, Throwable, or Error directly**. 把他们当成抽象类, 开发中尽量用标准库的exceptions. 其中`IllegalStateException`是输入的任何只都无效, 其余情况用`IllegalStateException`.
+| Exception | Occasion for Use |
+| --- | --- |
+| IllegalArgumentException | Non-null parameter value is inappropriate |
+| IllegalStateException | Object state is inappropriate for method invocation |
+| NullPointerException | Parameter value is null where prohibited |
+| IndexOutOfBoundsException | Index parameter value is out of range |
+| ConcurrentModificationException | Concurrent modification of an object has been detected where it is prohibited |
+| UnsupportedOperationException | Object does not support method |
+
+## Item 73: Throw exceptions appropriate to the abstraction
 
 
 ## 参考
