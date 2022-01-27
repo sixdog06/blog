@@ -79,6 +79,9 @@ exceptions只能用来处理潜在的意外情况, 而不是用作基础的流�
 | UnsupportedOperationException | Object does not support method |
 
 ## Item 73: Throw exceptions appropriate to the abstraction
+在higher layers去catch lower-level exceptions, 并抛higher-level exceptions, 传递错误信息, 这里主要的目的是防止报错的来源被污染了. 实际开发中通常会catch之后直接记日志, 并隔离lower-level exceptions, 防止影响主业务流程.
+
+## Item 74: Document all exceptions thrown by each method
 
 
 ## 参考
