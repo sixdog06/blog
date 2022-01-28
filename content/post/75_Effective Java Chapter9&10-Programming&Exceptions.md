@@ -82,6 +82,12 @@ exceptions只能用来处理潜在的意外情况, 而不是用作基础的流�
 在higher layers去catch lower-level exceptions, 并抛higher-level exceptions, 传递错误信息, 这里主要的目的是防止报错的来源被污染了. 实际开发中通常会catch之后直接记日志, 并隔离lower-level exceptions, 防止影响主业务流程.
 
 ## Item 74: Document all exceptions thrown by each method
+`throws exception`只抛checked exceptions, 并在`@throw`中做好文档, 如果一个类有很多重复的exception, 那么可以把这个文档写在类的文档中.
+
+## Item 75: Include failure-capture information in detail messages
+报错打印足够的信息, 比如`IndexOutOfBoundsException`可以打印出具体上下限是多少, 但注意有信安风险的信息不能打印.
+
+## Item 76: Strive for failure atomicity
 
 
 ## 参考
