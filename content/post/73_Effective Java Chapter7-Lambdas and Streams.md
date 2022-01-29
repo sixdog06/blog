@@ -1,6 +1,6 @@
 ---
-title: "Effective Java Chapter7-Enums and Annotations"
-date: 2021-12-28
+title: "Effective Java Chapter7-Lambdas and Streams"
+date: 2021-12-29
 draft: false
 author: "小拳头"
 categories: ["Java"]
