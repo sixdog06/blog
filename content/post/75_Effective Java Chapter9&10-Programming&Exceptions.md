@@ -91,7 +91,7 @@ exceptions只能用来处理潜在的意外情况, 而不是用作基础的流�
 在exception出现的时候, 应该保证原子性, 也就是不影响方法其他对象. 比如可以在要修改对象是进行合法判断, 如果不合法则抛错, 合法才能修改对象. 也可以金修改对象的copy, 合法再把修改的内容传给对象. 除此之外只能用recovery code进行回滚了.
 
 ## Item 77: Don’t ignore exceptions
-
+不要catch了exceptions什么都不做, 如果可以忽略, 也要在文档中注明.
 
 ## 参考
 1. Effective Java
