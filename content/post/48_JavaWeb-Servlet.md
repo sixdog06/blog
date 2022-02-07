@@ -41,7 +41,7 @@ public class HelloServlet extends HttpServlet {
 }
 ```
 
-创建映射并配置Tomcat, 直接run即可. 现实的是默认的hello world界面, 在url后面加上`hello`, `"Hello, Servlet"`就可以被打印了. 还可以用`*`来代替所有, 但是`*`前不能加项目映射路径, `*`通配符的优先级低于固有映射路径.
+创建映射并配置Tomcat, 直接run即可. 显示的是默认的hello world界面, 在url后面加上`hello`, `"Hello, Servlet"`就可以被打印了. 还可以用`*`来代替所有, 但是`*`前不能加项目映射路径, `*`通配符的优先级低于固有映射路径.
 ```
 <!--注册Servlet-->
 <servlet>
@@ -56,7 +56,7 @@ public class HelloServlet extends HttpServlet {
 ```
 
 ## ServletContext
-web容器(Tomcat), 为每个Web应用程序构建一个对应的ServletContext对象, 代表当前的Web应用. ServletContext的作用是防止一些数据. 我们新建一个类, 用来放置数据
+web容器(Tomcat), 为每个Web应用程序构建一个对应的ServletContext对象, 代表当前的Web应用. ServletContext的作用是放置一些数据. 我们新建一个类, 用来放置数据.
 ```
 public class HelloServlet extends HttpServlet {
 
