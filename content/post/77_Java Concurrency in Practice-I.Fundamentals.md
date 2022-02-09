@@ -44,7 +44,13 @@ volatile提供轻量级的同步机制, 编译器和运行时不会对volatile�
 publish指对象被作用域外的代码使用, 如果不该publish的对象被publish(对象还没构造好时), 就叫escape. 有一种不容易发现的情况就是构造器中new实例的时候, 这个实例被publish时, 构造器内的this也会被隐式地publish, 然而此时构造器可能并没有执行结束. 所以可以用工厂方法返回实例, 防止escape. *e.g. SafeListener ThisEscape*.
 
 ### Thread confinement
-从代码实现上, 把会共享的变量限制在只能被一个线程用, 那么就不需要synchronization. 如Swing的dispatch线程.
+从代码实现上, 把会共享的变量限制在只能被一个线程用, 那么就不需要synchronization. 如Swing的dispatch线程. 但如果仅从代码去实现thread confinement(ad-hoc thread confinement), 程序会比较脆弱, 像GUI这样的用一个单线程的子系统去实现, 在很多情况下效果会更好. 
+
+volatile变量是thread confinement的一种特殊情况, 因为只要保证单线程写, 那么Visibility是可保证的. Stack confinement同样也能保证thread confinement, 因为局部变量只会在线程的栈中使用, 局部变量只要不溢出, 那么一定线程安全了. *e.g. ThreadConfinementExample.loadTheArk*.
+
+保证thread confinement最标准的实现方法是使用`ThreadLocal`, 使用时可以把它想象成一个Map, 对不同的线程提供对应的值(实际不是这样实现的), 当线程不用这个值了, 这个值就会被GC. 每个set的值在使用的线程都有独立的副本, 在get时也总会返回当前线程设置的最新值. *ThreadConfinementExample.getConnection*
+
+### Immutability
 
 
 ## 基础
