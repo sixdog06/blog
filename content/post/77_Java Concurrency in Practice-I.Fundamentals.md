@@ -1,5 +1,5 @@
 ---
-title: "Java并发编程实战-基础知识"
+title: "Java Concurrency in Practice-I.Fundamentals"
 date: 2022-01-29
 draft: false
 author: "小拳头"
@@ -8,14 +8,14 @@ categories: ["Java"]
 
 基础知识覆盖了书中的第二章到第五章. 第一章为粗略地介绍, 简单过一下就好, 相信看这本书的人或多或少是了解Java并发编程的. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab), 有示例的代码以类名的形式均标注在小结的最后.
 
-## 第二章-线程安全性
-### 原子性
+## Chapter2-Thread Safety
+### Atomicity
 在不同的线程访问一个资源时, 这个资源的状态应该是一致的, 类的行为和应该有的规范完全一致. 我认为简单地说, 就是这个类的功能不管是单线程还是并发, 都是正常的. **所以无状态对象一定安全**, 因为他没有域, 也没有对其他类的域的引用, 计算过程的局部局部都只在栈上的, 没有共享资源, 那么一定安全了. 当这个而无状态类有字段时, 可以用原子变量类, 如`AtomicLong`来保证原子性(读取-修改-写入). 这里要注意, 原子性只针对原子变量本身, 多个原子变量因为不应时序的调用, 不能保证线程安全. *e.g. AtomicTest*.
 
-### 加锁机制
+### Locking
 可以用`synchronized(lock) {}`标注同步代码块, 并且这些内置锁是可重入的, 也就是说锁的粒度是线程, 线程可以获得自己持有的锁. *e.g. Widgit*
 
-### 用锁来保护状态
+### Guarding statewith locks
 多个线程共享的变量应该由一个锁来保护, 反之不是多个线程共享的变量无需保护. 锁需要保护必变性条件中的所有涉及的变量, 只保护一个变量是不够的. 即使像Vector类的所有方法都是`synchronized`方法2, 也不能保证如
 ```
 if (!vector.contains(element)) {
@@ -24,11 +24,11 @@ if (!vector.contains(element)) {
 ```
 的复合操作原子.
 
-### 活跃性与性能
+### Liveness and performance
 没有使用原子变量类, 也没有对整个方法加锁, 防止持有锁的时间过长. **要注意对于计算时间长的的操作不能加锁. 比如i/o操作**. *e.g. CachedFactorizer*;
 
-## 第三章-对象的共享
-### 可见性
+## Chapter3-Sharing Objects
+### Visibility
 没有同步机制, 两个线程的执行顺序是无法判断的(因为重排序), 这时候做内存操作很容易出错, 读的值可能是更新前的**失效数据**, 也可能是更新后的. *e.g. NoVisibility* 在JavaBean中, 如果要对一个值的get和set进行同步, 那么`synchronized`需要同时加在在getter和setter方法上. **加锁不仅要保证互斥, 也要保证内存可见性.**
 
 > synchronized方法锁的的是`this`实例, 静态synchronized方法锁的是`ClassName.class`实例. 和对方法内部整个代码块加锁的写法是等价的.
@@ -40,7 +40,12 @@ volatile提供轻量级的同步机制, 编译器和运行时不会对volatile�
 - 该变量不会和其他状态变量一起纳入不变性条件
 - 访问变量时不需要加锁
 
-### 发布和溢出
+### Publication and escape
+publish指对象被作用域外的代码使用, 如果不该publish的对象被publish(对象还没构造好时), 就叫escape. 有一种不容易发现的情况就是构造器中new实例的时候, 这个实例被publish时, 构造器内的this也会被隐式地publish, 然而此时构造器可能并没有执行结束. 所以可以用工厂方法返回实例, 防止escape. *e.g. SafeListener ThisEscape*.
+
+### Thread confinement
+从代码实现上, 把会共享的变量限制在只能被一个线程用, 那么就不需要synchronization. 如Swing的dispatch线程.
+
 
 ## 基础
 1. Java并发编程实战
