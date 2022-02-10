@@ -56,9 +56,18 @@ immutable的对象线程安全, 不可变对象需要满足如下几个条件. *
 - 域都是final(String除外, 严格来说不用满足这一点, 但是实现上需要对JMM有深入的理解, 所以自己写代码别这么做). 将不可变的域声明为final是个好习惯. 
 - 对象创建期间, this不溢出
 
-当某个变量的读写有竞争条件时, 可以把他们放在一个不可变对象中, 来保证线程安全. *e.g. OneValueCache*.
+当某个变量的读写有竞争条件时, 可以把他们放在一个不可变对象中, 来保证线程安全. *e.g. VolatileCachedFactorizer OneValueCache*. 
 
 ### Safe publication
+Effectively immutable objects(技术上状态可变, 但是实际上不会对其进行改变)需要安全地publish, 让使用这个对象的线程看到已发布的状态. 书中总结了以下几种方式. 
+- 静态初始化函数中初始化一个对象的引用. 因为静态初始化在JVM的初始化阶段进行, JVM保证内部的线程安全
+- 将对象引用保存到volatile或AtomicReference对象中
+- 将对象引用保存到正确构造对象的final域中
+- 将对象引用保存到一个由锁保护的域中
+
+而Mutable objects不仅仅需要safe publication, 还需要线程安全或用锁保护. 而不可变对象因为本身保证了线程安全, 所以可用任何机制发布. 
+
+## Chapter4-Composing Objects
 
 
 ## 基础
