@@ -51,6 +51,14 @@ volatile变量是thread confinement的一种特殊情况, 因为只要保证单�
 保证thread confinement最标准的实现方法是使用`ThreadLocal`, 使用时可以把它想象成一个Map, 对不同的线程提供对应的值(实际不是这样实现的), 当线程不用这个值了, 这个值就会被GC. 每个set的值在使用的线程都有独立的副本, 在get时也总会返回当前线程设置的最新值. *ThreadConfinementExample.getConnection*
 
 ### Immutability
+immutable的对象线程安全, 不可变对象需要满足如下几个条件. *e.g. ThreeStooges*.
+- 对象创建后其状态不能修改
+- 域都是final(String除外, 严格来说不用满足这一点, 但是实现上需要对JMM有深入的理解, 所以自己写代码别这么做). 将不可变的域声明为final是个好习惯. 
+- 对象创建期间, this不溢出
+
+当某个变量的读写有竞争条件时, 可以把他们放在一个不可变对象中, 来保证线程安全. *e.g. OneValueCache*.
+
+### Safe publication
 
 
 ## 基础
