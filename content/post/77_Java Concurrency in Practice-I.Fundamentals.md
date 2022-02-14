@@ -71,10 +71,13 @@ Effectively immutable objects(技术上状态可变, 但是实际上不会对其
 这一章介绍一些组合模式, 让一个类更容易成为线程安全的类.
 
 ### Designing a thread-safe class
-设计线程安全的类, 需要考虑3个基本要素. *e.g. Counter*
-- 构成对象状态的所有对象
-- 约束状态变量的不变形条件
+设计线程安全的类, 需要考虑3个基本要素. *e.g. Counter*, 要之一的是invariants, precondition, postcondition都需要满足.
+- 构成对象状态的**所有变量**
+- 约束状态变量的**不变性条件**
 - 建立对象状态的并发访问管理策略
+
+### Instance confinement
+确保一个对象只能有单个线程访问, 封装在对象内部的数据, 可以把数据的访问相纸在对象的方法上. *e.g. PersonSet*
 
 ## 基础
 1. Java并发编程实战
