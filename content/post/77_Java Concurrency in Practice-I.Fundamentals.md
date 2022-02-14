@@ -77,7 +77,10 @@ Effectively immutable objects(技术上状态可变, 但是实际上不会对其
 - 建立对象状态的并发访问管理策略
 
 ### Instance confinement
-确保一个对象只能有单个线程访问, 封装在对象内部的数据, 可以把数据的访问相纸在对象的方法上. *e.g. PersonSet*
+确保一个对象只能有单个线程访问, 封装在对象内部的数据, 可以把数据的访问限制在对象的方法上. *e.g. PersonSet*. 进而想到Java的监视器模式, 用一把内部锁来封装内部的mutable state. *e.g. *.
+
+### Delegating thread safety
+
 
 ## 基础
 1. Java并发编程实战
