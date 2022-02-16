@@ -85,6 +85,9 @@ Effectively immutable objects(技术上状态可变, 但是实际上不会对其
 如果保证Point的线程安全, 也可以发布Point, *e.g. PublishingVehicleTracker*. 和DelegatingVehicleTracker的区别是这个`SafePoint`是可以改变的, 因为读写的方法都加了锁, 所以还是能保证线程安全. 
 
 ### Adding functionality to existing thread-safe classes
+第一种方式是在使用端进行加锁, 但是要注意这个锁需要是实例的`this`, 不是`ListHelper`, 否则这个锁是无效的. 这样使用的问题是破坏封装性, 耦合度更高了. *e.g. ListHelper*. 更好的方法是Composition. *e.g. ImprovedList*. 例子中用监视器模式封装了List.
+
+### Documenting synchronization policies
 
 
 ## 基础
