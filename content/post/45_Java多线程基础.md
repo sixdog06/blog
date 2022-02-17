@@ -3,8 +3,7 @@ title: "Java多线程-基础"
 date: 2020-11-30
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["Java"]
+categories: ["Java"]
 ---
 
 ## 创建
@@ -331,7 +330,6 @@ public class ThreadPool {
         service.execute(new NumberThread()); //Runnable
         //service.submit(); //Callable
         service.shutdown();
-
     }
 }
 
