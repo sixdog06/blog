@@ -25,11 +25,11 @@ if (!vector.contains(element)) {
 的复合操作原子.
 
 ### Liveness and performance
-没有使用原子变量类, 也没有对整个方法加锁, 防止持有锁的时间过长. **要注意对于计算时间长的的操作不能加锁. 比如i/o操作**. *e.g. CachedFactorizer*;
+没有使用原子变量类, 也没有对整个方法加锁, 防止持有锁的时间过长. **要注意对于计算时间长的操作不能加锁. 比如i/o操作**. *e.g. CachedFactorizer*;
 
 ## Chapter3-Sharing Objects
 ### Visibility
-没有同步机制, 两个线程的执行顺序是无法判断的(因为重排序), 这时候做内存操作很容易出错, 读的值可能是更新前的**失效数据**, 也可能是更新后的. *e.g. NoVisibility* 在JavaBean中, 如果要对一个值的get和set进行同步, 那么`synchronized`需要同时加在在getter和setter方法上. **加锁不仅要保证互斥, 也要保证内存可见性.**
+没有同步机制, 两个线程的执行顺序是无法判断的(因为重排序), 这时候做内存操作很容易出错, 读的值可能是更新前的**失效数据**, 也可能是更新后的, 影响Visibility. *e.g. NoVisibility* 在JavaBean中, 如果要对一个值的get和set进行同步, 那么`synchronized`需要同时加在在getter和setter方法上. **加锁不仅要保证互斥, 也要保证内存可见性.**
 
 > synchronized方法锁的的是`this`实例, 静态synchronized方法锁的是`ClassName.class`实例. 和对方法内部整个代码块加锁的写法是等价的.
 
@@ -71,7 +71,7 @@ Effectively immutable objects(技术上状态可变, 但是实际上不会对其
 这一章介绍一些组合模式, 让一个类更容易成为线程安全的类.
 
 ### Designing a thread-safe class
-设计线程安全的类, 需要考虑3个基本要素. *e.g. Counter*, 要之一的是invariants, precondition, postcondition都需要满足.
+设计线程安全的类, 需要考虑3个基本要素. *e.g. Counter*.
 - 构成对象状态的**所有变量**
 - 约束状态变量的**不变性条件**
 - 建立对象状态的并发访问管理策略
@@ -90,7 +90,7 @@ Effectively immutable objects(技术上状态可变, 但是实际上不会对其
 ### Documenting synchronization policies
 对类的线程安全性应该写文档,  同步策略是什么, 锁保护了哪些变量, 都应该注明. 如果遇到了没有写线程安全的类, 就假设是不是线程安全的.
 
-## Building Blocks
+## Chapter5-Building Blocks
 
 
 ## 基础
