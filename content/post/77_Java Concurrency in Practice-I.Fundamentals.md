@@ -88,6 +88,9 @@ Effectively immutable objects(技术上状态可变, 但是实际上不会对其
 第一种方式是在使用端进行加锁, 但是要注意这个锁需要是实例的`this`, 不是`ListHelper`, 否则这个锁是无效的. 这样使用的问题是破坏封装性, 耦合度更高了. *e.g. ListHelper*. 更好的方法是Composition. *e.g. ImprovedList*. 例子中用监视器模式封装了List.
 
 ### Documenting synchronization policies
+对类的线程安全性应该写文档,  同步策略是什么, 锁保护了那刺耳变量, 都应该注明. 如果遇到了没有写线程安全的类, 就假设是不是线程安全的.
+
+## Building Blocks
 
 
 ## 基础
