@@ -91,7 +91,19 @@ Effectively immutable objects(技术上状态可变, 但是实际上不会对其
 对类的线程安全性应该写文档,  同步策略是什么, 锁保护了哪些变量, 都应该注明. 如果遇到了没有写线程安全的类, 就假设是不是线程安全的.
 
 ## Chapter5-Building Blocks
+### Problems with synchronized collections
+同之前提到过的一样, 同步容器类进行复合操作, 对调用方也可能是线程不安全的. 比如下面的代码. 解决方式是在调用端, 对复合操作加锁, 锁用`list`对象即可. 
+```
+public static Object getLast(Vector list) {
+    int lastIndex = list.size() - 1;
+    return list.get(lastIndex);
+}
 
+public static void deleteLast(Vector list) {
+    int lastIndex = list.size() - 1;
+    list.remove(lastIndex);
+}
+```
 
 ## 基础
 1. Java并发编程实战
