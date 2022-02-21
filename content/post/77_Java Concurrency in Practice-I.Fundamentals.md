@@ -105,6 +105,16 @@ public static void deleteLast(Vector list) {
 }
 ```
 
+即使是现在常用的并发容器类, 也会有复合操作带来的并发问题, 如下代码. 如果我希望带带期间加锁, 可以克隆这个容器, 去迭代副本, 因为副本封闭在单线程内, 保证线程安全. 
+```
+List<Widget> widgetList = Collections.synchronizedList(new ArrayList<>());
+...
+// May throw ConcurrentModificationException
+for (Widget w : widgetList) {
+    doSomething(w);
+}
+```
+
 ## 基础
 1. Java并发编程实战
 2. [廖雪峰Java教程-多线程](https://www.liaoxuefeng.com/wiki/1252599548343744/1255943750561472)
