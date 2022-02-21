@@ -115,6 +115,13 @@ for (Widget w : widgetList) {
 }
 ```
 
+### Concurrent collections
+用并发容器替代同步容器, 可以极大提高伸缩性并降低风险. 比如使用`ConcurrentHashMap`, 用更细粒度的锁, 并且本身不能被加锁来执行独占访问. 但是size/isEmpty可能发挥的值不准确(在并发场景作用较小).
+
+### Blocking queues and the producer-consumer pattern
+阻塞队列可以用来实现生产者-消费者模式. *e.g. FileCrawler Indexer*. 让对象安全地从生产者线程发布到消费者线程, 实现Serial thread confinement(串行的线程封闭). 对象虽然只属于单个对象, 导师们可以通过安全地publish对象来转义所有权. 书里面还介绍了通过Deque实现work stealing, 也就是消费者访问自己的双端队列, 如果完成了工作, 就送其他消费者消费的双端队列末尾秘密地获取工作, 这就是工作密取. 
+
+### Blocking and interruptible methods
 
 
 ## 基础
