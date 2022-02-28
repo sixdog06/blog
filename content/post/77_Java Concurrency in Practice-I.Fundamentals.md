@@ -129,6 +129,9 @@ for (Widget w : widgetList) {
 
 `Semaphore`可以通过`permit`来实现资源池/对容器加边界. 通过构造函数传一个初值, 每次尝试调用`acquire`就会获取一个许可, 当调用结束后再次调用`release`释放许可. *e.g. BoundedHashSet*.
 
+书中还介绍了`Barriers`, 和闭锁的区别是栅栏的所有线程必须同时达到一个位置, 才能继续执行. Java提供了CyclicBarrier和Exchanger. 前者可以让参与方反复在栅栏位置汇合, 后者可以让参与反在栅栏位置上交换数据. 这里的例子不太好, 不深究了...
+
+### Building an efficient, scalable result cache
 
 
 ## 基础
