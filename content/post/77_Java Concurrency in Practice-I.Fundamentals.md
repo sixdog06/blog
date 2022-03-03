@@ -6,11 +6,11 @@ author: "小拳头"
 categories: ["Java"]
 ---
 
-基础知识覆盖了书中的第二章到第五章. 第一章为粗略地介绍, 简单过一下就好, 相信看这本书的人或多或少是了解Java并发编程的. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab), 有示例的代码以类名的形式均标注在小结的最后.
+基础知识覆盖了书中的第二章到第五章. 第一章为粗略地介绍, 简单过一下就好, 相信看这本书的人或多或少是了解Java并发编程的. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab), 有示例的代码以*类名*的形式标注在小结中.
 
 ## Chapter2-Thread Safety
 ### Atomicity
-在不同的线程访问一个资源时, 这个资源的状态应该是一致的, 类的行为和应该有的规范完全一致. 我认为简单地说, 就是这个类的功能不管是单线程还是并发, 都是正常的. **所以无状态对象一定安全**, 因为他没有域, 也没有对其他类的域的引用, 计算过程的局部局部都只在栈上的, 没有共享资源, 那么一定安全了. 当这个而无状态类有字段时, 可以用原子变量类, 如`AtomicLong`来保证原子性(读取-修改-写入). 这里要注意, 原子性只针对原子变量本身, 多个原子变量因为不应时序的调用, 不能保证线程安全. *e.g. AtomicTest*.
+在不同的线程访问一个资源时, 这个资源的状态应该是一致的, 类的行为和应该有的规范完全一致. 我认为简单地说, 就是这个类的功能不管是单线程还是并发, 都是正常的. **所以无状态对象一定安全**, 因为它没有域, 也没有对其他类的域的引用, 计算过程只在栈上的, 没有共享资源, 那么一定安全了. 当这个而无状态类有字段时, 可以用原子变量类, 如`AtomicLong`来保证原子性(读取-修改-写入). 这里要注意, 原子性只针对原子变量本身, 多个原子变量因为不应时序的调用, 不能保证线程安全. *e.g. AtomicTest*.
 
 ### Locking
 可以用`synchronized(lock) {}`标注同步代码块, 并且这些**内置锁**是可重入的, 也就是说锁的粒度是线程, 线程可以获得自己持有的锁. *e.g. Widgit*. ~从这里可以看出有些地方写`ReentrantLock`和`synchronized`的区别是`synchronized`不可重入~, 这种说法是错的. 只不过用`ReentrantLock`, 我们可以多次手动获取锁, 并且手动解锁. 
@@ -53,13 +53,13 @@ volatile变量是thread confinement的一种特殊情况, 因为只要保证单�
 ### Immutability
 immutable的对象线程安全, 不可变对象需要满足如下几个条件. *e.g. ThreeStooges*.
 - 对象创建后其状态不能修改
-- 域都是final(String除外, 严格来说不用满足这一点, 但是实现上需要对JMM有深入的理解, 所以自己写代码别这么做). 将不可变的域声明为final是个好习惯. 
+- 域都是final(String除外, ~严格来说不用满足这一点, 但是实现上需要对JMM有深入的理解, 所以自己写代码别这么做~). 将不可变的域声明为final是个好习惯. 
 - 对象创建期间, this不溢出
 
 当某个变量的读写有竞争条件时, 可以把他们放在一个不可变对象中, 来保证线程安全. *e.g. VolatileCachedFactorizer OneValueCache*. 
 
 ### Safe publication
-Effectively immutable objects(技术上状态可变, 但是实际上不会对其进行改变)需要安全地publish, 让使用这个对象的线程看到已发布的状态. 书中总结了以下几种方式. 
+**Effectively immutable objects**(技术上状态可变, 但是实际上不会对其进行改变)需要安全地publish, 让使用这个对象的线程看到已发布的状态. 书中总结了以下几种方式. 
 - 静态初始化函数中初始化一个对象的引用. 因为静态初始化在JVM的初始化阶段进行, JVM保证内部的线程安全
 - 将对象引用保存到volatile或AtomicReference对象中
 - 将对象引用保存到正确构造对象的final域中
@@ -85,7 +85,7 @@ Effectively immutable objects(技术上状态可变, 但是实际上不会对其
 如果保证Point的线程安全, 也可以发布Point, *e.g. PublishingVehicleTracker*. 和DelegatingVehicleTracker的区别是这个`SafePoint`是可以改变的, 因为读写的方法都加了锁, 所以还是能保证线程安全. 
 
 ### Adding functionality to existing thread-safe classes
-第一种方式是在使用端进行加锁, 但是要注意这个锁需要是实例的`this`, 不是`ListHelper`, 否则这个锁是无效的. 这样使用的问题是破坏封装性, 耦合度更高了. *e.g. ListHelper*. 更好的方法是Composition. *e.g. ImprovedList*. 例子中用监视器模式封装了List.
+第一种方式是在使用端进行加锁, 但是要注意这个锁需要锁实例, 而不是`ListHelper`, 否则这个锁是无效的. 这样使用的问题是破坏封装性, 耦合度更高了. *e.g. ListHelper*. 更好的方法是Composition. *e.g. ImprovedList*. 这个例子使用监视器模式封装了List.
 
 ### Documenting synchronization policies
 对类的线程安全性应该写文档,  同步策略是什么, 锁保护了哪些变量, 都应该注明. 如果遇到了没有写线程安全的类, 就假设是不是线程安全的.
@@ -134,6 +134,6 @@ for (Widget w : widgetList) {
 ### Building an efficient, scalable result cache
 设计一个带缓存的计算系统. *e.g. Memoizer1/Memoizer2/Memoizer3/Memoizer*.
 
-## 基础
+## 参考
 1. Java并发编程实战
 2. [廖雪峰Java教程-多线程](https://www.liaoxuefeng.com/wiki/1252599548343744/1255943750561472)
