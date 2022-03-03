@@ -132,7 +132,7 @@ for (Widget w : widgetList) {
 书中还介绍了`Barriers`, 和闭锁的区别是栅栏的所有线程必须同时达到一个位置, 才能继续执行. Java提供了CyclicBarrier和Exchanger. 前者可以让参与方反复在栅栏位置汇合, 后者可以让参与反在栅栏位置上交换数据. 这里的例子不太好, 不深究了...
 
 ### Building an efficient, scalable result cache
-
+设计一个带缓存的计算系统. *e.g. Memoizer1/Memoizer2/Memoizer3/Memoizer*.
 
 ## 基础
 1. Java并发编程实战
