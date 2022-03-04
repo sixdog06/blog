@@ -92,7 +92,7 @@ immutable的对象线程安全, 不可变对象需要满足如下几个条件. *
 
 ## Chapter5-Building Blocks
 ### Problems with synchronized collections
-同之前提到过的一样, 同步容器类进行复合操作, 对调用方也可能是线程不安全的. 比如下面的代码. 解决方式是在调用端, 对复合操作加锁, 锁用`list`对象即可. 
+同之前提到过的一样, 同步容器类进行复合操作, 对调用方也可能是线程不安全的. 比如下面的代码. 解决方式是在调用端对复合操作加锁, 锁用`list`对象. 
 ```
 public static Object getLast(Vector list) {
     int lastIndex = list.size() - 1;
@@ -105,21 +105,21 @@ public static void deleteLast(Vector list) {
 }
 ```
 
-即使是现在常用的并发容器类, 也会有复合操作带来的并发问题, 如下代码. 如果我希望带带期间加锁, 可以克隆这个容器, 去迭代副本, 因为副本封闭在单线程内, 保证线程安全. 还应注意如toString, hashCode, equals这样会隐式迭代的操作. *e.g. HiddenIterator*.
+即使是现在常用的并发容器类, 也会有复合操作带来的并发问题, 如下代码. 如果我希望迭代期间加锁, 可以克隆这个容器, 去迭代副本, 因为副本封闭在单线程内, 保证线程安全. 还应注意如toString, hashCode, equals这样会隐式迭代的操作. *e.g. HiddenIterator*.
 ```
 List<Widget> widgetList = Collections.synchronizedList(new ArrayList<>());
 ...
-// May throw ConcurrentModificationException
+// May throw ConcurrentModificationException(一直持有锁消耗资源, 也有死锁的风险)
 for (Widget w : widgetList) {
     doSomething(w);
 }
 ```
 
 ### Concurrent collections
-用并发容器替代同步容器, 可以极大提高伸缩性并降低风险. 比如使用`ConcurrentHashMap`, 用更细粒度的锁, 并且本身不能被加锁来执行独占访问. 但是size/isEmpty可能发挥的值不准确(在并发场景作用较小).
+用并发容器替代同步容器, 可以极大提高伸缩性并降低风险. 比如使用`ConcurrentHashMap`, 用更细粒度的锁, 并且本身不能被加锁来执行独占访问. 但是size/isEmpty的值不一定准确(在并发场景作用较小).
 
 ### Blocking queues and the producer-consumer pattern
-阻塞队列可以用来实现生产者-消费者模式. *e.g. FileCrawler Indexer*. 让对象安全地从生产者线程发布到消费者线程, 实现Serial thread confinement(串行的线程封闭). 对象虽然只属于单个对象, 导师们可以通过安全地publish对象来转义所有权. 书里面还介绍了通过Deque实现work stealing, 也就是消费者访问自己的双端队列, 如果完成了工作, 就送其他消费者消费的双端队列末尾秘密地获取工作, 这就是工作密取. 
+阻塞队列可以用来实现生产者-消费者模式. *e.g. FileCrawler Indexer*. 让对象安全地从生产者线程发布到消费者线程, 实现Serial thread confinement(串行的线程封闭). 对象虽然只属于单个线程, 但是可以通过安全地publish对象来转义所有权. 书里面还介绍了通过Deque实现work stealing, 也就是消费者访问自己的双端队列, 如果完成了工作, 就送其他消费者消费的双端队列末尾秘密地获取工作, 这就是工作密取. 
 
 ### Blocking and interruptible methods
 线程可能会因为等待i/o操作结束/等待获得一个锁等等而暂停执行, 如果每个方法被阻塞并抛出`InterruptedException`, 说明该方法是一个阻塞方法. 当阻塞方法被调用时, 最好的办法是传递`InterruptedException`给调用者, 包括不捕获异常, 或捕获异常后再次抛出. 如果需要恢复中断(不能抛错的情况), 可以捕获并尝试恢复*e.g. TaskRunnable*.  
