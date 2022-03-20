@@ -26,6 +26,9 @@ public interface Executor {
 
 而*e.g. Renderer*通过`ExecutorCompletionService`实现了并行的下载与及时渲染. 已经下载好的图片在`completionService.take()`后可以被及时消费掉.
 
+## Chapter7-Cancellation and Shutdown
+
+
 ## 参考
 1. Java并发编程实战
 2. [廖雪峰Java教程-多线程](https://www.liaoxuefeng.com/wiki/1252599548343744/1255943750561472)
