@@ -7,9 +7,11 @@ categories: ["Java"]
 ---
 
 ## 常用工具
-- gray: 独立配置mac不同app改变light or dark的主题配置.
+- gray: 独立配置mac不同app改变light or dark的主题配置
 - iina: 视频播放器
 - snipaste: 截图工具
 - Magnet: 分屏工具
+- mos: 鼠标控制软件
 
-## 
+## 办公效率
+- draw.io: 流程图软件
