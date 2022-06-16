@@ -15,8 +15,8 @@ categories: ["Java"]
 ### Locking
 可以用`synchronized(lock) {}`标注同步代码块, 并且这些**内置锁**是可重入的, 重入是指在一个线程中可以多次获取同一把锁, 也就是说锁的粒度是线程, 线程可以获得自己持有的锁. *e.g. Widgit*这个例子的子类的同步方法中调用父类的同步方法, 两个方法的方法体不同, 但是`this`是相同的, 所以实际上是重入了同一把锁. 可以看出, 有些地方写`ReentrantLock`和`synchronized`的区别是`synchronized`不可重入, 这种说法是错的. 只不过用`ReentrantLock`, 我们可以多次手动获取锁, 并且手动解锁. 
 
-### Guarding statewith locks
-多个线程共享的变量应该由一个锁来保护, 反之不是多个线程共享的变量无需保护. 锁需要保护必变性条件中的所有涉及的变量, 只保护一个变量是不够的. 即使像Vector类的所有方法都是`synchronized`方法2, 也不能保证如
+### Guarding state with locks
+多个线程共享的变量应该由一个锁来保护, 反之不是多个线程共享的变量无需保护. 锁需要保护invariants(不变性条件)中的所有涉及的变量, 只保护一个变量是不够的. 即使像Vector类的所有方法都是`synchronized`方法2, 也不能保证如
 ```
 if (!vector.contains(element)) {
     vector.add(element)
@@ -24,8 +24,10 @@ if (!vector.contains(element)) {
 ```
 的复合操作原子.
 
+> 对invariants这个概念, 可以将其理解为状态的不变. 简单说, 比如我们要求`a == 2 * b`, 那个在并发场景下, 这个两个变量共同组成了这个2倍等式的我不变性条件
+
 ### Liveness and performance
-没有使用原子变量类, 也没有对整个方法加锁, 防止持有锁的时间过长. **要注意对于计算时间长的操作不能加锁. 比如i/o操作**. *e.g. CachedFactorizer*;
+*e.g. SynchronizedFactorizer*中对整个方法进行加锁, 让Servlet无法多线程处理任务, 这种粗粒度地对整个方法加锁非常不好. 而*e.g. CachedFactorizer*中, 把读写的操作分别加锁, 会有更好的性能. 实际上只有读写的时候才会访问共享的变量, 而`doGet`代码块内的局部变量都没有被发布, 在自己的线程中是安全的.
 
 ## Chapter3-Sharing Objects
 ### Visibility
