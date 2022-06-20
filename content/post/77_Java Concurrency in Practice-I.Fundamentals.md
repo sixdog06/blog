@@ -43,7 +43,7 @@ volatile提供轻量级的同步机制, 编译器和运行时不会对volatile�
 - 访问变量时不需要加锁
 
 ### Publication and escape
-publish指对象被作用域外的代码使用, 如果不该publish的对象被publish(对象还没构造好时), 就叫escape. 有一种不容易发现的情况就是构造器中new实例的时候, 这个实例被publish时, 构造器内的this也会被隐式地publish, 然而此时构造器可能并没有执行结束. 所以可以用工厂方法返回实例, 防止escape. *e.g. SafeListener ThisEscape*.
+publish指对象被作用域外的代码使用, 如果不应该被publish的对象被publish(对象还没构造好时), 就叫escape. 有一种不容易发现的情况就是构造器中new实例的时候, 这个实例被publish时, 构造器内的this也会被隐式地publish, 然而此时构造器可能并没有执行结束. 所以可以用工厂方法返回实例, 工厂方法中在对象构造完成后, 再把这个对象的实例传给其他类, 防止escape. *e.g. SafeListener ThisEscape*.
 
 ### Thread confinement
 从代码实现上, 把会共享的变量限制在只能被一个线程用, 那么就不需要synchronization. 如Swing的dispatch线程. 但如果仅从代码去实现thread confinement(ad-hoc thread confinement), 程序会比较脆弱, 像GUI这样的用一个单线程的子系统去实现, 在很多情况下效果会更好. 
