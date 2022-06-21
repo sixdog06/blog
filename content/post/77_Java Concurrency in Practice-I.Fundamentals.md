@@ -48,7 +48,7 @@ publish指对象被作用域外的代码使用, 如果不应该被publish的对�
 ### Thread confinement
 从代码实现上, 把变量限制在只能被一个线程用同步. 如Swing的dispatch线程. 如果仅从代码去实现这样的逻辑, 书中定义叫ad-hoc thread confinement, 这种程序会比较脆弱, 举个例子, volatile变量如果保证单线程写入, 因为可见性可以保证, 所以可以确保线程安全, 但是可以预见的是保证单线程写入本身就不是容易的事情. 书中还用了一个局部变量的例子来解释thread confinement, 也叫stack confinement, 让变量被限制在代码块内: *e.g. ThreadConfinementExample.loadTheArk*. 这个例子其实和前面的*CachedFactorizer*类似. 
 
-保证thread confinement最标准的实现方法是使用`ThreadLocal`, 使用时可以把它想象成一个Map, 对不同的线程提供对应的值(实际不是这样实现的), 当线程不用这个值了, 这个值就会被GC. 每个set的值在使用的线程都有独立的副本, 在get时也总会返回当前线程设置的最新值. *ThreadConfinementExample.getConnection*
+还有一种保证thread confinement使用`ThreadLocal`, 使用时可以把它想象成一个Map, 对不同的线程提供对应的值, 当线程不用这个值了, 这个值就会被GC. 每个set的值在使用的线程都有独立的副本, 在get时也总会返回当前线程设置的最新值. *ThreadConfinementExample.getConnection*
 
 ### Immutability
 immutable的对象线程安全, 不可变对象需要满足如下几个条件. *e.g. ThreeStooges*.
