@@ -52,11 +52,11 @@ publish指对象被作用域外的代码使用, 如果不应该被publish的对�
 
 ### Immutability
 immutable的对象线程安全, 不可变对象需要满足如下几个条件. *e.g. ThreeStooges*.
-- 对象创建后其状态不能修改
+- 对象创建后其状态不能修改(是集合类也可以, 但是不发布, 而是用已有元素做一些判断)
 - 域都是final(String除外, ~严格来说不用满足这一点, 但是实现上需要对JMM有深入的理解, 所以自己写代码别这么做~). 将不可变的域声明为final是个好习惯. 
 - 对象创建期间, this不溢出
 
-当某个变量的读写有竞争条件时, 可以把他们放在一个不可变对象中, 来保证线程安全. *e.g. VolatileCachedFactorizer OneValueCache*. 
+当某个变量的读写有竞争条件时, 可以把他们放在一个不可变对象中, 来保证线程安全. *e.g. VolatileCachedFactorizer*. 
 
 ### Safe publication
 **Effectively immutable objects**(技术上状态可变, 但是实际上不会对其进行改变)需要安全地publish, 让使用这个对象的线程看到已发布的状态. 书中总结了以下几种方式. 
