@@ -97,7 +97,7 @@ immutable的对象线程安全, 不可变对象需要满足如下几个条件. *
 public static Object getLast(Vector list) {
     int lastIndex = list.size() - 1;
     return list.get(lastIndex);
-}
+}   
 
 public static void deleteLast(Vector list) {
     int lastIndex = list.size() - 1;

@@ -54,7 +54,7 @@ home = ["HTML", "RSS"]
   reward = false 
   # reward_guide = "如果这篇文章对你有用,请随意打赏" 
 
-  # friends = true
+  friends = true
   bookmarks = false
   about_me = true
 
@@ -78,9 +78,9 @@ home = ["HTML", "RSS"]
   #xing          = "https://www.xing.com/profile/yourxingid"
   #git           = "full profile url for git user"
   
- # [[params.friend_link]]
-#  title = "Linda的博客"
-#  href =  "https://zhaozhihan.com"
+[[params.friend_link]]
+title = "FELL & ENJOY"
+href =  "https://fan-bu-fan.github.io/"
 
 #  [[params.bookmark_link]]
 #  title =  "Martin Fowler"
