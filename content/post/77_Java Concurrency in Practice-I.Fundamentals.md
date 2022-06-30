@@ -88,7 +88,7 @@ immutable的对象线程安全, 不可变对象需要满足如下几个条件. *
 如何对已经有的线程安全类增加更多的功能, 比如给一个list增加`如果没有该元素则添加的功能`. 最简单的方法是用子类去扩展基类的方法, 并对子类的方法进行加锁, 这种方法的问题是如果基类的同步策略改变, 会破怪子类的线程安全性. 还第一种方式是在使用端进行加锁, 但是要注意这个锁需要锁实例, 否则这个锁是无效的. 如*e.g. ListHelper*, 这样使用的问题是破坏封装性, 耦合度更高了. 更好的方法是Composition. *e.g. ImprovedList*. 这个例子使用监视器模式封装了List.
 
 ### Documenting synchronization policies
-对类的线程安全性应该写文档, 同步策略是什么, 锁保护了哪些变量, 都应该注明. 如果遇到了没有写线程安全的类, 就假设是不是线程安全的.
+对类的线程安全性应该写文档, 同步策略是什么, 锁保护了哪些变量, 都应该注明. 如果遇到了没有写线程安全的类, 就假设不是线程安全的.
 
 ## Chapter5-Building Blocks
 ### Problems with synchronized collections
@@ -105,7 +105,7 @@ public static void deleteLast(Vector list) {
 }
 ```
 
-即使是现在常用的并发容器类, 也会有复合操作带来的并发问题, 如下代码. 如果我希望迭代期间加锁, 可以克隆这个容器, 去迭代副本, 因为副本封闭在单线程内, 保证线程安全. 还应注意如toString, hashCode, equals这样会隐式迭代的操作. *e.g. HiddenIterator*.
+即使是现在常用的并发容器类, 也会有复合操作带来的并发问题, 如下代码. 如果我们希望迭代期间加锁, 可以克隆这个容器, 去迭代副本, 因为副本封闭在单线程内, 保证线程安全. 还应注意如toString, hashCode, equals这些方法会隐式地进行迭代, 可能会带来线程安全问题. *e.g. HiddenIterator*.
 ```
 List<Widget> widgetList = Collections.synchronizedList(new ArrayList<>());
 ...
@@ -116,10 +116,10 @@ for (Widget w : widgetList) {
 ```
 
 ### Concurrent collections
-用并发容器替代同步容器, 可以极大提高伸缩性并降低风险. 比如使用`ConcurrentHashMap`, 用更细粒度的锁, 并且本身不能被加锁来执行独占访问. 但是size/isEmpty的值不一定准确(在并发场景作用较小).
+用并发容器替代同步容器, 可以极大提高伸缩性并降低风险. 比如使用`ConcurrentHashMap`, 它的原理是用了更细粒度的锁, 从而实现最大程度的共享. 但是对一些但是size/isEmpty的值不一定准确(这些方法在并发场景作用较小).
 
 ### Blocking queues and the producer-consumer pattern
-阻塞队列可以用来实现生产者-消费者模式. *e.g. FileCrawler Indexer*. 让对象安全地从生产者线程发布到消费者线程, 实现Serial thread confinement(串行的线程封闭). 对象虽然只属于单个线程, 但是可以通过安全地publish对象来转义所有权. 书里面还介绍了通过Deque实现work stealing, 也就是消费者访问自己的双端队列, 如果完成了工作, 就送其他消费者消费的双端队列末尾秘密地获取工作, 这就是工作密取. 
+阻塞队列可以用来实现生产者-消费者模式. *e.g. FileCrawler Indexer*. 让对象安全地从生产者线程发布到消费者线程, 实现Serial thread confinement(串行的线程封闭). 对象虽然只属于单个线程, 但是可以通过安全地publish对象来转移所有权. 书里面还介绍了通过Deque实现work stealing, 也就是消费者访问自己的双端队列, 如果完成了工作, 就送其他消费者消费的双端队列末尾秘密地获取工作, 这就是工作密取. 
 
 ### Blocking and interruptible methods
 线程可能会因为等待i/o操作结束/等待获得一个锁等等而暂停执行, 如果每个方法被阻塞并抛出`InterruptedException`, 说明该方法是一个阻塞方法. 当阻塞方法被调用时, 最好的办法是传递`InterruptedException`给调用者, 包括不捕获异常, 或捕获异常后再次抛出. 如果需要恢复中断(不能抛错的情况), 可以捕获并尝试恢复*e.g. TaskRunnable*.  
