@@ -125,11 +125,9 @@ for (Widget w : widgetList) {
 线程可能会因为等待i/o操作结束/等待获得一个锁等等而暂停执行, 如果方法被阻塞并抛出`InterruptedException`, 说明该方法是一个阻塞方法. 当阻塞方法被调用时, 最好的办法是传递`InterruptedException`给调用者(不捕获异常, 或捕获异常后再次抛出). 如果需要恢复中断(不能抛错的情况), 可以捕获Exception并尝试恢复中断*e.g. TaskRunnable*.  
 
 ### Synchronizers
-这一小节介绍了一些基本的同步工具类. 第一种是`Latches`, 它是一种**闭锁(这种锁在到达结束状态之前不会允许线程通过, 结束状态之后允许所有线程通过并且不再关闭)**. *e.g. TestHarness*. `FutureTask`也可以用作闭锁, 调用get时, 若任务已完成, 则立刻返回结果, 否则阻塞, 知道任务完成, 返回结果或抛异常. *e.g. Preloader*.
+这一小节介绍了一些基本的同步工具类. 第一种是`Latches`, 它是一种**闭锁(这种锁在到达结束状态之前不会允许线程通过, 结束状态之后允许所有线程通过并且不再关闭)**. *e.g. TestHarness*. `FutureTask`也可以用作闭锁, 调用get时, 若任务已完成, 则立刻返回结果. 若任务还未完成, 就会阻塞, 直到任务完成后返回结果或者抛出异常. *e.g. Preloader*.
 
 `Semaphore`可以通过`permit`来实现资源池/对容器加边界. 通过构造函数传一个初值, 每次尝试调用`acquire`就会获取一个许可, 当调用结束后再次调用`release`释放许可. *e.g. BoundedHashSet*.
-
-书中还介绍了`Barriers`, 和闭锁的区别是栅栏的所有线程必须同时达到一个位置, 才能继续执行. Java提供了CyclicBarrier和Exchanger. 前者可以让参与方反复在栅栏位置汇合, 后者可以让参与反在栅栏位置上交换数据. 这里的例子不太好, 不深究了...
 
 ### Building an efficient, scalable result cache
 设计一个带缓存的计算系统. *e.g. Memoizer1/Memoizer2/Memoizer3/Memoizer*.
