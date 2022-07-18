@@ -130,7 +130,7 @@ for (Widget w : widgetList) {
 `Semaphore`可以通过`permit`来实现资源池/对容器加边界. 通过构造函数传一个初值, 每次尝试调用`acquire`就会获取一个许可, 当调用结束后再次调用`release`释放许可. *e.g. BoundedHashSet*.
 
 ### Building an efficient, scalable result cache
-设计一个带缓存的计算系统. *e.g. Memoizer1/Memoizer2/Memoizer3/Memoizer*.
+一步一步设计一个带缓存的计算系统: *e.g. Memoizer1 -> Memoizer2 -> Memoizer3 -> Memoizer*.
 
 ## 参考
 1. Java并发编程实战
