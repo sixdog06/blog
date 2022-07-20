@@ -3,7 +3,7 @@ title: "My Mac Tool List"
 date: 2022-01-21
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["杂谈"]
 ---
 
 ## 常用工具
