@@ -9,5 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Deploy Blog
-      run: ./deploy.sh
+      run: ./../../deploy.sh
       shell: bash
