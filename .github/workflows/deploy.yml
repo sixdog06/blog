@@ -1,0 +1,13 @@
+name: CI
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  job:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy Blog
+      run: ./deploy.sh
+      shell: bash
