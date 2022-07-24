@@ -10,7 +10,6 @@ jobs:
     steps:
     - name: Deploy Blog
       run: | 
-        cd ../..
         hugo # 生成public文件夹
         cd public
         echo "punchcode.top" > CNAME
