@@ -22,4 +22,5 @@ jobs:
         git push -f --set-upstream origin master
         cd ..
         rm -rf public
+      shell: bash
 
