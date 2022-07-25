@@ -3,7 +3,7 @@ title: "剑指offer"
 date: 2020-12-11
 draft: false
 author: "小拳头"
-categories: ["程序设计"]
+categories: ["学习笔记"]
 tags: ["数据结构与算法"]
 ---
 

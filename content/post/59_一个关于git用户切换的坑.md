@@ -3,7 +3,7 @@ title: "一个关于git用户切换的坑"
 date: 2021-07-28
 draft: false
 author: "小拳头"
-categories: ["杂谈"]
+categories: ["工具"]
 tags: ["git"]
 ---
 

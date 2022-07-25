@@ -3,7 +3,8 @@ title: "Effective Java Chapter2-Creating and Destroying Objects"
 date: 2021-11-08
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 这是Effective Java第二章的总结, 主要涵盖对象的创建和销毁. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).

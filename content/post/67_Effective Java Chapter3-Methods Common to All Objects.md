@@ -3,7 +3,8 @@ title: "Effective Java Chapter3-Methods Common to All Objects"
 date: 2021-11-16
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 这是Effective Java第三章的总结, 将如何override Object类的方法, 以及`Comparable.compareTo`这个类似的方法. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).

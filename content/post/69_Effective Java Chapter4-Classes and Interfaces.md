@@ -3,7 +3,8 @@ title: "Effective Java Chapter4-Classes and Interfaces"
 date: 2021-11-28
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 这是Effective Java第四章的总结, 讲如何设计Java Class和Interfaces, 这是我们写Java去抽象逻辑的核心. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).

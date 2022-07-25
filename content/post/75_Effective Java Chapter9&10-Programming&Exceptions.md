@@ -3,7 +3,8 @@ title: "Effective Java Chapter9&10-General Programming&Exceptions"
 date: 2022-01-20
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 这是Effective Java第九和第十章的总结, 讲如何编程. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).

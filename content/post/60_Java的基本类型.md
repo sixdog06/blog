@@ -3,7 +3,8 @@ title: "Java的基本类型"
 date: 2021-08-08
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 在刚结束的培训项目中需要把几个指标落库, 我想当然的以为int那21亿的范围应该已经够用了, 结果项目发布后报了一堆out of range. 我发现自己对最最基本的数据类型理解不深入, 而这却是开发天天都会打交道的东西, 于是花了点时间了解了基础的数据类型. 基于Java8.

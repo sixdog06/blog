@@ -3,8 +3,8 @@ title: "Redis入门"
 date: 2021-06-15
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["数据库"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 NoSQL方便扩展, 因为不像关系型数据库中的数据, 互相之间会有关联. 性能高, 而且数据类型多种多样, 不用提前设计. Redis代表Remote Dictionary Server. 可以用内存存储/持久化(rdb/aof), 效率高, 集成发布订阅系统, 有计时器和计数器. 有多重数据类型, 支持集群/事务. 

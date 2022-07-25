@@ -3,8 +3,8 @@ title: "JavaWeb-MVC/过滤器/监听器"
 date: 2021-05-31
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["JavaWeb"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 ## MVC三层架构

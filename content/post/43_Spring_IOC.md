@@ -3,7 +3,7 @@ title: "Spring-IOC"
 date: 2021-01-16
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
+categories: ["学习笔记"]
 tags: ["Spring"]
 ---
 

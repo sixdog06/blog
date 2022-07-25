@@ -3,8 +3,8 @@ title: "JavaWeb-Tomcat/Maven及其配置"
 date: 2021-05-10
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["JavaWeb"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 ## Web服务器

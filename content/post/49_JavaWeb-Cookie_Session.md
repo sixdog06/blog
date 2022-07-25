@@ -3,8 +3,8 @@ title: "JavaWeb-Cookie/Session"
 date: 2021-05-24
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["JavaWeb"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 cookie: 客户端技术(响应/请求), session: 服务器技术, 把信息或数据放在session中. **都是保存会话的技术**. 现实中的例子就是已经登陆的网站, 下次可以直接登陆. 

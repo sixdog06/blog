@@ -3,8 +3,8 @@ title: "MySQL-基础"
 date: 2020-11-12
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["MySQL"]
+categories: ["学习笔记"]
+tags: ["数据库"]
 ---
 
 ## MySQL的常见命令

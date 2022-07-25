@@ -3,7 +3,8 @@ title: "ajax的发post请求的坑"
 date: 2021-09-20
 draft: false
 author: "小拳头"
-categories: ["Web开发"]
+categories: ["编程语言"]
+tags: ["ajax"]
 ---
 
 在前端通过ajax请求向服务端发送请求是非常常见的场景, 在Java Web开发中, 通常用SpringMVC去取得请求体的数据. 而用ajax做post请求, 用的工具通常是jquery或者vue中推荐的axios. 但是这两者装载post请求体的方式其实是不同的, 这是个小小的坑, 做个小实验看看.

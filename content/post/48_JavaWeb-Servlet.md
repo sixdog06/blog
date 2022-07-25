@@ -3,8 +3,8 @@ title: "JavaWeb-Servlet"
 date: 2021-05-14
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["JavaWeb"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 ## 原理

@@ -3,7 +3,8 @@ title: "Java中toMap与asList的坑"
 date: 2021-12-30
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["编程语言"]
+tags: ["Java"]
 ---
 
 工作中遇到了两个坑, 讲述一下心路历程.

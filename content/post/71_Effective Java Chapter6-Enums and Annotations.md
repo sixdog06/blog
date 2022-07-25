@@ -3,7 +3,8 @@ title: "Effective Java Chapter6-Enums and Annotations"
 date: 2021-12-28
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 这是Effective Java第六章的总结, 讲枚举类和注解. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).

@@ -3,8 +3,8 @@ title: "SpringBoot入门"
 date: 2021-08-15
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["SpringBoot"]
+categories: ["学习笔记"]
+tags: ["Spring"]
 ---
 
 Spring Boot is an open source Java-based framework used to create a micro Service. It is developed by Pivotal Team and is used to build stand-alone and production ready spring applications. Micro Service is an architecture that allows the developers to develop and deploy services independently. Each service running has its own process and this achieves the lightweight model to support business applications.

@@ -3,7 +3,7 @@ title: "Spring-AOP"
 date: 2021-01-22
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
+categories: ["学习笔记"]
 tags: ["Spring"]
 ---
 

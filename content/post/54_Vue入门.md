@@ -3,8 +3,8 @@ title: "Vue入门"
 date: 2021-07-02
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["Vue"]
+categories: ["学习笔记"]
+tags: ["前端"]
 ---
 
 官方文档的中文介绍有简单入门的视频教程, 下载**HbuilderX**, 并导入官方的教程代码. 我学习的过程是先看完视频跑一边代码再根据文档梳理一次. 

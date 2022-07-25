@@ -3,7 +3,8 @@ title: "Java Concurrency in Practice-II.Structuring Concurrency Applications"
 date: 2022-03-07
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 项目链接[JavaLab](https://github.com/huanruiz/JavaLab), 有示例的代码以*类名*的形式标注在小结中.

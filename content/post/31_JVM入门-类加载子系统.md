@@ -3,7 +3,7 @@ title: "JVM入门-类加载子系统"
 date: 2021-01-25
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
 tags: ["JVM"]
 ---
 

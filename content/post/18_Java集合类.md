@@ -3,7 +3,7 @@ title: "Java Collection"
 date: 2021-01-08
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["编程语言"]
 tags: ["Java"]
 ---
 

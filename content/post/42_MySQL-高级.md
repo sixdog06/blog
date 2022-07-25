@@ -3,8 +3,8 @@ title: "MySQL-高级"
 date: 2020-11-17
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["MySQL"]
+categories: ["学习笔记"]
+tags: ["数据库"]
 ---
 
 ## 回顾

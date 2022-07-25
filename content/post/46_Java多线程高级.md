@@ -3,7 +3,8 @@ title: "Java多线程-高级"
 date: 2020-12-10
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 ## 继续卖票

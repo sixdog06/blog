@@ -3,7 +3,7 @@ title: "JVM入门-JVM与Java体系结构"
 date: 2021-01-25
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
 tags: ["JVM"]
 ---
 

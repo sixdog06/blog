@@ -3,7 +3,7 @@ title: "JVM入门-垃圾回收器"
 date: 2021-02-02
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
 tags: ["JVM"]
 ---
 

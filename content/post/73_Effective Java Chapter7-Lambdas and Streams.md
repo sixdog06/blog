@@ -3,7 +3,8 @@ title: "Effective Java Chapter7-Lambdas and Streams"
 date: 2021-12-29
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 这是Effective Java第七章的总结, 讲Lambdas和Streams这两个在Java8中经常使用的特性. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).

@@ -3,7 +3,7 @@ title: "JVM入门-运行时数据区概述及线程"
 date: 2021-01-27
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
 tags: ["JVM"]
 ---
 

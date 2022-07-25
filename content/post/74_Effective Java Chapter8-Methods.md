@@ -3,7 +3,8 @@ title: "Effective Java Chapter8-Methods"
 date: 2022-01-17
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 这是Effective Java第八章的总结, 讲如何设计方法, 个构造器原则一样, 考虑`usability, robustness, flexibility`. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).

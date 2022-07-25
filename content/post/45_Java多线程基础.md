@@ -3,7 +3,8 @@ title: "Java多线程-基础"
 date: 2020-11-30
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 ## 创建

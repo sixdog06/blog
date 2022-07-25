@@ -3,7 +3,7 @@ title: "JVM入门-堆"
 date: 2021-01-27
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
 tags: ["JVM"]
 ---
 

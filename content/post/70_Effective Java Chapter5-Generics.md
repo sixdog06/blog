@@ -3,7 +3,8 @@ title: "Effective Java Chapter5-Generics"
 date: 2021-12-14
 draft: false
 author: "小拳头"
-categories: ["Java"]
+categories: ["学习笔记"]
+tags: ["Java"]
 ---
 
 这是Effective Java第五章的总结, 讲泛型. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).
