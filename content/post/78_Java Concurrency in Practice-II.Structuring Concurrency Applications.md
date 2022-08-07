@@ -46,9 +46,60 @@ public void run() {
 }
 ```
 
-而取消任务最好的方式就是用Thread的`interrupt()`方法, 注意Thread有一个静态的`interrupted()`方法, 作用是返回当前的中断状态, 但是它的底层是`currentThread().isInterrupted(true);`会清除中断标志, 如果返回为`true`, 表示这个线程正在中断中, 要记住去处理它. 上述代码的`!cancelled`就可以替换为`!Thread.currentThread().isInterrupted()`. **Java中的中断最好只用在取消一个任务时**. **Java的中断是非抢占式的, 执行任务或取消操作的代码都不应该对线程的中断策略有任何假设**. 调用阻塞队列的质数生成器: *PrimeProducer*.
+而取消任务最好的方式就是用Thread的`interrupt()`方法, 注意Thread有一个静态的`interrupted()`方法, 作用是返回当前的中断状态, 但是它的底层是`currentThread().isInterrupted(true);`会清除中断标志, 如果返回为`true`, 表示这个线程正在中断中, 要记住去处理它. 上述代码的`!cancelled`就可以替换为`!Thread.currentThread().isInterrupted()`. **Java中取消一个任务最好的方式就是中断**. **Java的中断是非抢占式的, 执行任务或取消操作的代码都不应该对线程的中断策略有任何假设**. 调用阻塞队列的质数生成器: *PrimeProducer*.
 
-知道了怎么通过中断取消一个任务, 那么对于中断应该如何响应呢. 
+知道了怎么通过中断取消一个任务, 那么对于中断应该如何响应呢. 有两种办法:
+- `throw InterruptedException` 抛出中断给父线程
+- `catch (InterruptedException e)`中设置`interrupted = true;`并在finally中判断这个标志位, 若为`true`则重试中断. 
+
+接下来运用上面的知识来实现一个实现一个计时运行的任务. 在这之前先分析两种不好的实现方法. 第一种的代码如下, 在外部线程中去实现中断, 而我们不应该对线程的中断策略有任何假设, `timedRun`可以被任意线程调用, 不能被随意中断. `timedRun`很有可能已经完成任务, 或者没完成任务也不响应中断. 这种实现是绝对不能出现的.
+```
+private static final ScheduledExecutorService cancelExec = ...;
+
+public static void timedRun(Runnable r, long timeout, TimeUnit unit) {
+    final Thread taskThread = Thread.currentThread();
+    cancelExec.schedule(new Runnable() {
+        public void run() {
+            taskThread.interrupt();
+        }
+    }, timeout, unit);
+    r.run();
+}
+```
+
+第二种实现方法实际上是可用的, 通过join来让定时任务执行, 而执行任务的线程`RethrowableTask`也有自己的中断策略, 其中的抛错也被`volatile`, 保证可见性, 可以安全地被发布到`timedRun`的线程. 这种实现方式的问题是依赖了`join`, 因为Java Thread api本身的缺陷, 无论join成功或超时, 总会有结果(因为可见性), 而join本身又不返回成功与否的标志, 程序就无法知道线程是正常对出还是因为join超时而返回. 
+```
+public static void timedRun(final Runnable r, long timeout, TimeUnit unit) throws InterruptedException {
+    class RethrowableTask implements Runnable {
+        private volatile Throwable t; 
+        public void run() {
+            try {
+                r.run();
+            } catch (Throwable t) {
+                this.t = t;
+            } 
+            void rethrow() {
+                if (t != null) {
+                    throw launderThrowable(t);
+                }
+            }
+        }
+    }
+
+    RethrowableTask task = new RethrowableTask();
+    final Thread taskThread = new Thread(task);
+    taskThread.start();
+    cancelExec.schedule(new Runnable() {
+        public void run() {
+            taskThread.interrupt();
+        }
+    }, timeout, unit);
+    taskThread.join(unit.toMillis(timeout));
+    task.rethrow();
+}
+```
+
+
 
 ## 参考
 1. Java并发编程实战
