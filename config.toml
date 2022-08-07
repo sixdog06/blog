@@ -15,7 +15,7 @@ home = ["HTML", "RSS"]
 [params]
   header_image = "front.png"
   SEOTitle = "以终为始"
-  description = "longtermist"
+  description = "Software Engineer"
   keyword = "Harry, 小拳头"
   slogan = "以终为始"
   author = "小拳头"
@@ -36,7 +36,7 @@ home = ["HTML", "RSS"]
   algolia_apiKey = ""
 
   # Sidebar settings
-  sidebar_about_description = "一个软件工程师"
+  sidebar_about_description = "longtermist"
   sidebar_avatar = "/avatar.jpeg"
 
   featured_tags = true 
