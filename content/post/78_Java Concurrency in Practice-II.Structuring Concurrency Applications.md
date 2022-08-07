@@ -31,7 +31,8 @@ public interface Executor {
 而*e.g. Renderer*通过`ExecutorCompletionService`实现了并行的下载与及时渲染. 已经下载好的图片在`completionService.take()`后可以被及时消费掉.
 
 ## Chapter7-Cancellation and Shutdown
-*e.g. PrimeGenerator*是一个质数生成器, 通过调用`aSecondOfPrimes`方法, 实现在1秒延迟后取消质数生成. 看起来没有什么问题, 但实际上如果这个生成器对接了一个消费者, 如果诸如此类的生产者的生产速度大于消费速度, 那么会造成阻塞. 即使消费者执行了cancel的操作, 但是这个生产者依然会在put的过程中, 读不到cancel的值, 使程序无法退出.
+### 7.1 Task cancellation
+*e.g. PrimeGenerator*是一个质数生成器, 通过调用`aSecondOfPrimes`方法, 实现在1秒延迟后取消质数生成. 看起来没有什么问题, 但实际如果这个方法的任务调用了阻塞方法, 并且生产速度大于消费速度, 那么在阻塞队列满了之后, put时就会被阻塞. 即使消费者执行了cancel的操作, 生产者依然处在put的过程中, 读不到cancel的值, 使程序无法退出.
 ```
 public void run() { 
     try {
@@ -45,11 +46,9 @@ public void run() {
 }
 ```
 
-而取消任务最好的方式就是用Thread的`interrupt()`方法, 注意Thread有一个静态的`interrupted()`方法, 作用是返回当前的中断状态, 但是它的底层是`currentThread().isInterrupted(true);`会清除中断标志, 如果返回为`true`, 标志这个线程正在中断中, 要记住去处理它. 上述代码的`!cancelled`就可以替换为`!Thread.currentThread().isInterrupted()`. **Java中的中断最好只用在取消一个任务时**. **Java的中断是非抢占式的, 执行任务或取消操作的代码都不应该对线程的中断策略有任何假设**. 
+而取消任务最好的方式就是用Thread的`interrupt()`方法, 注意Thread有一个静态的`interrupted()`方法, 作用是返回当前的中断状态, 但是它的底层是`currentThread().isInterrupted(true);`会清除中断标志, 如果返回为`true`, 表示这个线程正在中断中, 要记住去处理它. 上述代码的`!cancelled`就可以替换为`!Thread.currentThread().isInterrupted()`. **Java中的中断最好只用在取消一个任务时**. **Java的中断是非抢占式的, 执行任务或取消操作的代码都不应该对线程的中断策略有任何假设**. 调用阻塞队列的质数生成器: *PrimeProducer*.
 
-
-
-
+知道了怎么通过中断取消一个任务, 那么对于中断应该如何响应呢. 
 
 ## 参考
 1. Java并发编程实战

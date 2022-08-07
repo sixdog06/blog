@@ -3,8 +3,7 @@ title: "Mybatis入门"
 date: 2021-07-09
 draft: false
 author: "小拳头"
-categories: ["WEB开发"]
-tags: ["数据库"]
+categories: ["学习笔记"]
 ---
 
 MyBatis是一款优秀的持久**层**框架, 它支持自定义SQL/存储过程以及高级映射. MyBatis免除了几乎所有的JDBC代码以及设置参数和获取结果集的工作. MyBatis可以通过简单的XML或注解来配置和映射原始类型/接口和Java POJO为数据库中的记录. (官网介绍)
