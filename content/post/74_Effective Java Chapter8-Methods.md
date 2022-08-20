@@ -43,6 +43,3 @@ varargs容易出现因为输入参数不确定而导致的错误, 比如传参�
 
 ## Item 56: Write doc comments for all exposed API elements
 个人觉得看这一章不如直接看JDK的jar包中的注解, 比如Collection系列注解, String注解和其他常用类/接口的注解. 
-
-## 参考
-1. Effective Java

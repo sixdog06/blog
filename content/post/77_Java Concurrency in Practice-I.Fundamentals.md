@@ -138,7 +138,3 @@ for (Widget w : widgetList) {
 
 ### Building an efficient, scalable result cache
 一步一步设计一个带缓存的计算系统: *e.g. Memoizer1 -> Memoizer2 -> Memoizer3 -> Memoizer*.
-
-## 参考
-1. Java并发编程实战
-2. [廖雪峰Java教程-多线程](https://www.liaoxuefeng.com/wiki/1252599548343744/1255943750561472)

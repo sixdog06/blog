@@ -49,6 +49,3 @@ streams和写循环需要trade off, streams让代码短了, 但是可读性可�
 
 ## Item 48: Use caution when making streams parallel
 用`parallel()`来提高stream的性能时需要极其谨慎, 极有可能出错. 比如`Stream.iterate()`这种无法被并行的stream, 并行只会对`ArrayList/HashMap/HashSet/ConcurrentHashMap/array/int range/long ranges这种可以被轻易切分, 而且能快速定位引用的模块有好的效果. 
-
-## 参考
-1. Effective Java

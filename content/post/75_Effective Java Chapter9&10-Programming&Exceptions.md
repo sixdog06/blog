@@ -93,6 +93,3 @@ exceptions只能用来处理潜在的意外情况, 而不是用作基础的流�
 
 ## Item 77: Don’t ignore exceptions
 不要catch了exceptions什么都不做, 如果可以忽略, 也要在文档中注明.
-
-## 参考
-1. Effective Java

@@ -98,9 +98,3 @@ public static void timedRun(final Runnable r, long timeout, TimeUnit unit) throw
     task.rethrow();
 }
 ```
-
-
-
-## 参考
-1. Java并发编程实战
-2. [廖雪峰Java教程-多线程](https://www.liaoxuefeng.com/wiki/1252599548343744/1255943750561472)
