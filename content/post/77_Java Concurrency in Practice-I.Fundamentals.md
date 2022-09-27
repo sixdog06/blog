@@ -7,7 +7,7 @@ categories: ["学习笔记"]
 tags: ["Java"]
 ---
 
-基础知识覆盖了书中的第二章到第五章. 第一章为粗略地介绍, 简单过一下就好, 相信看这本书的人或多或少是了解Java并发编程的. 我把有示例的代码以*斜体*的形式标注在文章中, 对应项目链接[JavaLab](https://github.com/huanruiz/JavaLab).
+基础知识覆盖了书中的第二章到第五章. 第一章为粗略的介绍, 简单过一下就好.
 
 ## Chapter2-Thread Safety
 这一节主要介绍线程安全的一些基本概念, 解释一些基本名词. 写线程安全的并发代码, 关键就是在访问共享资源时做好管理.
@@ -16,7 +16,7 @@ tags: ["Java"]
 在不同的线程访问一个资源时, 这个资源的状态应该是一致的, 类的行为和应该有的规范完全一致. 我认为简单地说, 就是这个类的功能不管是单线程还是并发, 都是正常的. **所以无状态对象一定安全**, 因为它没有域, 也没有对其他类的域的引用, 计算过程只在栈上的, 没有共享资源, 那么一定安全了. 当这个而无状态类有字段时, 可以用原子变量类, 如`AtomicLong`来保证原子性(读取-修改-写入). 这里要注意, 原子性只针对原子变量本身, 多个原子变量因为不应时序的调用, 不能保证线程安全. *e.g. AtomicTest*.
 
 ### Locking
-可以用`synchronized(lock) {}`标注同步代码块, 并且这些**内置锁**是可重入的, 重入是指在一个线程中可以多次获取同一把锁, 也就是说锁的粒度是线程, 线程可以获得自己持有的锁. *e.g. Widgit*这个例子的子类的同步方法中调用父类的同步方法, 两个方法的方法体不同, 但是`this`是相同的, 所以实际上是重入了同一把锁. 可以看出, 有些地方写`ReentrantLock`和`synchronized`的区别是`synchronized`不可重入, 这种说法是错的. 只不过用`ReentrantLock`, 我们可以多次手动获取锁, 并且手动解锁. 
+可以用`synchronized(lock) {}`标注同步代码块, 并且这些**内置锁**是可重入的, 重入是指在一个线程中可以多次获取同一把锁, 也就是说锁的粒度是线程, 线程可以获得自己持有的锁. *e.g. Widgit*这个例子的子类的同步方法中调用父类的同步方法, 两个方法的方法体不同, 但是`this`是相同的, 所以实际上是重入了同一把锁. 可以看出, 有些地方写`ReentrantLock`和`synchronized`的区别是`synchronized`不可重入, 这种说法是错的! 只不过用`ReentrantLock`, 我们可以多次手动获取锁, 并且手动解锁. 
 
 ### Guarding state with locks
 多个线程共享的变量应该由一个锁来保护, 反之不是多个线程共享的变量无需保护. 锁需要保护invariants(不变性条件)中的所有涉及的变量, 只保护一个变量是不够的. 即使像Vector类的所有方法都是`synchronized`方法2, 也不能保证如
@@ -31,12 +31,141 @@ if (!vector.contains(element)) {
 
 ### Liveness and performance
 *e.g. SynchronizedFactorizer*中对整个方法进行加锁, 让Servlet无法多线程处理任务, 这种粗粒度地对整个方法加锁非常不好. 而*e.g. CachedFactorizer*中, 把读写的操作分别加锁, 会有更好的性能. 实际上只有读写的时候才会访问共享的变量, 而`doGet`代码块内的局部变量都没有被发布, 在自己的线程中是安全的.
+```
+/**
+ * 粗粒度地对整个方法加锁(很不好)
+ */
+public class SynchronizedFactorizer extends HttpServlet {
+    
+    private BigInteger lastNumber;
+    
+    private BigInteger[] lastFactors;
+    
+    @Override
+    protected synchronized void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        BigInteger i = (BigInteger)req.getAttribute("i");
+        PrintWriter writer = resp.getWriter();
+        if (i.equals(lastNumber)) {
+            writer.print(Arrays.toString(lastFactors));
+        } else {
+            BigInteger[] factors = factor(i);
+            lastNumber = i;
+            lastFactors = factors;
+            writer.print(Arrays.toString(factors));
+        }
+        super.doGet(req, resp);
+    }
+    
+    /**
+     * 因式分解, 还没实现
+     */
+    private BigInteger[] factor(BigInteger number) {
+        return new BigInteger[]{};
+    }
+}
+```
+
+```
+/**
+ * 带缓存且线程安全的因式分解Servlet, 对{@code SynchronizedFactorizer}进行优化
+ * 既没有使用原子变量类, 也没有对整个方法加锁, 把栈上变量(每个线程独有的变量)排除在锁之外
+ * 符合我们非共享不加锁的原则
+ */
+public class CachedFactorizer extends HttpServlet {
+
+    private BigInteger lastNumber;
+
+    private BigInteger[] lastFactors;
+    
+    /**
+     * 命中的数量
+     */
+    private long hits;
+    
+    /**
+     * 缓存命中的数量
+     */
+    private long cacheHits;
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        BigInteger i = (BigInteger)req.getAttribute("i");
+        // factor只在单线程的栈上使用, 不被发布, 无需加锁
+        BigInteger[] factors = null;
+        // 查询, 先检查后执行
+        synchronized (this) {
+            ++hits;
+            if (i.equals(lastNumber)) {
+                ++cacheHits;
+                factors = lastFactors.clone();
+            }
+        }
+
+        if (factors == null) {
+            factors = factor(i);
+            // 修改, 实时更新缓存
+            synchronized (this) {
+                lastNumber = i;
+                lastFactors = factors.clone();
+            }
+        }
+        PrintWriter writer = resp.getWriter();
+        writer.print(Arrays.toString(factors));
+        super.doGet(req, resp);
+    }
+
+    public synchronized long getHits() {
+        return hits;
+    }
+
+    public synchronized double getCacheHitRatio() {
+        return (double)cacheHits / (double)hits;
+    }
+
+    /**
+     * 因式分解, 还没实现
+     */
+    private BigInteger[] factor(BigInteger number) {
+        return new BigInteger[]{};
+    }
+}
+```
 
 ## Chapter3-Sharing Objects
 这一章主要讲如何安全地共享资源, 来保证线程安全性. 换个角度理解这句话, 如果资源不被共享, 那么也能保证线程安全.
 
 ### Visibility
-没有同步机制, 两个线程的执行顺序是无法判断的(因为重排序), 这时候做内存操作很容易出错, 读的值可能是更新前的**失效数据**, 也可能是更新后的, 影响Visibility. *e.g. NoVisibility* 在JavaBean中, 如果要对一个值的get和set进行同步, 那么`synchronized`需要同时加在在getter和setter方法上. **加锁不仅要保证互斥, 也要保证内存可见性.**
+没有同步机制, 两个线程的执行顺序是无法判断的(因为重排序), 这时候做内存操作很容易出错, 读的值可能是更新前的**失效数据**, 也可能是更新后的, 影响Visibility. *e.g. NoVisibility*. 在JavaBean中, 如果要对一个值的get和set进行同步, 那么`synchronized`需要同时加在在getter和setter方法上. **加锁不仅要保证互斥, 也要保证内存可见性.**
+```
+/**
+ * 没有同步的情况下共享变量
+ * ReaderThread读不到ready为true的值, 导致程序无法终止. 也有可能读到了ready但是读不到number的值
+ */
+public class NoVisibility {
+
+    private static boolean ready;
+
+    private static int number;
+
+    private static class ReaderThread extends Thread {
+
+        @Override
+        public void run() {
+            while (!ready) {
+                // 让该线程回到ready状态, 实际生产中几乎不会用
+                Thread.yield();
+            }
+            System.out.println(number);
+        }
+    }
+
+    public static void main(String[] args) {
+        new ReaderThread().run();
+        number = 42;
+        ready = true;
+    }
+}
+```
 
 > synchronized方法锁的的是`this`实例, 静态synchronized方法锁的是`ClassName.class`实例. 和对方法内部整个代码块加锁的写法是等价的.
 
@@ -48,7 +177,76 @@ volatile提供轻量级的同步机制, 编译器和运行时不会对volatile�
 - 访问变量时不需要加锁
 
 ### Publication and escape
-publish指对象被作用域外的代码使用, 如果不应该被publish的对象被publish(对象还没构造好时), 就叫escape. 有一种不容易发现的情况就是构造器中new实例的时候, 这个实例被publish时, 构造器内的this也会被隐式地publish, 然而此时构造器可能并没有执行结束. 所以可以用工厂方法返回实例, 工厂方法中在对象构造完成后, 再把这个对象的实例传给其他类, 防止escape. *e.g. SafeListener ThisEscape*.
+publish指对象被作用域外的代码使用, 如果不应该被publish的对象被publish(对象还没构造好时), 就叫escape. 有一种不容易发现的情况就是构造器中new实例的时候, 这个实例被publish时, 构造器内的this也会被隐式地publish, 然而此时构造器可能并没有执行结束. 为了解决这个问题, 可以用工厂方法返回实例, 工厂方法中在对象构造完成后, 再把这个对象的实例传给其他类, 防止escape. *e.g. SafeListener ThisEscape*.
+```
+/**
+ * this溢出
+ */
+public class ThisEscape {
+
+    /**
+     * 构造函数中, 包含对this的隐式引用, 所以当ThisEscape构造器发布EventListener时, this也会被发布.
+     */
+    public ThisEscape(EventSource source) {
+        source.registerListener(
+                new EventListener() {
+                    @Override
+                    public void onEvent(Event e) {
+                        // 如果EventListener被发布, this溢出了, 但是ThisEscape并没有构造完成
+                        System.out.println(this);
+                    }
+                }
+        );
+        System.out.println("do other thing");
+    }
+
+    public static void main(String[] args) {
+        EventSource source = new EventSource();
+        new ThisEscape(source);
+        source.eventListener.onEvent(new Event());
+    }
+}
+```
+
+```
+/**
+ * 通过工厂方法, 防止this溢出
+ */
+public class SafeListener {
+
+    /**
+     * EventListener内部有onEvent方法等待override
+     */
+    private final EventListener listener;
+
+    private SafeListener() {
+        listener = new EventListener() {
+            @Override
+            public void onEvent(Event e) {
+                // 不允许这个时候的状态被外部访问
+            }
+        };
+
+        System.out.println("do other thing");
+    }
+
+    public static SafeListener newInstance(EventSource source) {
+        // SafeListener构造完成后, 再用registerListener去注册
+        SafeListener safe = new SafeListener();
+        source.registerListener(safe.listener);
+        return safe;
+    }
+}
+
+public class EventSource {
+
+    public EventListener eventListener;
+
+    public void registerListener(EventListener eventListener) {
+        this.eventListener = eventListener;
+    }
+}
+```
 
 ### Thread confinement
 从代码实现上, 把变量限制在只能被一个线程用同步. 如Swing的dispatch线程. 如果仅从代码去实现这样的逻辑, 书中定义叫ad-hoc thread confinement, 这种程序会比较脆弱, 举个例子, volatile变量如果保证单线程写入, 因为可见性可以保证, 所以可以确保线程安全, 但是可以预见的是保证单线程写入本身就不是容易的事情. 书中还用了一个局部变量的例子来解释thread confinement, 也叫stack confinement, 让变量被限制在代码块内: *e.g. ThreadConfinementExample.loadTheArk*. 这个例子其实和前面的*CachedFactorizer*类似. 
