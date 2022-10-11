@@ -14,9 +14,45 @@ tags: ["Java"]
 
 ### Atomicity
 在不同的线程访问一个资源时, 这个资源的状态应该是一致的, 类的行为和应该有的规范完全一致. 我认为简单地说, 就是这个类的功能不管是单线程还是并发, 都是正常的. **所以无状态对象一定安全**, 因为它没有域, 也没有对其他类的域的引用, 计算过程只在栈上的, 没有共享资源, 那么一定安全了. 当这个而无状态类有字段时, 可以用原子变量类, 如`AtomicLong`来保证原子性(读取-修改-写入). 这里要注意, 原子性只针对原子变量本身, 多个原子变量因为不应时序的调用, 不能保证线程安全. *e.g. AtomicTest*.
+```
+public class AtomicTest {
+
+    /**
+     * 使用原子变量类, 保证原子性
+     */
+    private final AtomicLong count = new AtomicLong(0);
+
+    public long getCount() {
+        return count.getAndIncrement();
+    }
+}
+```
 
 ### Locking
 可以用`synchronized(lock) {}`标注同步代码块, 并且这些**内置锁**是可重入的, 重入是指在一个线程中可以多次获取同一把锁, 也就是说锁的粒度是线程, 线程可以获得自己持有的锁. *e.g. Widgit*这个例子的子类的同步方法中调用父类的同步方法, 两个方法的方法体不同, 但是`this`是相同的, 所以实际上是重入了同一把锁. 可以看出, 有些地方写`ReentrantLock`和`synchronized`的区别是`synchronized`不可重入, 这种说法是错的! 只不过用`ReentrantLock`, 我们可以多次手动获取锁, 并且手动解锁. 
+```
+public class Widget {
+
+    public synchronized void doSomething() {
+        System.out.println(this + ": calling method(super)");
+    }
+
+    public static void main(String[] args) {
+        LoggingWidget loggingWidget = new LoggingWidget();
+        loggingWidget.doSomething();
+    }
+}
+
+class LoggingWidget extends Widget {
+
+    @Override
+    public synchronized void doSomething() {
+        System.out.println(this + ": calling method");
+        // 调用父类的同步方法, 虽然方法不同, 但是this是用一个, 那么锁就是同一个
+        super.doSomething();
+    }
+}
+```
 
 ### Guarding state with locks
 多个线程共享的变量应该由一个锁来保护, 反之不是多个线程共享的变量无需保护. 锁需要保护invariants(不变性条件)中的所有涉及的变量, 只保护一个变量是不够的. 即使像Vector类的所有方法都是`synchronized`方法2, 也不能保证如
@@ -249,21 +285,133 @@ public class EventSource {
 ```
 
 ### Thread confinement
-从代码实现上, 把变量限制在只能被一个线程用同步. 如Swing的dispatch线程. 如果仅从代码去实现这样的逻辑, 书中定义叫ad-hoc thread confinement, 这种程序会比较脆弱, 举个例子, volatile变量如果保证单线程写入, 因为可见性可以保证, 所以可以确保线程安全, 但是可以预见的是保证单线程写入本身就不是容易的事情. 书中还用了一个局部变量的例子来解释thread confinement, 也叫stack confinement, 让变量被限制在代码块内: *e.g. ThreadConfinementExample.loadTheArk*. 这个例子其实和前面的*CachedFactorizer*类似. 
+从代码实现上, 把变量限制在只能被一个线程用同步. 如Swing的dispatch线程. 如果仅从代码去实现这样的逻辑, 书中定义叫ad-hoc thread confinement, 这种程序会比较脆弱, 举个例子, volatile变量如果保证单线程写入, 因为可见性可以保证, 所以可以确保线程安全, 但是可以预见的是保证单线程写入本身就不是容易的事情. **stack confinement**也是一种特殊的Thread confinement, 让变量被限制在代码块内: *e.g. ThreadConfinementExample.loadTheArk*. 这个例子其实和前面的*CachedFactorizer*类似. 
+```
+public class ThreadConfinementExample {
 
-还有一种保证thread confinement使用`ThreadLocal`, 使用时可以把它想象成一个Map, 对不同的线程提供对应的值, 当线程不用这个值了, 这个值就会被GC. 每个set的值在使用的线程都有独立的副本, 在get时也总会返回当前线程设置的最新值. *ThreadConfinementExample.getConnection*
+    /**
+     * animals作为局部变量, 被封闭在代码块内
+     */
+    public int loadTheArk(Collection<Animal> candidates) {
+        SortedSet<Animal> animals;
+        int numPairs = 0;
+        Animal candidate = null;
+
+        // animals对象只在
+        animals = new TreeSet<>();
+        animals.addAll(candidates);
+        for (Animal a : animals) {
+            if (candidate == null || !candidate.isPotentialMate(a)) {
+                candidate = a;
+            }
+        }
+        return numPairs;
+    }
+}
+```
+
+还有一种保证thread confinement使用**ThreadLocal**, 使用时可以把它想象成一个Map, 对不同的线程提供对应的值, 当线程不用这个值了, 这个值就会被GC. 每个set的值在使用的线程都有独立的副本, 在get时也总会返回当前线程设置的最新值.
+```
+private static ThreadLocal<Connection> connectionHolder = new ThreadLocal<Connection>() {
+
+    @Override
+    public Connection initialValue() {
+        try {
+            return DriverManager.getConnection(DB_URL);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+};
+
+public static Connection getConnection() {
+    return connectionHolder.get();
+}
+```
 
 ### Immutability
 immutable的对象线程安全, 不可变对象需要满足如下几个条件. *e.g. ThreeStooges*.
 - 对象创建后其状态不能修改(是集合类也可以, 但是不发布, 而是用已有元素做一些判断)
 - 域都是final(String除外, ~严格来说不用满足这一点, 但是实现上需要对JMM有深入的理解, 所以自己写代码别这么做~). 将不可变的域声明为final是个好习惯. 
 - 对象创建期间, this不溢出
+```
+public class ThreeStooges {
 
-当某个变量的读写有竞争条件时, 可以把他们放在一个不可变对象中, 来保证线程安全. *e.g. VolatileCachedFactorizer*. 
+    /**
+     * Set可变, 但是构造后无法修改
+     */
+    private final Set<String> stooges = new HashSet<>();
+
+    public ThreeStooges() {
+        stooges.add("Moe");
+        stooges.add("Larry");
+        stooges.add("Curly");
+    }
+
+    public boolean isStooge(String name) {
+        return stooges.contains(name);
+    }
+}
+```
+
+当某个变量的读写有竞争条件时, 可以把他们放在一个不可变对象中, 来保证线程安全.
+```
+public class VolatileCachedFactorizer extends HttpServlet {
+
+    /**
+     * volatile保证visibility, 只要引用改变了, 其他线程就能看到
+     */
+    private volatile OneValueCache cache = new OneValueCache(null, null);
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        BigInteger i = (BigInteger)req.getAttribute("i");
+        BigInteger[] factors = cache.getFactors(i);
+        if (factors == null) {
+            factors = factor(i);
+            cache = new OneValueCache(i, factors);
+        }
+        PrintWriter writer = resp.getWriter();
+        writer.print(Arrays.toString(factors));
+        super.doGet(req, resp);
+    }
+
+    /**
+     * 因式分解, 还没实现
+     */
+    private BigInteger[] factor(BigInteger number) {
+        return new BigInteger[]{};
+    }
+}
+
+/**
+ * 线程安全的因式分解, 因为lastNumber和lastFactors不可变
+ */
+public class OneValueCache {
+
+    private final BigInteger lastNumber;
+
+    private final BigInteger[] lastFactors;
+
+    public OneValueCache(BigInteger i, BigInteger[] factors) {
+        lastNumber = i;
+        lastFactors = Arrays.copyOf(factors, factors.length);
+    }
+
+    public BigInteger[] getFactors(BigInteger i) {
+        if (lastNumber == null || !lastNumber.equals(i)) {
+            return null;
+        } else {
+            return Arrays.copyOf(lastFactors, lastFactors.length);
+        }
+    }
+}
+```
 
 ### Safe publication
 **Effectively immutable objects**(技术上状态可变, 但是实际上不会对其进行改变)需要安全地publish, 让使用这个对象的线程看到已发布的状态. 书中总结了以下几种方式. 
-- 静态初始化函数中初始化一个对象的引用. 因为静态初始化在JVM的初始化阶段进行, JVM保证内部的线程安全
+- 静态初始化函数中初始化一个对象的引用. 因为静态初始化在JVM的初始化阶段进行, JVM保证内部的线程安全.
 - 将对象引用保存到volatile或AtomicReference对象中
 - 将对象引用保存到正确构造对象的final域中
 - 将对象引用保存到一个由锁保护的域中
@@ -278,17 +426,302 @@ immutable的对象线程安全, 不可变对象需要满足如下几个条件. *
 - 构成对象状态的**所有变量**
 - 约束状态变量的**不变性条件**
 - 建立对象状态的并发访问管理策略
+```
+/**
+ * 监视器模式的线程安全计数器
+ * synchronization policy defines how an object coordinates access to its state without
+ * violating its invariants or postconditions. It specifies the combination of immutability,
+ * thread confinement, and locking.
+ */
+public final class Counter {
+
+    /**
+     * long是primitive type, 所以value是构成这个对象的所有状态
+     */
+    private long value = 0;
+
+    public synchronized long getValue() {
+        return value;
+    }
+
+    public synchronized long increment() {
+        if (value == Long.MAX_VALUE) {
+            throw new IllegalStateException("counter overflow");
+        }
+        return ++value;
+    }
+}
+```
 
 ### Instance confinement
 确保一个对象只能有单个线程访问, 封装在对象内部的数据, 可以把数据的访问限制在对象的方法上. *e.g. PersonSet*. 进而想到Java的监视器模式, 用一把内部锁来封装内部的mutable state. *e.g. PrivateLock*.  *e.g. MonitorVehicleTracker*.
+```
+public class PersonSet {
+
+    /**
+     * HashSet不是线程安全, 但是访问的方法线程安全, 保证了mySet线程安全
+     * 注意这里的Person的线程安全性没有做假设
+     */
+    private final Set<Person> mySet = new HashSet<>();
+
+    public synchronized void addPerson(Person p) {
+        mySet.add(p);
+    }
+
+    public synchronized boolean containsPerson(Person p) {
+        return mySet.contains(p);
+    }
+}
+
+/**
+ * Guarding state with a private lock
+ */
+public class PrivateLock {
+
+    private final Object myLock = new Object();
+
+    Widget widget;
+
+    void someMethod() {
+        synchronized (myLock) {
+            // Access or modify the state of widget...
+        }
+    }
+}
+```
+```
+/**
+ * 车辆追踪器, 监视器模式, 保证在修改MutablePoint时线程安全
+ */
+public class MonitorVehicleTracker {
+
+    /**
+     * 坐标, 这个locations和MutablePoint都不会publish
+     */
+    private final Map<String, MutablePoint> locations;
+
+    public MonitorVehicleTracker(Map<String, MutablePoint> locations) {
+        this.locations = deepCopy(locations);
+    }
+    
+    /**
+     * 传的是new出来的locations, 而不是这个类的域
+     */
+    public synchronized Map<String, MutablePoint> getLocations() {
+        return deepCopy(locations);
+    }
+    
+    /**
+     * 每次都传出新的对象, 保证内部的MutablePoint不被发布
+     */
+    public synchronized MutablePoint getLocation(String id) {
+        MutablePoint loc = locations.get(id);
+        return loc == null ? null : new MutablePoint(loc);
+    }
+
+    public synchronized void setLocation(String id, int x, int y) {
+        MutablePoint loc = locations.get(id);
+        if (loc == null) {
+            throw new IllegalArgumentException("No such ID: " + id);
+        }
+        loc.x = x;
+        loc.y = y;
+    }
+
+    private static Map<String, MutablePoint> deepCopy(Map<String, MutablePoint> m) {
+        Map<String, MutablePoint> result = new HashMap<>(5);
+        for (String id : m.keySet()) {
+            result.put(id, new MutablePoint(m.get(id)));
+        }
+        return Collections.unmodifiableMap(result);
+    }
+}
+
+/**
+ * 这个类不是线程安全的, 但是追踪器类安全
+ */
+public class MutablePoint {
+
+    public int x, y;
+
+    public MutablePoint() {
+        x = 0;
+        y = 0;
+    }
+
+    public MutablePoint(MutablePoint p) {
+        this.x = p.x;
+        this.y = p.y;
+    }
+}
+```
 
 ### Delegating thread safety
 基于委托的车辆追踪器, *DelegatingVehicleTracker*. locations委托给ConcurrentMap保证线程安全. 这个类中只有单个状态. 还有一种情况是一个类需要多个独立且线程安全的状态变量, 那么可以把主类的线程安全委托给这些变量. 但如果这些变量互相有依赖关系, 限制条件(比如一个必须大于另一个). 那么仍然需要加锁. 
+```
+public class DelegatingVehicleTracker {
+
+    /**
+     * Point is immutable, 线程安全
+     */
+    private final ConcurrentMap<String, Point> locations;
+
+    /**
+     * unmodifiableMap is immutable
+     */
+    private final Map<String, Point> unmodifiableMap;
+
+    public DelegatingVehicleTracker(Map<String, Point> points) {
+        locations = new ConcurrentHashMap<>(points);
+        // unmodifiableMap是locations的view, 虽然可以实时更新, 但可能存在不一致的view, 因为view会跟着locations变.
+        unmodifiableMap = Collections.unmodifiableMap(locations);
+    }
+
+    public Map<String, Point> getLocations() {
+        return unmodifiableMap;
+        // 返回浅拷贝, 因为value不可变, 所以只需要赋值结构即可. 这样保证复制过来的view不发生变化.
+        // return Collections.unmodifiableMap(new HashMap<String, Point>(locations));
+    }
+
+    public Point getLocation(String id) {
+        return locations.get(id);
+    }
+
+    public void setLocation(String id, int x, int y) {
+        if (locations.replace(id, new Point(x, y)) == null) {
+            throw new IllegalArgumentException("invalid vehicle name: " + id);
+        }
+    }
+}
+
+/**
+ * immutable class
+ */
+public class Point {
+
+    public final int x, y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+```
 
 如果保证Point的线程安全, 也可以发布Point, *e.g. PublishingVehicleTracker*. 和DelegatingVehicleTracker的区别是这个`SafePoint`是可以改变的, 因为读写的方法都加了锁, 所以还是能保证线程安全. 
+```
+/**
+ * SafePoint被发布的版本, SafePoint本身线程安全, 所以允许可变. 可以改变车辆的位置.
+ */
+public class PublishingVehicleTracker {
+
+    private final Map<String, SafePoint> locations;
+
+    private final Map<String, SafePoint> unmodifiableMap;
+
+    public PublishingVehicleTracker(Map<String, SafePoint> locations) {
+        this.locations = new ConcurrentHashMap<>(locations);
+        this.unmodifiableMap = Collections.unmodifiableMap(this.locations);
+    }
+
+    public Map<String, SafePoint> getLocations() {
+        return unmodifiableMap;
+    }
+
+    public SafePoint getLocation(String id) {
+        return locations.get(id);
+    }
+
+    public void setLocation(String id, int x, int y) {
+        if (!locations.containsKey(id)) {
+            throw new IllegalArgumentException("invalid vehicle name: " + id);
+        }
+        locations.get(id).set(x, y);
+    }
+}
+
+/**
+ * 可变, 但依然线程安全
+ */
+public class SafePoint {
+
+    private int x, y;
+
+    private SafePoint(int[] a) {
+        this(a[0], a[1]);
+    }
+
+    public SafePoint(SafePoint p) {
+        this(p.get());
+    }
+
+    public SafePoint(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public synchronized int[] get() {
+        return new int[] {x, y};
+    }
+
+    public synchronized void set(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+```
 
 ### Adding functionality to existing thread-safe classes
 如何对已经有的线程安全类增加更多的功能, 比如给一个list增加`如果没有该元素则添加的功能`. 最简单的方法是用子类去扩展基类的方法, 并对子类的方法进行加锁, 这种方法的问题是如果基类的同步策略改变, 会破怪子类的线程安全性. 还第一种方式是在使用端进行加锁, 但是要注意这个锁需要锁实例, 否则这个锁是无效的. 如*e.g. ListHelper*, 这样使用的问题是破坏封装性, 耦合度更高了. 更好的方法是Composition. *e.g. ImprovedList*. 这个例子使用监视器模式封装了List.
+```
+public class ListHelper {
+
+    public List<String> list = Collections.synchronizedList(new ArrayList<>());
+    
+    /**
+     * synchronized如果加载方法上, 锁就是ListHelper的实例, 和list中其他方法的锁不一样了, 无法保证线程安全
+     */
+    public boolean putIfAbsent(String x) {
+        synchronized (list) {
+            boolean absent = !list.contains(x);
+            if (absent) {
+                // do something
+                return true;
+            }
+            return false;
+        }
+    }
+}
+```
+
+```
+public class ImprovedList<T> { //implements List<T> {
+
+    private final List<T> list;
+    
+    /**
+     * 这个地方传入后, 客户端就应该停止使用list
+     * @param list
+     */
+    public ImprovedList(List<T> list) {
+        this.list = list;
+    }
+
+    public synchronized boolean putIfAbsent(T x) {
+        boolean contains = list.contains(x);
+        if (contains) {
+            list.add(x);
+        }
+        return !contains;
+    }
+
+    public synchronized void clear() {
+        list.clear();
+    }
+
+    // ... similarly delegate other List methods
+}
+```
 
 ### Documenting synchronization policies
 对类的线程安全性应该写文档, 同步策略是什么, 锁保护了哪些变量, 都应该注明. 如果遇到了没有写线程安全的类, 就假设不是线程安全的.
