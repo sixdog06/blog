@@ -14,12 +14,70 @@ tags: ["Java"]
 
 ### 6.1-Executing tasks in threads
 如果串行执行任务, 性能很差, 不适合web服务器. 但是因为安全性和简单性, 被GUI框架广泛使用. *e.g. SingleThreadWebServer*. 如果并行执行, 但是无限制地创建线程, 依然会有缺陷, 因为线程的生命周期开销高(创建和销毁), 活跃的线程会消耗资源, 并且线程的数量上限是有限制的, 超出范围会产生OOM. *e.g. ThreadPerTaskWebServer*.
+```
+/**
+ * 串行渲染器
+ */
+public class SingleThreadRenderer {
+    
+    void renderPage(CharSequence source) {
+        renderText(source);
+        List<ImageData> imageDatas = new ArrayList<>();
+        for (ImageInfo imageInfo: scanForImageInfo(source)) {
+            imageDatas.add(imageInfo.downloadImage());
+            for (ImageData data : imageDatas) {
+                renderImage(data);
+            }
+        }
+    }
+}
+
+/**
+ * 为每个任务创建线程
+ */
+public class ThreadPerTaskWebServer {
+    
+    public static void main(String[] args) throws IOException {
+        ServerSocket socket = new ServerSocket(80);
+        while (true) {
+            final Socket connection = socket.accept();
+            Runnable task = new Runnable() {
+                
+                @Override
+                public void run() {
+                    handleRequest(connection);
+                } };
+            new Thread(task).start();
+        }
+    }
+}
+```
 
 ### 6.2-The Executor framework
 通过`Executor`接口作为基础, 实现了很多异步任务执行的框架. *e.g. TaskExecutionWebServer*. Executors下也实现了创建线程池的方法(**实际上还是推荐手动设置参数**). Executor的主要目的还是解耦任务的提交和执行. 如果想有一些灵活的执行策略, `new Thread(runnable).start()`这种提交立即执行的代码就可以考虑用`Executor`来替代, 并在实现的时候插入一些执行策略. 
 ```
-public interface Executor {
-    void execute(Runnable command);
+/**
+ * 基于Executor的web服务器
+ */
+public class TaskExecutionWebServer {
+    
+    private static final int N_THREADS = 100;
+    
+    private static final Executor exec = Executors.newFixedThreadPool(N_THREADS);
+    
+    public static void main(String[] args) throws IOException {
+        ServerSocket socket = new ServerSocket(80);
+        while (true) {
+            final Socket connection = socket.accept();
+            Runnable task = new Runnable() {
+               @Override
+                public void run() {
+                    handleRequest(connection);
+                }
+            };
+            exec.execute(task);
+        }
+    }
 }
 ```
 
@@ -27,26 +85,185 @@ public interface Executor {
 
 ### 6.3 Finding exploitable parallelism
 这一节通过一个图像渲染器来解释并发的设计. 首先是*e.g. SingleThreadRenderer*这种没有并发的串行设计, 图像渲染和图像下载的i/o操作耦合在一起, 等待i/o操作的过程中, CPU几乎不工作, 让整个任务的总时长较长, 所以需要拆开任务并发执行. 如果用Future类实现异步的图像渲染器, 如*e.g. FutureRenderer*, 理论上可以解决这个问题, 但是通常图像渲染的时间远低于下载的时间, 所以最终的瓶颈仍然在下载时间, 对性能的提升有限. 
+```
+/**
+ * 串行, 性能不好, 但是能提供简单性和安全性. GUI框架用的多, 但不适合web服务器
+ */
+public class SingleThreadWebServer {
+    
+    public static void main(String[] args) throws IOException {
+        ServerSocket socket = new ServerSocket(80);
+        while (true) {
+            Socket connection = socket.accept();
+            handleRequest(connection);
+        }
+    }
+}
+
+/**
+ * Future实现的异步图像渲染
+ */
+public class FutureRenderer {
+    
+    private final ExecutorService executor = new ThreadPoolExecutor(
+            5,
+            10,
+            100,
+            TimeUnit.MILLISECONDS,
+            new ArrayBlockingQueue<>(5));
+    
+    void renderPage(CharSequence source) {
+        final List<ImageInfo> imageInfos = scanForImageInfo(source);
+        Callable<List<ImageData>> task = new Callable<List<ImageData>>() {
+            @Override
+            public List<ImageData> call() {
+                List<ImageData> result = new ArrayList<>();
+                for (ImageInfo imageInfo : imageInfos) {
+                    result.add(imageInfo.downloadImage());
+                }
+                return result;
+            }
+        };
+    
+        Future<List<ImageData>> future = executor.submit(task);
+        renderText(source);
+        try {
+            List<ImageData> imageData = future.get();
+            for (ImageData data : imageData) {
+                renderImage(data);
+            }
+        } catch (InterruptedException e) {
+            // Re-assert the thread’s interrupted status
+            Thread.currentThread().interrupt();
+            // We don’t need the result, so cancel the task too
+            future.cancel(true);
+        } catch (ExecutionException e) {
+            throw launderThrowable(e.getCause());
+        }
+    }
+}
+```
 
 而*e.g. Renderer*通过`ExecutorCompletionService`实现了并行的下载与及时渲染. 已经下载好的图片在`completionService.take()`后可以被及时消费掉.
+```
+public class Renderer {
+    
+    private final ExecutorService executor;
+    
+    Renderer(ExecutorService executor) {
+        this.executor = executor;
+    }
+    
+    void renderPage(CharSequence source) {
+        List<ImageInfo> info = scanForImageInfo(source);
+        CompletionService<ImageData> completionService = new ExecutorCompletionService<>(executor);
+        
+        for (final ImageInfo imageInfo : info) {
+            // 下载任务拆线程做
+            completionService.submit(new Callable<ImageData>() {
+                @Override
+                public ImageData call() {
+                    return imageInfo.downloadImage();
+                }
+            });
+        }
+    
+        renderText(source);
+    
+        try {
+            for (int t = 0, n = info.size(); t < n; t++) {
+                // 把已经下载成功的图片分别渲染, 消费阻塞队列
+                Future<ImageData> f = completionService.take();
+                ImageData imageData = f.get();
+                renderImage(imageData);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            throw launderThrowable(e.getCause());
+        }
+    }
+}
+```
 
 ## Chapter7-Cancellation and Shutdown
 ### 7.1 Task cancellation
 *e.g. PrimeGenerator*是一个质数生成器, 通过调用`aSecondOfPrimes`方法, 实现在1秒延迟后取消质数生成. 看起来没有什么问题, 但实际如果这个方法的任务调用了阻塞方法, 并且生产速度大于消费速度, 那么在阻塞队列满了之后, put时就会被阻塞. 即使消费者执行了cancel的操作, 生产者依然处在put的过程中, 读不到cancel的值, 使程序无法退出.
 ```
-public void run() { 
-    try {
-        BigInteger p = BigInteger.ONE; 
+/**
+ * 质数生成器
+ */
+public class PrimeGenerator implements Runnable {
+    
+    private final List<BigInteger> primes = new ArrayList<>();
+    
+    private volatile boolean cancelled;
+    
+    @Override
+    public void run() {
+        BigInteger p = BigInteger.ONE;
         while (!cancelled) {
-            queue.put(p = p.nextProbablePrime());
+            p = p.nextProbablePrime();
+            synchronized (this) {
+                primes.add(p);
+            }
         }
-    } catch (InterruptedException consumed) {
-
+    }
+    
+    public void cancel() {
+        cancelled = true;
+    }
+    
+    public synchronized List<BigInteger> get() {
+        return new ArrayList<>(primes);
+    }
+    
+    /**
+     * 1秒钟的时候调用cancel
+     */
+    List<BigInteger> aSecondOfPrimes() throws InterruptedException {
+        PrimeGenerator generator = new PrimeGenerator();
+        new Thread(generator).start();
+        try {
+            SECONDS.sleep(1);
+        } finally {
+            generator.cancel();
+        }
+        return generator.get();
     }
 }
 ```
 
 而取消任务最好的方式就是用Thread的`interrupt()`方法, 注意Thread有一个静态的`interrupted()`方法, 作用是返回当前的中断状态, 但是它的底层是`currentThread().isInterrupted(true);`会清除中断标志, 如果返回为`true`, 表示这个线程正在中断中, 要记住去处理它. 上述代码的`!cancelled`就可以替换为`!Thread.currentThread().isInterrupted()`. **Java中取消一个任务最好的方式就是中断**. **Java的中断是非抢占式的, 执行任务或取消操作的代码都不应该对线程的中断策略有任何假设**. 调用阻塞队列的质数生成器: *PrimeProducer*.
+```
+/**
+ * PrimeGenerator的阻塞队列版, 这时候需要用interrupt来实现cancel, 防止阻塞队列阻塞后线程读不到cancel信号量, 导致任务无法停止
+ */
+public class PrimeProducer extends Thread {
+
+    private final BlockingQueue<BigInteger> queue;
+
+    PrimeProducer(BlockingQueue<BigInteger> queue) {
+        this.queue = queue;
+    }
+
+    @Override
+    public void run() {
+        try {
+            BigInteger p = BigInteger.ONE;
+            while (!Thread.currentThread().isInterrupted()) {
+                queue.put(p = p.nextProbablePrime());
+            }
+        } catch (InterruptedException consumed) {
+            // Allow thread to exit
+        }
+    }
+
+    public void cancel() {
+        interrupt();
+    }
+}
+```
 
 知道了怎么通过中断取消一个任务, 那么对于中断应该如何响应呢. 有两种办法:
 - `throw InterruptedException` 抛出中断给父线程
@@ -54,16 +271,87 @@ public void run() {
 
 接下来运用上面的知识来实现一个实现一个计时运行的任务. 在这之前先分析两种不好的实现方法. 第一种的代码如下, 在外部线程中去实现中断, 而我们不应该对线程的中断策略有任何假设, `timedRun`可以被任意线程调用, 不能被随意中断. `timedRun`很有可能已经完成任务, 或者没完成任务也不响应中断. 这种实现是绝对不能出现的.
 ```
-private static final ScheduledExecutorService cancelExec = ...;
-
-public static void timedRun(Runnable r, long timeout, TimeUnit unit) {
-    final Thread taskThread = Thread.currentThread();
-    cancelExec.schedule(new Runnable() {
-        public void run() {
-            taskThread.interrupt();
+public class TimedRun {
+    
+    /**
+     * timedRun是static的, 可以被任何线程调用, 调用线程的中断策略是未知的, 如果该线程任务已经执行完成,
+     * {@code cancelExec.schedule}的延时才结束, 那么{@code taskThread.interrupt()}会造成无法推测的后果
+     */
+    private static final ScheduledExecutorService cancelExec = new ScheduledThreadPoolExecutor(1);
+    
+    public static void timedRun(Runnable r, long timeout, TimeUnit unit) {
+        final Thread taskThread = Thread.currentThread();
+        // 在一段延时后调用
+        cancelExec.schedule(new Runnable() {
+            @Override
+            public void run() {
+                taskThread.interrupt();
+            }
+        }, timeout, unit);
+        r.run();
+    }
+    
+    /**
+     * 修复了timedRun的问题, 但是因为用了join. 无法知道线程是正常退出(因为taskThread.interrupt()退出)还是因为join超时而返回
+     */
+    public static void timedRun2(final Runnable r, long timeout, TimeUnit unit) throws InterruptedException {
+        class RethrowableTask implements Runnable {
+            /**
+             * 在两个线程之间共享
+             */
+            private volatile Throwable t;
+            
+            @Override
+            public void run() {
+                try {
+                    r.run();
+                } catch (Throwable t) {
+                    this.t = t;
+                }
+            }
+            
+            void rethrow() {
+                if (t != null) {
+                    throw launderThrowable(t);
+                }
+            }
         }
-    }, timeout, unit);
-    r.run();
+        
+        RethrowableTask task = new RethrowableTask();
+        final Thread taskThread = new Thread(task);
+        // 任务线程开始执行
+        taskThread.start();
+        // 用专门的中断线程中断任务
+        cancelExec.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    taskThread.interrupt();
+                }
+            }, timeout, unit);
+        taskThread.join(unit.toMillis(timeout));
+        task.rethrow();
+    }
+    
+    /**
+     * 通过Future的取消功能来实现. 这样可以知道是因为超时退出(TimeoutException), 还是任务执行完成后或没执行完成因为中断而退出
+     */
+    private static final ExecutorService taskExec = Executors.newFixedThreadPool(1);
+    
+    public static void timedRun3(Runnable r, long timeout, TimeUnit unit) throws InterruptedException {
+        Future<?> task = taskExec.submit(r);
+    
+        try {
+            task.get(timeout, unit);
+        } catch (TimeoutException e) {
+            // 超时, 可以取消任务
+        } catch (ExecutionException e) {
+            // exception thrown in task; rethrow
+            throw launderThrowable(e.getCause());
+        } finally {
+            // 任务没有执行了, 这行代码没有影响. 若还在执行, 则中断任务
+            task.cancel(true);
+        }
+    }
 }
 ```
 
