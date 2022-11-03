@@ -7,10 +7,8 @@ categories: ["学习笔记"]
 tags: ["Java"]
 ---
 
-项目链接[JavaLab](https://github.com/huanruiz/JavaLab), 有示例的代码以*类名*的形式标注在小结中.
-
 ## Chapter6-Task Execution
-一个大型的应用通常是一个个的task组成的, 这个Chapter就讲怎么设计一个task.
+一个大型的应用通常是一个个的任务组成的, 这个Chapter就讲怎么设计一个线程安全的任务.
 
 ### 6.1-Executing tasks in threads
 如果串行执行任务, 性能很差, 不适合web服务器. 但是因为安全性和简单性, 被GUI框架广泛使用. *e.g. SingleThreadWebServer*. 如果并行执行, 但是无限制地创建线程, 依然会有缺陷, 因为线程的生命周期开销高(创建和销毁), 活跃的线程会消耗资源, 并且线程的数量上限是有限制的, 超出范围会产生OOM. *e.g. ThreadPerTaskWebServer*.

@@ -7,13 +7,11 @@ categories: ["学习笔记"]
 tags: ["Java"]
 ---
 
-基础知识覆盖了书中的第二章到第五章. 第一章为粗略的介绍, 简单过一下就好.
-
 ## Chapter2-Thread Safety
 这一节主要介绍线程安全的一些基本概念, 解释一些基本名词. 写线程安全的并发代码, 关键就是在访问共享资源时做好管理.
 
 ### Atomicity
-在不同的线程访问一个资源时, 这个资源的状态应该是一致的, 类的行为和应该有的规范完全一致. 我认为简单地说, 就是这个类的功能不管是单线程还是并发, 都是正常的. **所以无状态对象一定安全**, 因为它没有域, 也没有对其他类的域的引用, 计算过程只在栈上的, 没有共享资源, 那么一定安全了. 当这个而无状态类有字段时, 可以用原子变量类, 如`AtomicLong`来保证原子性(读取-修改-写入). 这里要注意, 原子性只针对原子变量本身, 多个原子变量因为不应时序的调用, 不能保证线程安全. *e.g. AtomicTest*.
+在不同的线程访问一个资源时, 这个资源的状态应该是一致的, 类的行为和应该有的规范完全一致. **所以无状态对象一定安全**, 因为它没有域, 也没有对其他类的域的引用, 计算过程只在栈上的, 没有共享资源, 那么一定安全了. 当这个而无状态类有字段时, 可以用原子变量类, 如`AtomicLong`来保证原子性(读取-修改-写入). 这里要注意, 原子性只针对原子变量本身, 多个原子变量因为不同时序的调用, 不能保证线程安全. *e.g. AtomicTest*.
 ```
 public class AtomicTest {
 
@@ -29,7 +27,7 @@ public class AtomicTest {
 ```
 
 ### Locking
-可以用`synchronized(lock) {}`标注同步代码块, 并且这些**内置锁**是可重入的, 重入是指在一个线程中可以多次获取同一把锁, 也就是说锁的粒度是线程, 线程可以获得自己持有的锁. *e.g. Widgit*这个例子的子类的同步方法中调用父类的同步方法, 两个方法的方法体不同, 但是`this`是相同的, 所以实际上是重入了同一把锁. 可以看出, 有些地方写`ReentrantLock`和`synchronized`的区别是`synchronized`不可重入, 这种说法是错的! 只不过用`ReentrantLock`, 我们可以多次手动获取锁, 并且手动解锁. 
+可以用`synchronized(lock) {}`标注同步代码块, 并且这些**内置锁**是可重入的, 重入是指在一个线程中可以多次获取同一把锁, 也就是说锁的粒度是线程, 线程可以获得自己持有的锁. *Widgit*这个例子的子类的同步方法中调用父类的同步方法, 两个方法的方法体不同, 但是`this`是相同的, 所以实际上是重入了同一把锁. 可以看出, 有些地方写`ReentrantLock`和`synchronized`的区别是`synchronized`不可重入, 这种说法是错的! 只不过用`ReentrantLock`, 我们可以多次手动获取锁, 并且手动解锁. 
 ```
 public class Widget {
 
@@ -55,18 +53,18 @@ class LoggingWidget extends Widget {
 ```
 
 ### Guarding state with locks
-多个线程共享的变量应该由一个锁来保护, 反之不是多个线程共享的变量无需保护. 锁需要保护invariants(不变性条件)中的所有涉及的变量, 只保护一个变量是不够的. 即使像Vector类的所有方法都是`synchronized`方法2, 也不能保证如
+多个线程共享的变量应该由一个锁来保护, 反之不是多个线程共享的变量无需保护. 锁需要保护invariants(不变性条件)中的所有涉及的变量, 只保护一个变量是不够的. `Vector`的所有方法都是`synchronized`方法, 也无法使复合操作原子.
 ```
 if (!vector.contains(element)) {
     vector.add(element)
 }
 ```
-的复合操作原子.
+
 
 > 对invariants这个概念, 可以将其理解为状态的不变. 简单说, 比如我们要求`a == 2 * b`, 那个在并发场景下, 这个两个变量共同组成了这个2倍等式的不变性条件
 
 ### Liveness and performance
-*e.g. SynchronizedFactorizer*中对整个方法进行加锁, 让Servlet无法多线程处理任务, 这种粗粒度地对整个方法加锁非常不好. 而*e.g. CachedFactorizer*中, 把读写的操作分别加锁, 会有更好的性能. 实际上只有读写的时候才会访问共享的变量, 而`doGet`代码块内的局部变量都没有被发布, 在自己的线程中是安全的.
+*SynchronizedFactorizer*中对整个方法进行加锁, 让Servlet无法多线程处理任务, 这种粗粒度地对整个方法加锁非常不好. 而*CachedFactorizer*中, 把读写的操作分别加锁, 会有更好的性能. 只有读写的时候才会问共享的变量, `doGet`代码块内的局部变量也都没有被发布, 在自己的线程中是安全的.
 ```
 /**
  * 粗粒度地对整个方法加锁(很不好)
@@ -93,7 +91,7 @@ public class SynchronizedFactorizer extends HttpServlet {
     }
     
     /**
-     * 因式分解, 还没实现
+     * 因式分解, 未实现
      */
     private BigInteger[] factor(BigInteger number) {
         return new BigInteger[]{};
@@ -310,7 +308,7 @@ public class ThreadConfinementExample {
 }
 ```
 
-还有一种保证thread confinement使用**ThreadLocal**, 使用时可以把它想象成一个Map, 对不同的线程提供对应的值, 当线程不用这个值了, 这个值就会被GC. 每个set的值在使用的线程都有独立的副本, 在get时也总会返回当前线程设置的最新值.
+使用**ThreadLocal**也能实现thread confinement, 使用时可以把它想象成一个Map, 对不同的线程提供对应的值, 当线程不用这个值了, 这个值就会被GC. 每个set的值在使用的线程都有独立的副本, 在get时也总会返回当前线程设置的最新值.
 ```
 private static ThreadLocal<Connection> connectionHolder = new ThreadLocal<Connection>() {
 
@@ -333,7 +331,7 @@ public static Connection getConnection() {
 ### Immutability
 immutable的对象线程安全, 不可变对象需要满足如下几个条件. *e.g. ThreeStooges*.
 - 对象创建后其状态不能修改(是集合类也可以, 但是不发布, 而是用已有元素做一些判断)
-- 域都是final(String除外, ~严格来说不用满足这一点, 但是实现上需要对JMM有深入的理解, 所以自己写代码别这么做~). 将不可变的域声明为final是个好习惯. 
+- 域都是final
 - 对象创建期间, this不溢出
 ```
 public class ThreeStooges {
@@ -454,7 +452,7 @@ public final class Counter {
 ```
 
 ### Instance confinement
-确保一个对象只能有单个线程访问, 封装在对象内部的数据, 可以把数据的访问限制在对象的方法上. *e.g. PersonSet*. 进而想到Java的监视器模式, 用一把内部锁来封装内部的mutable state. *e.g. PrivateLock*.  *e.g. MonitorVehicleTracker*.
+确保一个对象只能有单个线程访问. 封装在对象内部的数据, 可以把数据的访问限制在对象的方法上. *e.g. PersonSet*. 
 ```
 public class PersonSet {
 
@@ -472,7 +470,10 @@ public class PersonSet {
         return mySet.contains(p);
     }
 }
+```
 
+Java的监视器模式, 用一把内部锁来封装内部的mutable state. *e.g. PrivateLock*.  *e.g. MonitorVehicleTracker*.
+```
 /**
  * Guarding state with a private lock
  */
