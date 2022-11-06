@@ -123,7 +123,7 @@ public class TimedRun {
             
             @Override
             public void run() {
-                try {
+                try { 
                     r.run();
                 } catch (Throwable t) {
                     this.t = t;
