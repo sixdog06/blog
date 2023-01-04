@@ -373,6 +373,3 @@ public class Item9 {
     }
 }
 ```
-
-## 参考
-1. Effective Java

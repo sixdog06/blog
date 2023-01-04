@@ -34,6 +34,147 @@ tags: ["Java"]
 - 重写`equals`后必须重写`hashCode`
 - 注意`equals`的入参是Object而不是具体的类
 - 写相等条件的时候, 只比较想要比较的条件, 这种条件是符合需求的即可, 而不是把所有字段一层一层往下比
+```
+public class Item10 {
+
+    /**
+     * 2 Pattern不提供equals
+     */
+    private static Pattern pattern = Pattern.compile("a*b");
+
+    public static void main(String[] args) {
+        /** 不必重写 **/
+        // 1.Thread本身没有提供value的概念
+        Thread thread = new Thread();
+        thread.start();
+        // 2.Pattern不提供equals, eg.域中的p
+        // 3.AbstractList已重写equals
+        List<Integer> list = new ArrayList<>();
+        // 4.私有类可以抛错, 不是必须的
+        new PrivateClass();
+
+        /** equals不满足基本条件case **/
+        // 1.Symmetry
+        CaseInsensitiveString cis = new CaseInsensitiveString("Polish");
+        String s = "polish";
+        System.out.println(cis.equals(s));
+        System.out.println(s.equals(cis));
+
+        // 2.Transitivity
+        ColorPoint p1 = new ColorPoint(1, 2, Color.RED);
+        Point p2 = new Point(1, 2);
+        ColorPoint p3 = new ColorPoint(1, 2, Color.BLUE);
+        System.out.println("---bad ColorPoint case---");
+        System.out.println(p1.equals(p2));
+        System.out.println(p2.equals(p3));
+        System.out.println(p1.equals(p3));
+
+        // 通过分离color属性来保证Transitivity
+        GoodColorPoint goodP1 = new GoodColorPoint(1, 2, Color.RED);
+        GoodColorPoint goodP3 = new GoodColorPoint(1, 2, Color.BLUE);
+        System.out.println("---good ColorPoint case---");
+        System.out.println(goodP1.equals(p2));
+        System.out.println(p2.equals(goodP3));
+        System.out.println(goodP1.equals(goodP3));
+
+        // 3.Consistent
+        try {
+            //
+            URL url1 = new URL("https://www.baidu.com");
+            URL url2 = new URL("https://www.baidu.com");
+            System.out.println(url1.equals(url2));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 比较
+        System.out.println(1f == 1.0f);
+        System.out.println(Float.compare(Float.valueOf(1), Float.valueOf(1.0f)));
+        System.out.println(Double.compare(Double.valueOf(1), Double.valueOf(1.00)));
+        System.out.println(Objects.equals(1.0, 1.00));
+
+        // equals的标准例程
+        new PhoneNumber(12, 34, 56);
+    }
+}
+
+class PrivateClass {
+
+    @Override
+    public boolean equals(Object obj) {
+        throw new AssertionError();
+    }
+}
+
+public class ColorPoint extends Point {
+
+    private final Color color;
+
+    public ColorPoint(int x, int y, Color color) {
+        super(x, y);
+        this.color = color;
+    }
+
+    /**
+     * 错误版本, 满足symmetry ,但是不满足transitivity. 有其他的如SmellPoint, 如果写
+     * {@code myColorPoint.equals(mySmellPoint)} 会因为递归, 触发StackOverflowError
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Point)) {
+            return false;
+        }
+        // If o is a normal Point, do a color-blind comparison
+        if (!(o instanceof ColorPoint)) {
+            return o.equals(this);
+        }
+        // o is a ColorPoint, do a full comparison
+        return super.equals(o) && ((ColorPoint) o).color == color;
+    }
+
+    /**
+     * todo: 书上的代码似乎不太对
+     * 书上想表达: 虽然满足了transitivity, 但是违反<strong>Liskov substitution principle</strong>.
+     * 其他Point的subclass的equals会不对
+     */
+//    @Override
+//    public boolean equals(Object o) {
+//        if (o == null || o.getClass() != getClass()) {
+//            return false;
+//        }
+//        Point p = (Point)o;
+//        return p.x == x && p.y == y;
+//    }
+}
+
+public class GoodColorPoint extends Point {
+
+    private final Point point;
+
+    private final Color color;
+
+    public GoodColorPoint(int x, int y, Color color) {
+        point = new Point(x, y);
+        this.color = Objects.requireNonNull(color);
+    }
+
+    /**
+     * Returns the point-view of this color point.
+     */
+    public Point asPoint() {
+        return point;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof GoodColorPoint)) {
+            return false;
+        }
+        GoodColorPoint cp = (GoodColorPoint) o;
+        return cp.point.equals(point) && cp.color.equals(color);
+    }
+}
+```
 
 ## Item 11: Always override hashCode when you override equals
 重写`equals`之后必须重写`hashCode`, 参见`hashCode`的契约, 来自Java8的文档.
@@ -52,9 +193,127 @@ tags: ["Java"]
 - 数组字段, 若没有significant element, 用**非0常数**代替, 如果全是significant element, 直接调用`Arrays.hashCode`来计算, 而如果只有部分是significant element, 用`Type.hashCode(f)`计算每一个值, 并用算出来的每一个c做`result = 31 * result + c`计算, 得到哈希值
 
 对于这个计算公式中31的选择, 主要因为它是一个奇数. 如果是个偶数, 在做乘法时如果结果超出了数据范围的限制, 那么信息会丢失, 因为从位运算的角度看, 乘2相当于左移一位. 而`31 * i == (i << 5) - i`, 虚拟机会优化为位运算获得更好的性能表现. 写哈希方法时, 不要给计算方法的详细说明, 因为这会限制以后的优化. 像`String/Integer`的hashCode都是根据实例计算的确定值, 造成以后所有的新发布都要依赖这种实现.
+```
+HashMap<PhoneNumber, String> map = new HashMap<>(5);
+PhoneNumber phoneNumber = new PhoneNumber(123, 456, 789);
+map.put(phoneNumber, "Test");
+// 同样的对象可以得到结果
+System.out.println(map.get(phoneNumber));
+// 不同的对象, 没有重写hashCode, 得不到结果
+System.out.println(map.get(new PhoneNumber(123, 456, 789)));
+
+// String的hashCode有详细说明, 会限制以后的性能优化
+new String();
+```
+```
+/**
+ * equals的标准实现
+ */
+public final class PhoneNumber {
+
+    private final short areaCode, prefix, lineNum;
+
+    /**
+     * 通过hashCode字段, 可以实现懒计算, 只有hashCode为0时才计算, 否则直接返回hashCode
+     */
+//    private int hashCode;
+
+    public PhoneNumber(int areaCode, int prefix, int lineNum) {
+        this.areaCode = rangeCheck(areaCode, 999, "area code");
+        this.prefix = rangeCheck(prefix, 999, "prefix");
+        this.lineNum = rangeCheck(lineNum, 9999, "line num");
+    }
+
+    private static short rangeCheck(int val, int max, String arg) {
+        if (val < 0 || val > max) {
+            throw new IllegalArgumentException(arg + ": " + val);
+        }
+        return (short)val;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof PhoneNumber)) {
+            return false;
+        }
+        PhoneNumber pn = (PhoneNumber)o;
+        return pn.lineNum == lineNum && pn.prefix == prefix && pn.areaCode == areaCode;
+    }
+
+    /**
+     * Typical hashCode method
+     *  guava提供了更优的hash method, 如{@code Hashing.crc32()}.
+     *  Objects提供了{@code Objects.hash(lineNum, prefix, areaCode)}, 但是性能较差, 看源码会发现
+     *  这个方法用了{@code Object a[]}数组来存值, 使用了不必要的空间, 并且对于基础类型, 拆箱装箱也会
+     *  有额外的性能损耗
+     */
+    @Override
+    public int hashCode() {
+        int result = Short.hashCode(areaCode);
+        result = 31 * result + Short.hashCode(prefix);
+        result = 31 * result + Short.hashCode(lineNum);
+        return result;
+    }
+}
+
+```
 
 ## Item 12: Always override toString
-如果不重写, 返回的是`类名@hashCode的十六进制`. 书中推荐对所有可以实例化的类都重写`toString()`方法, 言下之意, 对静态工厂类, 枚举类没必要重写
+如果不重写, 返回的是`类名@hashCode的十六进制`. 书中推荐对所有可以实例化的类都重写`toString()`方法. 不可实例化的类, 如对静态工厂类, 枚举类没必要重写.
+```
+public final class PhoneNumber {
+
+    private final short areaCode, prefix, lineNum;
+
+    /**
+     * 通过hashCode字段, 可以实现懒计算, 只有hashCode为0时才计算, 否则直接返回hashCode
+     */
+//    private int hashCode;
+
+    public PhoneNumber(int areaCode, int prefix, int lineNum) {
+        this.areaCode = rangeCheck(areaCode, 999, "area code");
+        this.prefix = rangeCheck(prefix, 999, "prefix");
+        this.lineNum = rangeCheck(lineNum, 9999, "line num");
+    }
+
+    private static short rangeCheck(int val, int max, String arg) {
+        if (val < 0 || val > max) {
+            throw new IllegalArgumentException(arg + ": " + val);
+        }
+        return (short)val;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof PhoneNumber)) {
+            return false;
+        }
+        PhoneNumber pn = (PhoneNumber)o;
+        return pn.lineNum == lineNum && pn.prefix == prefix && pn.areaCode == areaCode;
+    }
+
+    /**
+     * Typical hashCode method
+     *  guava提供了更优的hash method, 如{@code Hashing.crc32()}.
+     *  Objects提供了{@code Objects.hash(lineNum, prefix, areaCode)}, 但是性能较差, 看源码会发现
+     *  这个方法用了{@code Object a[]}数组来存值, 使用了不必要的空间, 并且对于基础类型, 拆箱装箱也会
+     *  有额外的性能损耗
+     */
+    @Override
+    public int hashCode() {
+        int result = Short.hashCode(areaCode);
+        result = 31 * result + Short.hashCode(prefix);
+        result = 31 * result + Short.hashCode(lineNum);
+        return result;
+    }
+}
+```
 
 ## Item 13: Override clone judiciously(todo)
 `Cloneable`这个接口起一个标记的作用, 如果有类实现了它, 当其对象`clone`方法被调用时, 会返回对象的copy, 对象的每个字段都应该被copy. 所以如果要实现这个接口, 类应该提供一个通常实现起来很复杂的`clone`方法. 
@@ -69,7 +328,34 @@ public interface Comparable<T> {
 
 Comparable的契约: Compares this object with the specified object for order. Returns a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object. Throws ClassCastException if the specified object’s type prevents it from being compared to this object. 一般用-1, 1代替负值和正值, 负值正值的绝对值要相等. 满足reflexivity, symmetry, and transitivity. 还有一点, 推荐但不强制`(x.compareTo(y) == 0) == (x.equals(y))`, 行为一致会让代码清晰, 不一致应指明他们的相等条件的维度是什么(natural ordering?/other kinds of ordering?). 像BigDecimal的equals和compareTo的实现就是不同的, 对于`new BigDecimal("1.0") and new BigDecimal("1.00")`如果用HashSet这种基于`equals`的集合去存储, 两个都会存进去, 而对于TreeSet这种基于`compareTo`的集合, 会被认为是相等的. 比较时还要注意越界的问题, 不要用`Integer-Integer`这种方式最为return的值
 
+```
+// String实现了Comparable
+Set<String> s = new TreeSet<>();
+String[] strings = {"b", "c", "a", "ab"};
+Collections.addAll(s, strings);
+System.out.println(s);
 
+// BigDecimal的equals意义与compareTo不同, equals要考虑精度
+BigDecimal bigDecimal1 = new BigDecimal("1.0");
+BigDecimal bigDecimal2 = new BigDecimal("1.00");
+HashSet<BigDecimal> hashSet = new HashSet<>();
+hashSet.add(bigDecimal1);
+hashSet.add(bigDecimal2);
 
-## 参考
-1. Effective Java
+TreeSet<BigDecimal> treeSet = new TreeSet<>();
+treeSet.add(bigDecimal1);
+treeSet.add(bigDecimal2);
+
+System.out.println(hashSet);
+System.out.println(treeSet);
+
+// 注意越界问题, 做return的返回值要注意
+Integer integer1 = Integer.valueOf(-2000000000);
+Integer integer2 = Integer.valueOf(1000000000);
+System.out.println(integer1 - integer2);
+// 正确方式1
+System.out.println(Integer.compare(integer1, integer2));
+// 正确方式2
+Comparator<Integer> integerOrder = Comparator.comparingInt(o -> o.intValue());
+System.out.println(integerOrder.compare(integer1, integer2));
+```
