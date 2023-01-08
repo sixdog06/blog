@@ -3,7 +3,7 @@ title: "Java如何自定义排序"
 date: 2020-10-14
 draft: false
 author: "小拳头"
-categories: ["编程语言"]
+categories: ["Tech"]
 tags: ["Java"]
 ---
 

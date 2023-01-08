@@ -3,7 +3,7 @@ title: "ajax的发post请求的坑"
 date: 2021-09-20
 draft: false
 author: "小拳头"
-categories: ["编程语言"]
+categories: ["Tech"]
 tags: ["ajax"]
 ---
 

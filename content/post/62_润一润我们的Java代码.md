@@ -3,7 +3,7 @@ title: "润一润我们的Java代码"
 date: 2021-08-15
 draft: false
 author: "小拳头"
-categories: ["编程语言"]
+categories: ["Tech"]
 tags: ["Java"]
 ---
 

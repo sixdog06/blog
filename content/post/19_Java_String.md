@@ -3,7 +3,7 @@ title: "Java String"
 date: 2021-03-11
 draft: false
 author: "小拳头"
-categories: ["编程语言"]
+categories: ["Tech"]
 tags: ["Java"]
 ---
 
