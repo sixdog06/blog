@@ -3,7 +3,7 @@ title: "DFS与BFS"
 date: 2021-01-08
 draft: false
 author: "小拳头"
-categories: ["程序设计"]
+categories: ["Tech"]
 tags: ["数据结构与算法"]
 ---
 

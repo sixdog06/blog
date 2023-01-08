@@ -3,7 +3,7 @@ title: "LRU与LFU"
 date: 2021-02-16
 draft: false
 author: "小拳头"
-categories: ["程序设计"]
+categories: ["Tech"]
 tags: ["数据结构与算法"]
 ---
 
