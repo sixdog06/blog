@@ -6,9 +6,9 @@ author: "小拳头"
 categories: ["TECH"]
 ---
 
-在[JEP 444](https://openjdk.org/jeps/444)中, 对虚拟线程进行了第一次正式的介绍, 并且提供了[preview api](https://openjdk.org/jeps/12). 虚拟线程在JDK19中已经被发布, 并且预计在JDK21中发布最新版本.
+在[JEP 444](https://openjdk.org/jeps/444)中, 对虚拟线程进行了第一次正式的介绍, 并且提供了[preview api](https://openjdk.org/jeps/12). 虚拟线程在JDK19中已经被发布, 并且预计在JDK21中发布最终版本.
 
-其实从JEP 444的介绍可以看出, 虚拟线程只会对高并发(超过几千的并发量)并且不是CPU密集型应用的效果有显著的提升. 有了virtual thread这个概念, 非virtual的线程也就有了platform thread这个名字. virtual thread是一种轻量级的platform thread, 它具有platform thread的所有功能. 类似Go中的goroutines, virtual thread是JDK提供的用户级线程, 并不直接与OS绑定, 所以一个OS先线程下可以有很多个虚拟线程. Java平台线程的切换从抽象的角度看是时间片的轮状, 或是有优先级的调度, 但是当一个平台线程进行IO操作时, CPU资源其实并没有被有效使用, 而虚拟线程则可以在IO操作进行等待的时候, 执行其他的任务, 冲锋利用CPU.
+其实从JEP 444的介绍可以看出, 虚拟线程只会对高并发(超过几千的并发量)并且不是CPU密集型应用的效果有显著的提升. 有了virtual thread这个概念, 非virtual的线程也就有了platform thread这个名字. virtual thread是一种轻量级的platform thread, 它具有platform thread的所有功能. 类似Go中的goroutines, virtual thread是JDK提供的用户级线程, 并不直接与OS绑定, 所以一个OS先线程下可以有很多个虚拟线程. Java平台线程的切换从抽象的角度看是时间片的轮状, 或是有优先级的调度, 但是当一个平台线程进行IO操作时, CPU资源其实并没有被有效使用, 而虚拟线程则可以在IO操作进行等待的时候, 执行其他的任务, 充分利用CPU.
 
 下面的例程, 分别用`Thread.sleep(1000);`来模拟IO操作的等待时间, `Test.fibonacci(int n);`来模拟计算操作. 分别测试IO密集和CPU密集的运行效果. 每两个实验之间主线程会`Thread.sleep(5000);`, 让当前执行的任务全部完成, 再执行下一个.
 ```
