@@ -7,7 +7,7 @@ categories: ["学习笔记"]
 tags: ["Java"]
 ---
 
-这是Effective Java第八章的总结, 讲如何设计方法, 个构造器原则一样, 考虑`usability, robustness, flexibility`. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).
+这是Effective Java第八章的总结, 讲如何设计方法, 个构造器原则一样, 考虑`usability, robustness, flexibility`. 项目链接[JavaLab](https://github.com/xqt01/JavaLab).
 
 ## Item 49: Check parameters for validity
 对方法和构造器的输入做有效性检测. 我在开发中遇到这种情况有时会记个日志, 而如果是接口的请求, 会针对参数返回对应的错误信息. 对埋的很深的逻辑, 通常不太敢直接抛错, 能丢弃数据的逻辑一般就把它丢了.

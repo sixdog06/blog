@@ -7,7 +7,7 @@ categories: ["学习笔记"]
 tags: ["Java"]
 ---
 
-这是Effective Java第四章的总结, 讲如何设计Java Class和Interfaces, 这是我们写Java去抽象逻辑的核心. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).
+这是Effective Java第四章的总结, 讲如何设计Java Class和Interfaces, 这是我们写Java去抽象逻辑的核心. 项目链接[JavaLab](https://github.com/xqt01/JavaLab).
 
 ## Item 15: Minimize the accessibility of classes and members
 尽量让类的accessibility严格, 书中讲了很多原因, 总的来说就是降低代码的耦合度, 对private的方法, 我们可以放心地优化/修改. 对于类的字段, 大多数情况都不应该让他们是public的. 对于`public static final fields`常量, 应该用大写+下划线的格式命名.

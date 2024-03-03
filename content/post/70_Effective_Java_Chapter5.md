@@ -7,7 +7,7 @@ categories: ["学习笔记"]
 tags: ["Java"]
 ---
 
-这是Effective Java第五章的总结, 讲泛型. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).
+这是Effective Java第五章的总结, 讲泛型. 项目链接[JavaLab](https://github.com/xqt01/JavaLab).
 
 ## Item 26: Don’t use raw types
 在集合中不要用`raw types`, 写集合带钻石符号, 避免在runtime时期程序出错. 但是因为泛型擦除, 有几个地方是例外:

@@ -7,7 +7,7 @@ categories: ["学习笔记"]
 tags: ["Java"]
 ---
 
-这是Effective Java第三章的总结, 将如何override Object类的方法, 以及`Comparable.compareTo`这个类似的方法. 项目链接[JavaLab](https://github.com/huanruiz/JavaLab).
+这是Effective Java第三章的总结, 将如何override Object类的方法, 以及`Comparable.compareTo`这个类似的方法. 项目链接[JavaLab](https://github.com/xqt01/JavaLab).
 
 ## Item 10: Obey the general contract when overriding equals
 最简单的办法就是不去重写`equals`方法, 这意味着每个实例只与自己相等. 那么这个类通常满足以下5种情况.

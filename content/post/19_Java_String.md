@@ -9,7 +9,7 @@ tags: ["Java"]
 
 在面试中遇到了一个问题: Java String是线程安全的吗? 我刚开始回答它是不安全的, 因为方法都没有加`synchronized`, 后来被面试官引导到字符串常量池才反应过来, String底层是`private final char value[];`, 是常量, 所以**String一定是线程安全的**, 并不能从`synchronized`来看是不是安全, 因为这个char数组就没法用方法修改.
 
-从常量池的角度来看, 在[JVM-字符创常量池](https://huanruiz.github.io/post/jvm/8_%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/)已经总结了. 去理解`String`到底在底层创建了多少个对象, `intern()`的作用, 字符串拼接底层在干什么.
+从常量池的角度来看, 在[JVM-字符创常量池](https://xqt01.github.io/post/jvm/8_%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0/)已经总结了. 去理解`String`到底在底层创建了多少个对象, `intern()`的作用, 字符串拼接底层在干什么.
 
 对于String底层, 我们直接先看构造方法. (JDK8下依然是char[], JDK9及之后就是byte[]了)
 ```
